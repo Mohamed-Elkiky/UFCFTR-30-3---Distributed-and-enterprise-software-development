@@ -276,18 +276,18 @@ img {
   grid-template-columns: repeat(12, 1fr);
 }
 
-.grid > * {
+.grid>* {
   grid-column: span 12;
 }
 
 @media (min-width: 640px) {
-  .grid > * {
+  .grid>* {
     grid-column: span 6;
   }
 }
 
 @media (min-width: 960px) {
-  .grid > * {
+  .grid>* {
     grid-column: span 4;
   }
 }

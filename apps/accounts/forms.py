@@ -236,3 +236,182 @@ class CustomerRegistrationForm(forms.ModelForm):
                 postcode=self.cleaned_data['postcode']
             )
         return user
+    
+class CommunityGroupRegistrationForm(forms.ModelForm):
+    """
+    Registration form for Community Group accounts (TC-017).
+    """
+
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'group@email.com'
+        })
+    )
+
+    phone = forms.CharField(
+        max_length=20,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': '0117 900000'
+        })
+    )
+
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter a secure password'
+        }),
+        help_text='Minimum 8 characters'
+    )
+
+    password_confirm = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Confirm your password'
+        }),
+        label='Confirm Password'
+    )
+
+    organisation_name = forms.CharField(
+        max_length=200,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Bristol Food Bank'
+        })
+    )
+
+    organisation_address = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'rows': 3,
+            'placeholder': 'Organisation address'
+        })
+    )
+
+    postcode = forms.CharField(
+        max_length=10,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'BS1 2AB'
+        })
+    )
+
+    class Meta:
+        model = User
+        fields = ['email', 'phone']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get('password')
+        password_confirm = cleaned_data.get('password_confirm')
+
+        if password and password_confirm and password != password_confirm:
+            raise ValidationError('Passwords do not match.')
+
+        return cleaned_data
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data['password'])
+        user.role = User.Role.COMMUNITY_GROUP
+
+        if commit:
+            user.save()
+            CommunityGroupProfile.objects.create(
+                user=user,
+                organisation_name=self.cleaned_data['organisation_name'],
+                organisation_address=self.cleaned_data['organisation_address'],
+                postcode=self.cleaned_data['postcode']
+            )
+        return user
+
+
+class RestaurantRegistrationForm(forms.ModelForm):
+    """
+    Registration form for Independent Restaurant accounts (TC-018).
+    """
+
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'info@restaurant.com'
+        })
+    )
+
+    phone = forms.CharField(
+        max_length=20,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': '0117 123456'
+        })
+    )
+
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter a secure password'
+        }),
+        help_text='Minimum 8 characters'
+    )
+
+    password_confirm = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Confirm your password'
+        }),
+        label='Confirm Password'
+    )
+
+    restaurant_name = forms.CharField(
+        max_length=200,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'The Local Bistro'
+        })
+    )
+
+    restaurant_address = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'rows': 3,
+            'placeholder': 'Restaurant address'
+        })
+    )
+
+    postcode = forms.CharField(
+        max_length=10,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'BS1 9XY'
+        })
+    )
+
+    class Meta:
+        model = User
+        fields = ['email', 'phone']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get('password')
+        password_confirm = cleaned_data.get('password_confirm')
+
+        if password and password_confirm and password != password_confirm:
+            raise ValidationError('Passwords do not match.')
+
+        return cleaned_data
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data['password'])
+        user.role = User.Role.RESTAURANT
+
+        if commit:
+            user.save()
+            RestaurantProfile.objects.create(
+                user=user,
+                restaurant_name=self.cleaned_data['restaurant_name'],
+                restaurant_address=self.cleaned_data['restaurant_address'],
+                postcode=self.cleaned_data['postcode']
+            )
+        return user
