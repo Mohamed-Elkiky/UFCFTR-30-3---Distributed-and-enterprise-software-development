@@ -19,4 +19,7 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     path('dashboard/producer/', views.producer_dashboard, name='producer_dashboard'),
     path('dashboard/customer/', views.customer_dashboard, name='customer_dashboard'),
+
+    # Terms and conditions
+    path('terms/', views.terms_conditions, name='terms_conditions'),
 ]

@@ -135,3 +135,8 @@ def customer_dashboard(request):
         'profile': request.user.customer_profile
     }
     return render(request, 'customer/dashboard.html', context)
+
+
+def terms_conditions(request):
+    """Display the terms and conditions page."""
+    return render(request, 'terms/terms_conditions.html')
