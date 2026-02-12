@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Surplus Deals</h1>
+<p>Discounted items nearing best-before dates.</p>
+
+{% if deals %}
+  <ul>
+    {% for d in deals %}
+      <li style="margin-bottom: 0.75rem;">
+        <strong>{{ d.name|default:"Deal item" }}</strong>
+        {% if d.original_price and d.discount_price %}
+          <br />Was £{{ d.original_price }} — Now £{{ d.discount_price }}
+        {% endif %}
+        {% if d.best_before %}
+          <br /><small>Best before: {{ d.best_before }}</small>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No surplus deals available right now.</p>
+{% endif %}
+
+{% endblock %}

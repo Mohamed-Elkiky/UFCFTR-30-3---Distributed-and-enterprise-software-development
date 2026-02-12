@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Categories</h1>
+
+{% if categories %}
+  <ul>
+    {% for c in categories %}
+      <li>
+        {% if c.id %}
+          <a href="{% url 'product_list' %}?category={{ c.id }}">{{ c.name|default:"Unnamed category" }}</a>
+        {% else %}
+          {{ c.name|default:"Unnamed category" }}
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No categories yet.</p>
+{% endif %}
+
+{% endblock %}

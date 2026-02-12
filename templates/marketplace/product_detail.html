@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ product.name|default:"Product" }}</h1>
+
+{% if product %}
+  {% if product.price %}<p><strong>Price:</strong> £{{ product.price }}</p>{% endif %}
+  {% if product.description %}<p>{{ product.description }}</p>{% endif %}
+
+  {% if product.producer_name %}
+    <p><strong>Producer:</strong> {{ product.producer_name }}</p>
+  {% endif %}
+
+  {% if product.is_organic %}
+    <p><strong>Organic:</strong> Yes</p>
+  {% endif %}
+
+  {% if product.allergens %}
+    <p><strong>Allergens:</strong> {{ product.allergens }}</p>
+  {% endif %}
+
+  <p>
+    <a href="{% url 'product_list' %}">Back to products</a>
+  </p>
+{% else %}
+  <p>Product not available.</p>
+{% endif %}
+
+{% endblock %}
