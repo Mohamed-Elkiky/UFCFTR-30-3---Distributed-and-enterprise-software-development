@@ -6,6 +6,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{% block title %}BRFN Marketplace{% endblock %}</title>
 
+  <!-- Theme initialization (prevents flash) -->
+  <script>
+    (function() {
+      const theme = localStorage.getItem('theme') || 'light';
+      if (theme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   {% block extra_head %}{% endblock %}
 
@@ -66,53 +81,76 @@
   <!-- =============================================================== -->
   <header class="site-header">
     <nav class="site-nav" aria-label="Primary navigation">
+      <!-- Brand -->
       <a class="brand" href="{% url 'marketplace:home' %}">
-        <strong>BRFN</strong>
+        <span class="brand-text">BRFN</span>
+        <span class="brand-dot"></span>
       </a>
-
 
       {% block nav_links %}{% endblock %}
 
       <span class="nav-spacer" aria-hidden="true"></span>
 
-      <!-- Header search (preserves filters safely) -->
+      <!-- Header search -->
       <form class="nav-search" action="{% url 'marketplace:home' %}" method="get" role="search" aria-label="Search products">
         <label class="sr-only" for="nav-q">Search</label>
         {% if category %}<input type="hidden" name="category" value="{{ category }}" />{% endif %}
         {% if organic %}<input type="hidden" name="organic" value="1" />{% endif %}
         {% if allergen %}<input type="hidden" name="allergen" value="{{ allergen }}" />{% endif %}
+        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
         <input
           id="nav-q"
           name="q"
           type="search"
           value="{{ q|default:'' }}"
-          placeholder="Search products, descriptions, producers…"
+          placeholder="Search products..."
           aria-label="Search products"
         />
-        <button type="submit">Search</button>
+        <button type="submit" class="search-btn">
+          <span>Search</span>
+        </button>
       </form>
 
-      <!-- Cart (safe anchor; no dependency on a cart URL existing) -->
-      <a class="nav-link nav-cart" href="{% url 'marketplace:home' %}#cart" aria-label="Shopping cart">
-        Cart
+      <!-- Cart -->
+      <a class="nav-cart" href="{% url 'marketplace:home' %}#cart" aria-label="Shopping cart">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
         <span class="cart-badge" aria-label="Items in cart">{{ cart_count|default:"0" }}</span>
       </a>
 
+      <!-- Theme Toggle -->
+      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark/light mode">
+        <!-- Sun icon (light mode indicator) -->
+        <span class="theme-toggle-option icon-sun-wrap">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </span>
+        <!-- Moon icon (dark mode indicator) -->
+        <span class="theme-toggle-option icon-moon-wrap">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </span>
+      </button>
+
+      <!-- Divider -->
+      <span class="nav-divider"></span>
+
       <!-- Auth links -->
       {% if user.is_authenticated %}
-        <span class="nav-greeting">Hi, {{ user.email }}!</span>
-        <a class="nav-link" href="{% url 'accounts:dashboard' %}">Dashboard</a>
-
-        {% if user.is_producer %}
-          <a class="nav-link" href="{% url 'accounts:producer_dashboard' %}">Producer</a>
-        {% elif user.is_customer %}
-          <a class="nav-link" href="{% url 'accounts:customer_dashboard' %}">Customer</a>
-        {% endif %}
-
-        <a class="nav-link" href="{% url 'accounts:logout' %}">Logout</a>
+        <div class="nav-user">
+          <span class="nav-greeting">{{ user.email }}</span>
+          <div class="nav-links">
+            <a class="nav-link" href="{% url 'accounts:dashboard' %}">Dashboard</a>
+            {% if user.is_producer %}
+              <a class="nav-link" href="{% url 'accounts:producer_dashboard' %}">Producer</a>
+            {% elif user.is_customer %}
+              <a class="nav-link" href="{% url 'accounts:customer_dashboard' %}">Customer</a>
+            {% endif %}
+            <a class="nav-link nav-link--logout" href="{% url 'accounts:logout' %}">Logout</a>
+          </div>
+        </div>
       {% else %}
-        <a class="nav-link" href="{% url 'accounts:login' %}">Login</a>
-        <a class="nav-link" href="{% url 'accounts:register' %}">Register</a>
+        <div class="nav-auth">
+          <a class="nav-link" href="{% url 'accounts:login' %}">Login</a>
+          <a class="nav-link nav-link--primary" href="{% url 'accounts:register' %}">Register</a>
+        </div>
       {% endif %}
 
       {% block nav_right %}{% endblock %}
@@ -481,5 +519,27 @@
   </footer>
 
   {% block extra_js %}{% endblock %}
+
+  <!-- Theme Toggle Script -->
+  <script>
+    (function() {
+      const toggle = document.getElementById('theme-toggle');
+      if (!toggle) return;
+
+      toggle.addEventListener('click', function() {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        
+        if (newTheme === 'dark') {
+          html.setAttribute('data-theme', 'dark');
+        } else {
+          html.removeAttribute('data-theme');
+        }
+        
+        localStorage.setItem('theme', newTheme);
+      });
+    })();
+  </script>
 </body>
 </html>
