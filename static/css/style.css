@@ -44,6 +44,10 @@ body {
     radial-gradient(900px 500px at 90% 10%, rgba(15, 118, 110, 0.10), transparent 60%),
     var(--bg);
   line-height: 1.5;
+  /* Sticky footer layout */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 a {
@@ -74,6 +78,8 @@ img {
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
+  /* Prevent shrinking in flex layout */
+  flex-shrink: 0;
 }
 
 .site-nav {
@@ -117,6 +123,9 @@ img {
   max-width: 1100px;
   margin: 0 auto;
   padding: 1.25rem 1rem 2.75rem;
+  /* Grow to push footer to bottom */
+  flex: 1 0 auto;
+  width: 100%;
 }
 
 .site-footer {
@@ -124,6 +133,8 @@ img {
   color: var(--muted);
   text-align: center;
   padding: 1.25rem 1rem;
+  /* Prevent shrinking in flex layout */
+  flex-shrink: 0;
 }
 
 /* ---------- Messages ---------- */

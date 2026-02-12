@@ -101,10 +101,6 @@
       <!-- Auth links -->
       {% if user.is_authenticated %}
         <span class="nav-greeting">Hi, {{ user.email }}!</span>
-<<<<<<< HEAD
-=======
-
->>>>>>> 15094d66d6313a2d78a0e58b4000059724eabf55
         <a class="nav-link" href="{% url 'accounts:dashboard' %}">Dashboard</a>
 
         {% if user.is_producer %}
