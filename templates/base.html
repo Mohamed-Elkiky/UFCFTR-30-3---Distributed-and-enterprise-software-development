@@ -11,25 +11,49 @@
 </head>
 
 <body class="{% block body_class %}{% endblock %}">
+
+  <!-- =============================================================== -->
+  <!-- HEADER / NAV                                                    -->
+  <!-- =============================================================== -->
   <header class="site-header">
-    <nav class="site-nav" aria-label="Primary">
+    <nav class="site-nav" aria-label="Primary navigation">
       <a class="brand" href="{% url 'marketplace:home' %}">
         <strong>BRFN</strong>
       </a>
 
-      <a class="nav-link" href="{% url 'marketplace:home' %}">Home</a>
 
       {% block nav_links %}{% endblock %}
 
       <span class="nav-spacer" aria-hidden="true"></span>
 
+      <!-- Header search (preserves filters safely) -->
+      <form class="nav-search" action="{% url 'marketplace:home' %}" method="get" role="search" aria-label="Search products">
+        <label class="sr-only" for="nav-q">Search</label>
+        {% if category %}<input type="hidden" name="category" value="{{ category }}" />{% endif %}
+        {% if organic %}<input type="hidden" name="organic" value="1" />{% endif %}
+        {% if allergen %}<input type="hidden" name="allergen" value="{{ allergen }}" />{% endif %}
+        <input
+          id="nav-q"
+          name="q"
+          type="search"
+          value="{{ q|default:'' }}"
+          placeholder="Search products, descriptions, producers…"
+          aria-label="Search products"
+        />
+        <button type="submit">Search</button>
+      </form>
+
+      <!-- Cart (safe anchor; no dependency on a cart URL existing) -->
+      <a class="nav-link nav-cart" href="{% url 'marketplace:home' %}#cart" aria-label="Shopping cart">
+        Cart
+        <span class="cart-badge" aria-label="Items in cart">{{ cart_count|default:"0" }}</span>
+      </a>
+
+      <!-- Auth links -->
       {% if user.is_authenticated %}
         <span class="nav-greeting">Hi, {{ user.email }}!</span>
-
-        {# Main dashboard (accounts/dashboard/) #}
         <a class="nav-link" href="{% url 'accounts:dashboard' %}">Dashboard</a>
 
-        {# Role-specific dashboards that exist in apps/accounts/urls.py #}
         {% if user.is_producer %}
           <a class="nav-link" href="{% url 'accounts:producer_dashboard' %}">Producer</a>
         {% elif user.is_customer %}
@@ -47,7 +71,11 @@
     </nav>
   </header>
 
+  <!-- =============================================================== -->
+  <!-- MAIN                                                            -->
+  <!-- =============================================================== -->
   <main id="content" class="site-main">
+
     {% if messages %}
       <div class="messages" aria-live="polite" aria-atomic="true">
         {% for message in messages %}
@@ -58,9 +86,348 @@
       </div>
     {% endif %}
 
-    {% block content %}{% endblock %}
+    {% block content %}
+
+      <!-- =========================================================== -->
+      <!-- HERO + PRIMARY SEARCH                                       -->
+      <!-- =========================================================== -->
+      <section class="home-hero" aria-label="Marketplace introduction">
+        <div class="home-hero__inner">
+          <h1 class="home-hero__title">Local food, direct from producers.</h1>
+          <p class="home-hero__sub">
+            Browse by category. Search by product name, description keywords, or producer.
+          </p>
+
+          <form class="home-search" action="{% url 'marketplace:home' %}" method="get" role="search" aria-label="Search marketplace">
+            <label class="sr-only" for="home-q">Search products</label>
+            {% if category %}<input type="hidden" name="category" value="{{ category|urlencode }}" />{% endif %}
+            {% if organic %}<input type="hidden" name="organic" value="1" />{% endif %}
+            {% if allergen %}<input type="hidden" name="allergen" value="{{ allergen|urlencode }}" />{% endif %}
+            <input
+              id="home-q"
+              name="q"
+              type="search"
+              value="{{ q|default:'' }}"
+              placeholder="Search: apples, sourdough, local honey, farm name…"
+            />
+            <button type="submit" class="btn btn--primary">Search</button>
+          </form>
+
+          <div class="home-actions">
+            <a class="btn btn--primary" href="{% url 'marketplace:home' %}#categories">Browse categories</a>
+            <a class="btn btn--ghost" href="{% url 'marketplace:home' %}#surplus">View surplus deals</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================================== -->
+      <!-- CATEGORY TILES (Critical)                                   -->
+      <!-- =========================================================== -->
+      <section id="categories" class="home-categories" aria-label="Browse by category">
+        <h2>Shop by category</h2>
+
+        {% if categories %}
+          <div class="category-grid">
+            {% for c in categories %}
+              <a class="category-card" href="{% url 'marketplace:home' %}?category={{ c.slug|default:c.name|urlencode }}">
+                <strong>{{ c.name }}</strong>
+                {% if c.description %}<span>{{ c.description }}</span>{% endif %}
+              </a>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="category-grid">
+            <a class="category-card" href="{% url 'marketplace:home' %}?category=vegetables"><strong>Vegetables</strong><span>Fresh &amp; seasonal</span></a>
+            <a class="category-card" href="{% url 'marketplace:home' %}?category=dairy-eggs"><strong>Dairy &amp; Eggs</strong><span>Milk, cheese, eggs</span></a>
+            <a class="category-card" href="{% url 'marketplace:home' %}?category=bakery"><strong>Bakery</strong><span>Bread, pastries</span></a>
+            <a class="category-card" href="{% url 'marketplace:home' %}?category=preserves"><strong>Preserves</strong><span>Jams, pickles, sauces</span></a>
+            <a class="category-card" href="{% url 'marketplace:home' %}?category=seasonal"><strong>Seasonal Specialities</strong><span>Limited runs</span></a>
+          </div>
+        {% endif %}
+      </section>
+
+      <!-- =========================================================== -->
+      <!-- QUICK FILTERS (Organic / Allergens)                         -->
+      <!-- =========================================================== -->
+      <section class="home-filters" aria-label="Quick filters">
+        <div class="filter-bar">
+
+          <a
+            class="btn btn--ghost btn--sm {% if organic %}btn--active{% endif %}"
+            href="{% url 'marketplace:home' %}?organic=1{% if q %}&amp;q={{ q|urlencode }}{% endif %}{% if category %}&amp;category={{ category|urlencode }}{% endif %}{% if allergen %}&amp;allergen={{ allergen|urlencode }}{% endif %}"
+            aria-label="Show organic products only"
+          >
+            Organic only
+          </a>
+
+          <form class="filter-form" action="{% url 'marketplace:home' %}" method="get" aria-label="Filter by allergen">
+            {% if q %}<input type="hidden" name="q" value="{{ q|urlencode }}" />{% endif %}
+            {% if category %}<input type="hidden" name="category" value="{{ category|urlencode }}" />{% endif %}
+            {% if organic %}<input type="hidden" name="organic" value="1" />{% endif %}
+
+            <label class="sr-only" for="allergen-filter">Filter by allergen</label>
+            <select id="allergen-filter" name="allergen" class="select select--sm" onchange="this.form.submit()">
+              <option value="">Allergen filter…</option>
+              <option value="gluten"{% if allergen == "gluten" %} selected{% endif %}>Gluten-free</option>
+              <option value="dairy"{% if allergen == "dairy" %} selected{% endif %}>Dairy-free</option>
+              <option value="nuts"{% if allergen == "nuts" %} selected{% endif %}>Nut-free</option>
+              <option value="eggs"{% if allergen == "eggs" %} selected{% endif %}>Egg-free</option>
+              <option value="soy"{% if allergen == "soy" %} selected{% endif %}>Soy-free</option>
+            </select>
+            <noscript><button type="submit" class="btn btn--sm">Apply</button></noscript>
+          </form>
+        </div>
+      </section>
+
+      <!-- =========================================================== -->
+      <!-- PRODUCT GRID HELPERS (inline, no extra files)               -->
+      <!-- =========================================================== -->
+
+      {# Note: `product` objects may not have all fields; template guards avoid crashing. #}
+      {% if q %}
+        <section class="home-search-results" aria-label="Search results">
+          <h2>Results for “{{ q }}”</h2>
+
+          {% if search_results %}
+            <div class="product-grid">
+              {% for product in search_results %}
+                <article class="product-card">
+                  <a class="product-card__link" href="{{ product.get_absolute_url|default:'#' }}">
+                    <h3 class="product-title">{{ product.name }}</h3>
+                  </a>
+
+                  <div class="product-meta">
+                    {# Price (supports discount) #}
+                    {% if product.discount_price %}
+                      <div class="product-price">
+                        <strong>&pound;{{ product.discount_price }}</strong>
+                        {% if product.price %}
+                          <span class="price-was">was &pound;{{ product.price }}</span>
+                        {% endif %}
+                      </div>
+                    {% elif product.price %}
+                      <div class="product-price">&pound;{{ product.price }}</div>
+                    {% else %}
+                      <div class="product-price muted">Price unavailable</div>
+                    {% endif %}
+
+                    {# Producer + origin #}
+                    {% if product.producer_name %}
+                      <div><strong>Producer:</strong> {{ product.producer_name }}</div>
+                    {% elif product.producer %}
+                      <div><strong>Producer:</strong> {{ product.producer }}</div>
+                    {% endif %}
+
+                    {% if product.origin %}
+                      <div><strong>Origin:</strong> {{ product.origin }}</div>
+                    {% endif %}
+
+                    {# Availability / season badge #}
+                    <span
+                      class="badge {% if product.is_in_season %}badge--good{% elif product.is_in_season == False %}badge--muted{% endif %}"
+                      {% if product.season_start and product.season_end %}
+                        title="Season: {{ product.season_start }} – {{ product.season_end }}"
+                      {% endif %}
+                    >
+                      {% if product.is_in_season %}
+                        In Season
+                      {% elif product.is_in_season == False %}
+                        Unavailable
+                      {% elif product.season_label %}
+                        {{ product.season_label }}
+                      {% else %}
+                        Year-round
+                      {% endif %}
+                    </span>
+                  </div>
+                </article>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="no-results">
+              <p>No results found. Try a different keyword or browse categories.</p>
+              <a class="btn btn--ghost" href="{% url 'marketplace:home' %}#categories">Browse categories</a>
+            </div>
+          {% endif %}
+        </section>
+      {% endif %}
+
+      <!-- =========================================================== -->
+      <!-- FEATURED PRODUCTS (shown regardless of search; ok if empty) -->
+      <!-- =========================================================== -->
+      <section class="home-featured" aria-label="Featured products">
+        <h2>Featured</h2>
+
+        {% if featured_products %}
+          <div class="product-grid">
+            {% for product in featured_products %}
+              <article class="product-card">
+                <a class="product-card__link" href="{{ product.get_absolute_url|default:'#' }}">
+                  <h3 class="product-title">{{ product.name }}</h3>
+                </a>
+
+                <div class="product-meta">
+                  {% if product.discount_price %}
+                    <div class="product-price">
+                      <strong>&pound;{{ product.discount_price }}</strong>
+                      {% if product.price %}
+                        <span class="price-was">was &pound;{{ product.price }}</span>
+                      {% endif %}
+                    </div>
+                  {% elif product.price %}
+                    <div class="product-price">&pound;{{ product.price }}</div>
+                  {% else %}
+                    <div class="product-price muted">Price unavailable</div>
+                  {% endif %}
+
+                  {% if product.producer_name %}
+                    <div><strong>Producer:</strong> {{ product.producer_name }}</div>
+                  {% elif product.producer %}
+                    <div><strong>Producer:</strong> {{ product.producer }}</div>
+                  {% endif %}
+
+                  {% if product.origin %}
+                    <div><strong>Origin:</strong> {{ product.origin }}</div>
+                  {% endif %}
+
+                  <span
+                    class="badge {% if product.is_in_season %}badge--good{% elif product.is_in_season == False %}badge--muted{% endif %}"
+                    {% if product.season_start and product.season_end %}
+                      title="Season: {{ product.season_start }} – {{ product.season_end }}"
+                    {% endif %}
+                  >
+                    {% if product.is_in_season %}
+                      In Season
+                    {% elif product.is_in_season == False %}
+                      Unavailable
+                    {% elif product.season_label %}
+                      {{ product.season_label }}
+                    {% else %}
+                      Year-round
+                    {% endif %}
+                  </span>
+                </div>
+              </article>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="muted">Featured products will appear here soon.</p>
+        {% endif %}
+      </section>
+
+      <!-- =========================================================== -->
+      <!-- SURPLUS / LAST-MINUTE DEALS                                 -->
+      <!-- =========================================================== -->
+      <section id="surplus" class="home-surplus" aria-label="Surplus deals">
+        <h2>Surplus / Last-minute deals</h2>
+        <p class="muted">Discounted items to help reduce waste.</p>
+
+        {% if surplus_products %}
+          <div class="product-grid">
+            {% for product in surplus_products %}
+              <article class="product-card product-card--deal">
+                <a class="product-card__link" href="{{ product.get_absolute_url|default:'#' }}">
+                  <h3 class="product-title">{{ product.name }}</h3>
+                </a>
+
+                <div class="product-meta">
+                  {% if product.discount_price %}
+                    <div class="product-price">
+                      <strong>&pound;{{ product.discount_price }}</strong>
+                      {% if product.price %}
+                        <span class="price-was">was &pound;{{ product.price }}</span>
+                      {% endif %}
+                    </div>
+                  {% elif product.price %}
+                    <div class="product-price">&pound;{{ product.price }}</div>
+                  {% else %}
+                    <div class="product-price muted">Price unavailable</div>
+                  {% endif %}
+
+                  {% if product.best_before %}
+                    <div><strong>Best before:</strong> {{ product.best_before }}</div>
+                  {% endif %}
+
+                  {% if product.producer_name %}
+                    <div><strong>Producer:</strong> {{ product.producer_name }}</div>
+                  {% elif product.producer %}
+                    <div><strong>Producer:</strong> {{ product.producer }}</div>
+                  {% endif %}
+
+                  {% if product.origin %}
+                    <div><strong>Origin:</strong> {{ product.origin }}</div>
+                  {% endif %}
+
+                  <span
+                    class="badge {% if product.is_in_season %}badge--good{% elif product.is_in_season == False %}badge--muted{% endif %}"
+                    {% if product.season_start and product.season_end %}
+                      title="Season: {{ product.season_start }} – {{ product.season_end }}"
+                    {% endif %}
+                  >
+                    {% if product.is_in_season %}
+                      In Season
+                    {% elif product.is_in_season == False %}
+                      Unavailable
+                    {% elif product.season_label %}
+                      {{ product.season_label }}
+                    {% else %}
+                      Year-round
+                    {% endif %}
+                  </span>
+                </div>
+              </article>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="muted">Surplus deals will appear here when producers list discounted stock.</p>
+        {% endif %}
+      </section>
+
+      <!-- =========================================================== -->
+      <!-- FOOD MILES HOOK (UI only)                                   -->
+      <!-- =========================================================== -->
+      <section id="food-miles" class="home-food-miles" aria-label="Food miles">
+        <h2>Food miles</h2>
+
+        {% if user_postcode %}
+          <p>Using postcode: <strong>{{ user_postcode }}</strong></p>
+        {% elif user.is_authenticated %}
+          <p>Add your postcode in your profile to calculate food miles.</p>
+        {% else %}
+          <p>Log in and add a postcode in your profile to see food miles.</p>
+        {% endif %}
+      </section>
+
+      <!-- =========================================================== -->
+      <!-- COMMUNITY LINKS                                             -->
+      <!-- =========================================================== -->
+      <section class="home-community" aria-label="Community and education">
+        <h2>Community</h2>
+        <div class="community-grid">
+          <a class="community-link card" href="{% url 'marketplace:home' %}#recipes">
+            <strong>Recipes</strong><span>Seasonal inspiration</span>
+          </a>
+          <a class="community-link card" href="{% url 'marketplace:home' %}#farm-stories">
+            <strong>Farm Stories</strong><span>Meet producers</span>
+          </a>
+          <a class="community-link card" href="{% url 'marketplace:home' %}#storage-guides">
+            <strong>Storage Guides</strong><span>Keep food fresh</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- Safe anchor targets -->
+      <div id="cart" aria-hidden="true"></div>
+      <div id="recipes" aria-hidden="true"></div>
+      <div id="farm-stories" aria-hidden="true"></div>
+      <div id="storage-guides" aria-hidden="true"></div>
+
+    {% endblock %}
   </main>
 
+  <!-- =============================================================== -->
+  <!-- FOOTER                                                          -->
+  <!-- =============================================================== -->
   <footer class="site-footer">
     <small>&copy; {% now "Y" %} BRFN Marketplace</small>
   </footer>
