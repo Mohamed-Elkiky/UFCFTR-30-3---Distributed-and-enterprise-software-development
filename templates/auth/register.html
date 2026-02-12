@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+{% block title %}Register | BRFN{% endblock %}
+
+{% block extra_head %}
+<style>
+  .form-control { width: 100%; box-sizing: border-box; }
+
+  /* Prefixed forms will render names like customer-phone, producer-phone */
+  input[name$="-phone"].form-control {
+    padding-left: 2rem;
+  }
+
+  .auth-card { max-width: 760px; margin: 0 auto; }
+  .form-row { margin-bottom: 1rem; max-width: 520px; }
+  .form-help { display:block; font-size: .9rem; opacity: .8; margin-top: .25rem; }
+  .form-error { color: #b02a37; font-size: .9rem; margin-top: .25rem; }
+
+  .phone-wrap { position: relative; max-width: 520px; }
+  .phone-prefix {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #555;
+    pointer-events: none;
+  }
+
+  .btn {
+    padding: .55rem .9rem;
+    border: 1px solid #333;
+    background: #fff;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  .btn:hover { background: #f5f5f5; }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="auth-card">
+  <h1>Register</h1>
+  <p>Select the account type you want to create.</p>
+
+  <div class="form-row">
+    <label for="accountType">Account type</label>
+    <select id="accountType" class="form-control">
+      <option value="customer" selected>Customer (Individual)</option>
+      <option value="producer">Producer</option>
+      {# Add these options only if you’ve added the forms + endpoints #}
+      {# <option value="community">Community Group</option> #}
+      {# <option value="restaurant">Restaurant</option> #}
+    </select>
+  </div>
+
+  <!-- CUSTOMER -->
+  <div id="customerForm">
+    <h2>Customer details</h2>
+
+    <form method="post" action="{% url 'accounts:register_customer' %}" novalidate>
+      {% csrf_token %}
+
+      {% if customer_form.non_field_errors %}
+        <div class="message message--error" role="alert">
+          {% for err in customer_form.non_field_errors %}{{ err }}{% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="form-row">
+        <label for="{{ customer_form.email.id_for_label }}">Email</label>
+        {{ customer_form.email }}
+        {% for e in customer_form.email.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="form-row">
+        <label for="{{ customer_form.phone.id_for_label }}">Phone</label>
+        <div class="phone-wrap">
+          <span class="phone-prefix">+</span>
+          {{ customer_form.phone }}
+        </div>
+        {% for e in customer_form.phone.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="form-row">
+        <label for="{{ customer_form.password.id_for_label }}">Password</label>
+        {{ customer_form.password }}
+        {% if customer_form.password.help_text %}<small class="form-help">{{ customer_form.password.help_text }}</small>{% endif %}
+        {% for e in customer_form.password.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="form-row">
+        <label for="{{ customer_form.password_confirm.id_for_label }}">Confirm password</label>
+        {{ customer_form.password_confirm }}
+        {% for e in customer_form.password_confirm.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="form-row">
+        <label for="{{ customer_form.full_name.id_for_label }}">Full name</label>
+        {{ customer_form.full_name }}
+        {% for e in customer_form.full_name.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="form-row">
+        <label for="{{ customer_form.delivery_address.id_for_label }}">Delivery address</label>
+        {{ customer_form.delivery_address }}
+        {% for e in customer_form.delivery_address.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="form-row">
+        <label for="{{ customer_form.postcode.id_for_label }}">Postcode</label>
+        {{ customer_form.postcode }}
+        {% for e in customer_form.postcode.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="form-row">
+        <label>
+          {{ customer_form.terms_accepted }} {{ customer_form.terms_accepted.label }}
+        </label>
+        {% for e in customer_form.terms_accepted.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+      </div>
+
+      <button class="btn" type="submit">Create customer account</button>
+    </form>
+  </div>
+
+  <!-- PRODUCER -->
+  <div id="producerForm" style="display:none;">
+    <h2>Producer details</h2>
+
+    <form method="post" action="{% url 'accounts:register_producer' %}" novalidate>
+      {% csrf_token %}
+
+      {% if producer_form.non_field_errors %}
+        <div class="message message--error" role="alert">
+          {% for err in producer_form.non_field_errors %}{{ err }}{% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="form-row">
+        <label for="{{ producer_form.email.id_for_label }}">Email</label>
+        {{ producer_form.email }}
+        {% for e in producer_form.email.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="form-row">
+        <label for="{{ producer_form.phone.id_for_label }}">Phone</label>
+        <div class="phone-wrap">
+          <span class="phone-prefix">+</span>
+          {{ producer_form.phone }}
+        </div>
+        {% for e in producer_form.phone.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="form-row">
+        <label for="{{ producer_form.password.id_for_label }}">Password</label>
+        {{ producer_form.password }}
+        {% if producer_form.password.help_text %}<small class="form-help">{{ producer_form.password.help_text }}</small>{% endif %}
+        {% for e in producer_form.password.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="form-row">
+        <label for="{{ producer_form.password_confirm.id_for_label }}">Confirm password</label>
+        {{ producer_form.password_confirm }}
+        {% for e in producer_form.password_confirm.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="form-row">
+        <label for="{{ producer_form.business_name.id_for_label }}">Business name</label>
+        {{ producer_form.business_name }}
+        {% for e in producer_form.business_name.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="form-row">
+        <label for="{{ producer_form.contact_name.id_for_label }}">Contact name</label>
+        {{ producer_form.contact_name }}
+        {% for e in producer_form.contact_name.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="form-row">
+        <label for="{{ producer_form.business_address.id_for_label }}">Business address</label>
+        {{ producer_form.business_address }}
+        {% for e in producer_form.business_address.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="form-row">
+        <label for="{{ producer_form.postcode.id_for_label }}">Postcode</label>
+        {{ producer_form.postcode }}
+        {% for e in producer_form.postcode.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+      </div>
+
+      <button class="btn" type="submit">Create producer account</button>
+    </form>
+  </div>
+
+  <hr style="margin: 1.5rem 0;" />
+  <p>Already registered? <a href="{% url 'accounts:login' %}">Login</a></p>
+</section>
+
+<script>
+  (function () {
+    const select = document.getElementById("accountType");
+    const customer = document.getElementById("customerForm");
+    const producer = document.getElementById("producerForm");
+
+    function update() {
+      const type = select.value;
+      customer.style.display = (type === "customer") ? "block" : "none";
+      producer.style.display = (type === "producer") ? "block" : "none";
+    }
+
+    select.addEventListener("change", update);
+    update();
+  })();
+</script>
+{% endblock %}

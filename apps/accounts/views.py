@@ -32,6 +32,21 @@ def logout_view(request):
     messages.success(request, 'You have been logged out successfully.')
     return redirect('accounts:login')
 
+def register(request):
+    if request.user.is_authenticated:
+        return redirect('accounts:dashboard')
+
+    context = {
+        "customer_form": CustomerRegistrationForm(prefix="customer"),
+        "producer_form": ProducerRegistrationForm(prefix="producer"),
+        # If you add these later:
+        # "community_form": CommunityGroupRegistrationForm(prefix="community"),
+        # "restaurant_form": RestaurantRegistrationForm(prefix="restaurant"),
+    }
+    return render(request, "auth/register.html", context)
+
+
+
 
 def register_producer(request):
     """
@@ -91,10 +106,6 @@ def dashboard(request):
     
     if user.is_producer:
         return redirect('accounts:producer_dashboard')
-    elif user.is_community_group:
-        return redirect('accounts:community_dashboard')
-    elif user.is_restaurant:
-        return redirect('accounts:restaurant_dashboard')
     else:
         # Default: customer dashboard
         return redirect('accounts:customer_dashboard')
