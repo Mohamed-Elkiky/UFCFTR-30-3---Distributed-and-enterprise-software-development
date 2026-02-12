@@ -1,0 +1,391 @@
+/* static/css/style.css */
+
+/* ---------- Base reset / defaults ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #ffffff;
+  --text: #131a2b;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+
+  --brand: #0f766e;
+  --brand-2: #0ea5a4;
+
+  --card: #ffffff;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+
+  --radius: 14px;
+  --radius-sm: 10px;
+
+  --focus: 0 0 0 3px rgba(14, 165, 164, 0.35);
+
+  --danger: #dc2626;
+  --warn: #f59e0b;
+  --success: #16a34a;
+  --info: #2563eb;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji",
+    "Segoe UI Emoji";
+  color: var(--text);
+  background: radial-gradient(1200px 600px at 20% -10%, rgba(14, 165, 164, 0.12), transparent 55%),
+    radial-gradient(900px 500px at 90% 10%, rgba(15, 118, 110, 0.10), transparent 60%),
+    var(--bg);
+  line-height: 1.5;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus);
+  border-radius: 8px;
+}
+
+/* ---------- Layout shell ---------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+
+.site-nav {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0.85rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+}
+
+.brand {
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  padding: 0.25rem 0.1rem;
+}
+
+.nav-link {
+  padding: 0.45rem 0.65rem;
+  border-radius: 10px;
+  color: var(--text);
+}
+
+.nav-link:hover {
+  text-decoration: none;
+  background: rgba(15, 118, 110, 0.08);
+}
+
+.nav-spacer {
+  margin-left: auto;
+}
+
+.nav-greeting {
+  color: var(--muted);
+  font-size: 0.95rem;
+  padding: 0.25rem 0.2rem;
+}
+
+.site-main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 2.75rem;
+}
+
+.site-footer {
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  text-align: center;
+  padding: 1.25rem 1rem;
+}
+
+/* ---------- Messages ---------- */
+.messages {
+  margin: 0 0 1rem 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.message {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-left-width: 4px;
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 0.9rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.message--error,
+.message--danger {
+  border-left-color: var(--danger);
+}
+
+.message--warning {
+  border-left-color: var(--warn);
+}
+
+.message--success {
+  border-left-color: var(--success);
+}
+
+.message--info {
+  border-left-color: var(--info);
+}
+
+/* ---------- Homepage dark background ---------- */
+.page-home {
+  background: #000000;
+  color: #ffffff;
+}
+
+.page-home .site-header {
+  background: rgba(0, 0, 0, 0.85);
+  border-bottom-color: #222;
+}
+
+.page-home .nav-link {
+  color: #ffffff;
+}
+
+.page-home .nav-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.page-home .nav-greeting {
+  color: #9ca3af;
+}
+
+.page-home .site-footer {
+  border-top-color: #222;
+  color: #9ca3af;
+}
+
+/* ---------- Homepage styles (safe even if other pages exist) ---------- */
+/* Use these classes in home.html:
+   - .home-hero, .home-hero__inner, .home-hero__title, .home-hero__sub
+   - .home-actions, .btn, .btn--primary, .btn--ghost
+   - .grid, .card, .card__title, .card__meta, .card__footer
+   - .badge, .price
+*/
+
+.home-hero {
+  margin-top: 0.25rem;
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(14, 165, 164, 0.08), rgba(255, 255, 255, 0.85));
+  border-radius: calc(var(--radius) + 4px);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.home-hero__inner {
+  padding: 1.4rem 1.25rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.home-hero__title {
+  margin: 0;
+  font-size: clamp(1.35rem, 2.2vw, 2rem);
+  line-height: 1.15;
+}
+
+.home-hero__sub {
+  margin: 0;
+  color: var(--muted);
+  max-width: 70ch;
+}
+
+.home-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  font-weight: 650;
+  cursor: pointer;
+  user-select: none;
+  text-decoration: none;
+}
+
+.btn:hover {
+  text-decoration: none;
+}
+
+.btn--primary {
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  color: #fff;
+  box-shadow: 0 10px 18px rgba(15, 118, 110, 0.22);
+}
+
+.btn--primary:hover {
+  filter: brightness(0.98);
+}
+
+.btn--ghost {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.btn--ghost:hover {
+  background: rgba(15, 118, 110, 0.07);
+}
+
+/* ---------- Product grid/cards ---------- */
+.grid {
+  margin-top: 1.25rem;
+  display: grid;
+  gap: 0.9rem;
+  grid-template-columns: repeat(12, 1fr);
+}
+
+.grid > * {
+  grid-column: span 12;
+}
+
+@media (min-width: 640px) {
+  .grid > * {
+    grid-column: span 6;
+  }
+}
+
+@media (min-width: 960px) {
+  .grid > * {
+    grid-column: span 4;
+  }
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.95rem;
+}
+
+.card__title {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.25;
+}
+
+.card__meta {
+  color: var(--muted);
+  font-size: 0.92rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.card__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+/* ---------- Small UI bits ---------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(15, 118, 110, 0.06);
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 650;
+}
+
+.price {
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+
+.hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 1rem 0;
+}
+
+/* ---------- Forms (homepage search/filter blocks) ---------- */
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.input,
+.select {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  padding: 0.6rem 0.75rem;
+  min-height: 42px;
+  font: inherit;
+}
+
+.input {
+  flex: 1 1 220px;
+}
+
+.select {
+  flex: 0 1 220px;
+}
+
+/* ---------- Utility ---------- */
+.hidden {
+  display: none !important;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.center {
+  text-align: center;
+}
