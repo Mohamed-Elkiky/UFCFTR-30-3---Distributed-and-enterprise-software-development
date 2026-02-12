@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -5,36 +6,52 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{% block title %}BRFN Marketplace{% endblock %}</title>
 
-  {% load static %}
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  {% block extra_head %}{% endblock %}
 </head>
 
-<body>
-  <header style="padding: 1rem; border-bottom: 1px solid #ddd;">
-    <nav style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
-      <a href="{% url 'marketplace:home' %}"><strong>BRFN</strong></a>
+<body class="{% block body_class %}{% endblock %}">
+  <header class="site-header">
+    <nav class="site-nav" aria-label="Primary">
+      <a class="brand" href="{% url 'marketplace:home' %}">
+        <strong>BRFN</strong>
+      </a>
 
-      <a href="{% url 'marketplace:home' %}">Home</a>
+      <a class="nav-link" href="{% url 'marketplace:home' %}">Home</a>
 
+      {% block nav_links %}{% endblock %}
 
-      <span style="margin-left: auto;"></span>
+      <span class="nav-spacer" aria-hidden="true"></span>
 
       {% if user.is_authenticated %}
-        <span>Hi, {{ user.email }}!</span>
-        <a href="{% url 'accounts:dashboard' %}">Dashboard</a>
-        <a href="{% url 'accounts:logout' %}">Logout</a>
+        <span class="nav-greeting">Hi, {{ user.email }}!</span>
+
+        {# Main dashboard (accounts/dashboard/) #}
+        <a class="nav-link" href="{% url 'accounts:dashboard' %}">Dashboard</a>
+
+        {# Role-specific dashboards that exist in apps/accounts/urls.py #}
+        {% if user.is_producer %}
+          <a class="nav-link" href="{% url 'accounts:producer_dashboard' %}">Producer</a>
+        {% elif user.is_customer %}
+          <a class="nav-link" href="{% url 'accounts:customer_dashboard' %}">Customer</a>
+        {% endif %}
+
+        <a class="nav-link" href="{% url 'accounts:logout' %}">Logout</a>
       {% else %}
-        <a href="{% url 'accounts:login' %}">Login</a>
-        <a href="{% url 'accounts:register_customer' %}">Register</a>
+        <a class="nav-link" href="{% url 'accounts:login' %}">Login</a>
+        <a class="nav-link" href="{% url 'accounts:register_customer' %}">Register (Customer)</a>
+        <a class="nav-link" href="{% url 'accounts:register_producer' %}">Register (Producer)</a>
       {% endif %}
+
+      {% block nav_right %}{% endblock %}
     </nav>
   </header>
 
-  <main style="max-width: 960px; margin: 0 auto; padding: 1.25rem;">
+  <main id="content" class="site-main">
     {% if messages %}
-      <div style="margin-bottom: 1rem;">
+      <div class="messages" aria-live="polite" aria-atomic="true">
         {% for message in messages %}
-          <div style="padding: .75rem; border: 1px solid #ddd; margin-bottom: .5rem;">
+          <div class="message {% if message.tags %}message--{{ message.tags }}{% endif %}" role="alert">
             {{ message }}
           </div>
         {% endfor %}
@@ -44,8 +61,10 @@
     {% block content %}{% endblock %}
   </main>
 
-  <footer style="padding: 1rem; border-top: 1px solid #ddd; text-align: center;">
-    <small>&copy; {{ now|date:"Y" }} BRFN Marketplace</small>
+  <footer class="site-footer">
+    <small>&copy; {% now "Y" %} BRFN Marketplace</small>
   </footer>
+
+  {% block extra_js %}{% endblock %}
 </body>
 </html>

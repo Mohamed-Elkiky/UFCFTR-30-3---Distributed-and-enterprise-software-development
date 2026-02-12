@@ -91,10 +91,6 @@ def dashboard(request):
     
     if user.is_producer:
         return redirect('accounts:producer_dashboard')
-    elif user.is_community_group:
-        return redirect('accounts:community_dashboard')
-    elif user.is_restaurant:
-        return redirect('accounts:restaurant_dashboard')
     else:
         # Default: customer dashboard
         return redirect('accounts:customer_dashboard')
