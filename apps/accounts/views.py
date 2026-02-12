@@ -33,20 +33,18 @@ def logout_view(request):
     return redirect('accounts:login')
 
 def register(request):
-    """
-    Single register page with dropdown (Customer/Producer).
-    Shows both forms and posts to the existing endpoints:
-    - accounts:register_customer
-    - accounts:register_producer
-    """
     if request.user.is_authenticated:
         return redirect('accounts:dashboard')
 
     context = {
-        "customer_form": CustomerRegistrationForm(),
-        "producer_form": ProducerRegistrationForm(),
+        "customer_form": CustomerRegistrationForm(prefix="customer"),
+        "producer_form": ProducerRegistrationForm(prefix="producer"),
+        # If you add these later:
+        # "community_form": CommunityGroupRegistrationForm(prefix="community"),
+        # "restaurant_form": RestaurantRegistrationForm(prefix="restaurant"),
     }
     return render(request, "auth/register.html", context)
+
 
 
 

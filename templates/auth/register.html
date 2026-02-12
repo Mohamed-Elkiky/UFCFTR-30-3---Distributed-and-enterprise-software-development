@@ -4,7 +4,11 @@
 {% block extra_head %}
 <style>
   .form-control { width: 100%; box-sizing: border-box; }
-  input[name="phone"].form-control { padding-left: 2rem; }
+
+  /* Prefixed forms will render names like customer-phone, producer-phone */
+  input[name$="-phone"].form-control {
+    padding-left: 2rem;
+  }
 
   .auth-card { max-width: 760px; margin: 0 auto; }
   .form-row { margin-bottom: 1rem; max-width: 520px; }
@@ -35,22 +39,31 @@
 {% block content %}
 <section class="auth-card">
   <h1>Register</h1>
-  <p>Create an account to use the BRFN marketplace.</p>
+  <p>Select the account type you want to create.</p>
 
   <div class="form-row">
     <label for="accountType">Account type</label>
     <select id="accountType" class="form-control">
-      <option value="customer" selected>Customer</option>
+      <option value="customer" selected>Customer (Individual)</option>
       <option value="producer">Producer</option>
+      {# Add these options only if you’ve added the forms + endpoints #}
+      {# <option value="community">Community Group</option> #}
+      {# <option value="restaurant">Restaurant</option> #}
     </select>
   </div>
 
-  <!-- CUSTOMER FORM -->
+  <!-- CUSTOMER -->
   <div id="customerForm">
     <h2>Customer details</h2>
 
     <form method="post" action="{% url 'accounts:register_customer' %}" novalidate>
       {% csrf_token %}
+
+      {% if customer_form.non_field_errors %}
+        <div class="message message--error" role="alert">
+          {% for err in customer_form.non_field_errors %}{{ err }}{% endfor %}
+        </div>
+      {% endif %}
 
       <div class="form-row">
         <label for="{{ customer_form.email.id_for_label }}">Email</label>
@@ -109,12 +122,18 @@
     </form>
   </div>
 
-  <!-- PRODUCER FORM -->
+  <!-- PRODUCER -->
   <div id="producerForm" style="display:none;">
     <h2>Producer details</h2>
 
     <form method="post" action="{% url 'accounts:register_producer' %}" novalidate>
       {% csrf_token %}
+
+      {% if producer_form.non_field_errors %}
+        <div class="message message--error" role="alert">
+          {% for err in producer_form.non_field_errors %}{{ err }}{% endfor %}
+        </div>
+      {% endif %}
 
       <div class="form-row">
         <label for="{{ producer_form.email.id_for_label }}">Email</label>
