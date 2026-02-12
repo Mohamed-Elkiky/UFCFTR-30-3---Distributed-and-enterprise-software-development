@@ -8,6 +8,55 @@
 
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   {% block extra_head %}{% endblock %}
+
+  <!-- Small safe defaults + phone "+" inside input -->
+  <style>
+    /* If your style.css already defines these, it will still work */
+    .form-control {
+      padding: .5rem .75rem;
+      border: 1px solid #ccc;
+      width: 100%;
+      box-sizing: border-box;
+      border-radius: 4px;
+      font: inherit;
+    }
+
+    /* Space for the + prefix shown inside the phone input */
+    input[name="phone"].form-control {
+      padding-left: 2rem;
+    }
+
+    .btn {
+      padding: .55rem .9rem;
+      border: 1px solid #333;
+      background: #fff;
+      cursor: pointer;
+      border-radius: 4px;
+      font: inherit;
+    }
+    .btn:hover { background: #f5f5f5; }
+
+    .auth-card {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .form-row { margin-bottom: 1rem; }
+    .form-help { display:block; font-size: .9rem; opacity: .8; margin-top: .25rem; }
+    .form-error { color: #b02a37; font-size: .9rem; margin-top: .25rem; }
+
+    /* Wrapper to place + inside the phone input */
+    .phone-wrap { position: relative; max-width: 520px; }
+    .phone-prefix {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #555;
+      pointer-events: none;
+      font-size: 0.95rem;
+    }
+  </style>
 </head>
 
 <body class="{% block body_class %}{% endblock %}">
@@ -26,10 +75,8 @@
       {% if user.is_authenticated %}
         <span class="nav-greeting">Hi, {{ user.email }}!</span>
 
-        {# Main dashboard (accounts/dashboard/) #}
         <a class="nav-link" href="{% url 'accounts:dashboard' %}">Dashboard</a>
 
-        {# Role-specific dashboards that exist in apps/accounts/urls.py #}
         {% if user.is_producer %}
           <a class="nav-link" href="{% url 'accounts:producer_dashboard' %}">Producer</a>
         {% elif user.is_customer %}
@@ -39,8 +86,7 @@
         <a class="nav-link" href="{% url 'accounts:logout' %}">Logout</a>
       {% else %}
         <a class="nav-link" href="{% url 'accounts:login' %}">Login</a>
-        <a class="nav-link" href="{% url 'accounts:register_customer' %}">Register (Customer)</a>
-        <a class="nav-link" href="{% url 'accounts:register_producer' %}">Register (Producer)</a>
+        <a class="nav-link" href="{% url 'accounts:register' %}">Register</a>
       {% endif %}
 
       {% block nav_right %}{% endblock %}

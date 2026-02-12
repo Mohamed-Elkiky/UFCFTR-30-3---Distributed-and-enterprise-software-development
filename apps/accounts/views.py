@@ -32,6 +32,23 @@ def logout_view(request):
     messages.success(request, 'You have been logged out successfully.')
     return redirect('accounts:login')
 
+def register(request):
+    """
+    Single register page with dropdown (Customer/Producer).
+    Shows both forms and posts to the existing endpoints:
+    - accounts:register_customer
+    - accounts:register_producer
+    """
+    if request.user.is_authenticated:
+        return redirect('accounts:dashboard')
+
+    context = {
+        "customer_form": CustomerRegistrationForm(),
+        "producer_form": ProducerRegistrationForm(),
+    }
+    return render(request, "auth/register.html", context)
+
+
 
 def register_producer(request):
     """
