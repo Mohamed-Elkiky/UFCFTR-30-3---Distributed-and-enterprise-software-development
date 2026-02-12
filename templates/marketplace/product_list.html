@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Products</h1>
+
+<form method="get" style="margin-bottom: 1rem;">
+  <input type="text" name="q" value="{{ q|default:'' }}" placeholder="Search products..." />
+  <button type="submit">Search</button>
+</form>
+
+{% if products %}
+  <ul>
+    {% for p in products %}
+      <li style="margin-bottom: 0.75rem;">
+        <strong>{{ p.name|default:"Unnamed product" }}</strong>
+        {% if p.price %}- £{{ p.price }}{% endif %}
+        <br />
+        {% if p.producer_name %}
+          <small>Producer: {{ p.producer_name }}</small><br />
+        {% endif %}
+        {% if p.id %}
+          <a href="{% url 'product_detail' p.id %}">View</a>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No products found.</p>
+{% endif %}
+
+{% endblock %}

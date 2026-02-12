@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}BRFN Marketplace{% endblock %}</title>
+
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+  <header style="padding: 1rem; border-bottom: 1px solid #ddd;">
+    <nav style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+      <a href="{% url 'marketplace:home' %}"><strong>BRFN</strong></a>
+
+      <a href="{% url 'marketplace:home' %}">Home</a>
+
+
+      <span style="margin-left: auto;"></span>
+
+      {% if user.is_authenticated %}
+        <span>Hi, {{ user.email }}!</span>
+        <a href="{% url 'accounts:dashboard' %}">Dashboard</a>
+        <a href="{% url 'accounts:logout' %}">Logout</a>
+      {% else %}
+        <a href="{% url 'accounts:login' %}">Login</a>
+        <a href="{% url 'accounts:register_customer' %}">Register</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <main style="max-width: 960px; margin: 0 auto; padding: 1.25rem;">
+    {% if messages %}
+      <div style="margin-bottom: 1rem;">
+        {% for message in messages %}
+          <div style="padding: .75rem; border: 1px solid #ddd; margin-bottom: .5rem;">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer style="padding: 1rem; border-top: 1px solid #ddd; text-align: center;">
+    <small>&copy; {{ now|date:"Y" }} BRFN Marketplace</small>
+  </footer>
+</body>
+</html>

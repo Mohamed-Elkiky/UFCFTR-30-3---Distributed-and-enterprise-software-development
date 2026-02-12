@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>BRFN Marketplace</h1>
+
+  {% if user.is_authenticated %}
+    <p>Welcome, {{ user.username }}.</p>
+  {% else %}
+    <p>Welcome! Please log in to place orders.</p>
+  {% endif %}
+
+  <p><small>Server time: {{ now }}</small></p>
+{% endblock %}

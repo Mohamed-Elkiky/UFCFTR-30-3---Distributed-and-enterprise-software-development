@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Producer Profile</h1>
+
+{% if producer %}
+  <h2>{{ producer.name|default:"Producer" }}</h2>
+
+  {% if producer.description %}<p>{{ producer.description }}</p>{% endif %}
+  {% if producer.location %}<p><strong>Location:</strong> {{ producer.location }}</p>{% endif %}
+  {% if producer.contact %}<p><strong>Contact:</strong> {{ producer.contact }}</p>{% endif %}
+
+  <hr />
+  <h3>Products</h3>
+  {% if products %}
+    <ul>
+      {% for p in products %}
+        <li>
+          {{ p.name|default:"Unnamed product" }}
+          {% if p.id %}- <a href="{% url 'product_detail' p.id %}">View</a>{% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No products listed yet.</p>
+  {% endif %}
+{% else %}
+  <p>Producer not found.</p>
+{% endif %}
+
+{% endblock %}

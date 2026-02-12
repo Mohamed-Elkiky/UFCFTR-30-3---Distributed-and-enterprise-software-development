@@ -1,0 +1,73 @@
+# =========================================================
+# Python / Django
+# =========================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python packaging
+*.egg-info/
+dist/
+build/
+pip-wheel-metadata/
+
+# Django runtime
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+
+# Django static collection output (keep your source static/ folder)
+staticfiles/
+
+# Django migrations cache (don’t ignore actual migrations code)
+*.mo
+
+# =========================================================
+# Environment / secrets
+# =========================================================
+.env
+.env.*
+!.env.example
+
+# =========================================================
+# Pytest / coverage
+# =========================================================
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+.tox/
+.nox/
+
+# =========================================================
+# IDEs / editors
+# =========================================================
+.vscode/
+.idea/
+*.iml
+
+# =========================================================
+# macOS
+# =========================================================
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# =========================================================
+# Node / frontend (in case you add it later)
+# =========================================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
