@@ -1,43 +1,67 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Register | BRFN{% endblock %}
 
 {% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+
 <style>
-  .form-control { width: 100%; box-sizing: border-box; }
-
-  /* Prefixed forms will render names like customer-phone, producer-phone */
-  input[name$="-phone"].form-control {
-    padding-left: 2rem;
+  /* Register-only layout (self-contained) */
+  .page-register .phone-split {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: 520px;
   }
 
-  .auth-card { max-width: 760px; margin: 0 auto; }
-  .form-row { margin-bottom: 1rem; max-width: 520px; }
-  .form-help { display:block; font-size: .9rem; opacity: .8; margin-top: .25rem; }
-  .form-error { color: #b02a37; font-size: .9rem; margin-top: .25rem; }
-
-  .phone-wrap { position: relative; max-width: 520px; }
-  .phone-prefix {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #555;
-    pointer-events: none;
+  .page-register .phone-country-select {
+    width: 100px;
+    min-width: 100px;
+    padding: 14px 14px;
+    font-size: 1.05rem;
+    line-height: 1.2;
+    border-radius: 10px;
   }
 
-  .btn {
-    padding: .55rem .9rem;
-    border: 1px solid #333;
-    background: #fff;
-    cursor: pointer;
-    border-radius: 4px;
+  .page-register .phone-number-input {
+    flex: 1 1 auto;
+    min-width: 180px;
+    padding: 14px 14px; /* taller */
+    font-size: 1.05rem;
+    line-height: 1.2;
+    border-radius: 10px;
   }
-  .btn:hover { background: #f5f5f5; }
+
+  .page-register .phone-country-select,
+  .page-register .phone-number-input {
+    box-sizing: border-box;
+  }
+
+  /* Name split */
+  .page-register .name-split {
+    display: flex;
+    gap: 12px;
+    max-width: 520px;
+  }
+  .page-register .name-split > div {
+    flex: 1 1 0;
+  }
+  .page-register .name-input {
+    padding: 14px 14px;
+    font-size: 1.05rem;
+    line-height: 1.2;
+    border-radius: 10px;
+  }
+
+  /* Hide real Django fields (we fill via JS) */
+  .page-register .hidden-field {
+    display: none !important;
+  }
 </style>
 {% endblock %}
 
 {% block content %}
-<section class="auth-card">
+<section class="auth-card page-register">
   <h1>Register</h1>
   <p>Select the account type you want to create.</p>
 
@@ -46,9 +70,6 @@
     <select id="accountType" class="form-control">
       <option value="customer" selected>Customer (Individual)</option>
       <option value="producer">Producer</option>
-      {# Add these options only if you’ve added the forms + endpoints #}
-      {# <option value="community">Community Group</option> #}
-      {# <option value="restaurant">Restaurant</option> #}
     </select>
   </div>
 
@@ -56,7 +77,7 @@
   <div id="customerForm">
     <h2>Customer details</h2>
 
-    <form method="post" action="{% url 'accounts:register_customer' %}" novalidate>
+    <form method="post" action="{% url 'accounts:register_customer' %}" novalidate data-phone-form="customer" data-name-form="customer">
       {% csrf_token %}
 
       {% if customer_form.non_field_errors %}
@@ -65,18 +86,72 @@
         </div>
       {% endif %}
 
+      <!-- NAME (UI split) -->
+      <div class="form-row">
+        <label>Name</label>
+
+        <!-- real Django full_name (hidden) -->
+        <div class="hidden-field django-fullname-field">
+          {{ customer_form.full_name }}
+        </div>
+
+        <div class="name-split" data-name-split="customer">
+          <div>
+            <input class="form-control name-input first-name-input" type="text" placeholder="First name" autocomplete="given-name" />
+          </div>
+          <div>
+            <input class="form-control name-input last-name-input" type="text" placeholder="Last name" autocomplete="family-name" />
+          </div>
+        </div>
+
+        {% for e in customer_form.full_name.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+      </div>
+
+      <!-- EMAIL -->
       <div class="form-row">
         <label for="{{ customer_form.email.id_for_label }}">Email</label>
         {{ customer_form.email }}
         {% for e in customer_form.email.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
       </div>
 
+      <!-- PHONE (UI split) -->
       <div class="form-row">
-        <label for="{{ customer_form.phone.id_for_label }}">Phone</label>
-        <div class="phone-wrap">
-          <span class="phone-prefix">+</span>
+        <label>Phone</label>
+
+        <!-- real Django phone (hidden) -->
+        <div class="hidden-field django-phone-field">
           {{ customer_form.phone }}
         </div>
+
+        <div class="phone-split" data-phone-split="customer">
+          <select class="form-control phone-country-select" autocomplete="tel-country-code">
+            <option value="44" selected>🇬🇧 +44</option>
+            <option value="353">🇮🇪 +353</option>
+            <option value="1">🇺🇸 +1</option>
+            <option value="33">🇫🇷 +33</option>
+            <option value="49">🇩🇪 +49</option>
+            <option value="39">🇮🇹 +39</option>
+            <option value="34">🇪🇸 +34</option>
+            <option value="31">🇳🇱 +31</option>
+            <option value="32">🇧🇪 +32</option>
+            <option value="20">🇪🇬 +20</option>
+            <option value="971">🇦🇪 +971</option>
+            <option value="966">🇸🇦 +966</option>
+            <option value="90">🇹🇷 +90</option>
+            <option value="92">🇵🇰 +92</option>
+            <option value="880">🇧🇩 +880</option>
+            <option value="91">🇮🇳 +91</option>
+          </select>
+
+          <input
+            class="form-control phone-number-input"
+            type="tel"
+            inputmode="numeric"
+            autocomplete="tel-national"
+            placeholder="Phone number"
+          />
+        </div>
+
         {% for e in customer_form.phone.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
       </div>
 
@@ -91,12 +166,6 @@
         <label for="{{ customer_form.password_confirm.id_for_label }}">Confirm password</label>
         {{ customer_form.password_confirm }}
         {% for e in customer_form.password_confirm.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
-      </div>
-
-      <div class="form-row">
-        <label for="{{ customer_form.full_name.id_for_label }}">Full name</label>
-        {{ customer_form.full_name }}
-        {% for e in customer_form.full_name.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
       </div>
 
       <div class="form-row">
@@ -126,7 +195,7 @@
   <div id="producerForm" style="display:none;">
     <h2>Producer details</h2>
 
-    <form method="post" action="{% url 'accounts:register_producer' %}" novalidate>
+    <form method="post" action="{% url 'accounts:register_producer' %}" novalidate data-phone-form="producer" data-name-form="producer">
       {% csrf_token %}
 
       {% if producer_form.non_field_errors %}
@@ -135,18 +204,69 @@
         </div>
       {% endif %}
 
+      <!-- NAME (UI split) -->
+      <div class="form-row">
+        <label>Name</label>
+
+        <div class="hidden-field django-fullname-field">
+          {{ producer_form.contact_name }}
+        </div>
+
+        <div class="name-split" data-name-split="producer">
+          <div>
+            <input class="form-control name-input first-name-input" type="text" placeholder="First name" autocomplete="given-name" />
+          </div>
+          <div>
+            <input class="form-control name-input last-name-input" type="text" placeholder="Last name" autocomplete="family-name" />
+          </div>
+        </div>
+
+        {% for e in producer_form.contact_name.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+      </div>
+
       <div class="form-row">
         <label for="{{ producer_form.email.id_for_label }}">Email</label>
         {{ producer_form.email }}
         {% for e in producer_form.email.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
       </div>
 
+      <!-- PHONE (UI split) -->
       <div class="form-row">
-        <label for="{{ producer_form.phone.id_for_label }}">Phone</label>
-        <div class="phone-wrap">
-          <span class="phone-prefix">+</span>
+        <label>Phone</label>
+
+        <div class="hidden-field django-phone-field">
           {{ producer_form.phone }}
         </div>
+
+        <div class="phone-split" data-phone-split="producer">
+          <select class="form-control phone-country-select" autocomplete="tel-country-code">
+            <option value="44" selected>🇬🇧 +44</option>
+            <option value="353">🇮🇪 +353</option>
+            <option value="1">🇺🇸 +1</option>
+            <option value="33">🇫🇷 +33</option>
+            <option value="49">🇩🇪 +49</option>
+            <option value="39">🇮🇹 +39</option>
+            <option value="34">🇪🇸 +34</option>
+            <option value="31">🇳🇱 +31</option>
+            <option value="32">🇧🇪 +32</option>
+            <option value="20">🇪🇬 +20</option>
+            <option value="971">🇦🇪 +971</option>
+            <option value="966">🇸🇦 +966</option>
+            <option value="90">🇹🇷 +90</option>
+            <option value="92">🇵🇰 +92</option>
+            <option value="880">🇧🇩 +880</option>
+            <option value="91">🇮🇳 +91</option>
+          </select>
+
+          <input
+            class="form-control phone-number-input"
+            type="tel"
+            inputmode="numeric"
+            autocomplete="tel-national"
+            placeholder="Phone number"
+          />
+        </div>
+
         {% for e in producer_form.phone.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
       </div>
 
@@ -167,12 +287,6 @@
         <label for="{{ producer_form.business_name.id_for_label }}">Business name</label>
         {{ producer_form.business_name }}
         {% for e in producer_form.business_name.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
-      </div>
-
-      <div class="form-row">
-        <label for="{{ producer_form.contact_name.id_for_label }}">Contact name</label>
-        {{ producer_form.contact_name }}
-        {% for e in producer_form.contact_name.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
       </div>
 
       <div class="form-row">
@@ -197,6 +311,7 @@
 
 <script>
   (function () {
+    // Toggle form blocks
     const select = document.getElementById("accountType");
     const customer = document.getElementById("customerForm");
     const producer = document.getElementById("producerForm");
@@ -206,9 +321,86 @@
       customer.style.display = (type === "customer") ? "block" : "none";
       producer.style.display = (type === "producer") ? "block" : "none";
     }
-
     select.addEventListener("change", update);
     update();
+
+    function digitsOnly(s) {
+      return (s || "").toString().replace(/[^\d]/g, "");
+    }
+
+    function wirePhone(kind) {
+      const form = document.querySelector(`form[data-phone-form="${kind}"]`);
+      if (!form) return;
+
+      const djangoPhoneInput = form.querySelector('input[name$="-phone"], input[name="phone"]');
+      const split = form.querySelector(`[data-phone-split="${kind}"]`);
+      if (!djangoPhoneInput || !split) return;
+
+      djangoPhoneInput.setAttribute("tabindex", "-1");
+
+      const country = split.querySelector(".phone-country-select");
+      const number = split.querySelector(".phone-number-input");
+
+      if (djangoPhoneInput.value) {
+        const allDigits = digitsOnly(djangoPhoneInput.value);
+        const code = digitsOnly(country.value);
+        number.value = allDigits.startsWith(code) ? allDigits.slice(code.length) : allDigits;
+      }
+
+      function sync() {
+        const c = digitsOnly(country.value);
+        const n = digitsOnly(number.value);
+        djangoPhoneInput.value = (c || n) ? ("+" + c + n) : "";
+      }
+
+      country.addEventListener("change", sync);
+      number.addEventListener("input", sync);
+      form.addEventListener("submit", sync);
+
+      sync();
+    }
+
+    function wireName(kind) {
+      const form = document.querySelector(`form[data-name-form="${kind}"]`);
+      if (!form) return;
+
+      // Customer uses full_name; Producer uses contact_name (per your template)
+      const hiddenName = kind === "customer"
+        ? form.querySelector('input[name$="-full_name"], input[name="full_name"]')
+        : form.querySelector('input[name$="-contact_name"], input[name="contact_name"]');
+
+      const split = form.querySelector(`[data-name-split="${kind}"]`);
+      if (!hiddenName || !split) return;
+
+      hiddenName.setAttribute("tabindex", "-1");
+
+      const first = split.querySelector(".first-name-input");
+      const last  = split.querySelector(".last-name-input");
+
+      // If re-rendered with value, try split on first space
+      if (hiddenName.value) {
+        const parts = hiddenName.value.trim().split(/\s+/);
+        first.value = parts.shift() || "";
+        last.value = parts.join(" ");
+      }
+
+      function sync() {
+        const f = (first.value || "").trim();
+        const l = (last.value || "").trim();
+        hiddenName.value = (f || l) ? (f + (l ? " " + l : "")) : "";
+      }
+
+      first.addEventListener("input", sync);
+      last.addEventListener("input", sync);
+      form.addEventListener("submit", sync);
+
+      sync();
+    }
+
+    wirePhone("customer");
+    wirePhone("producer");
+    wireName("customer");
+    wireName("producer");
   })();
 </script>
 {% endblock %}
