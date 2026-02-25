@@ -16,3 +16,5 @@ python manage.py runserver
 # Marketplace Migrations
 python manage.py makemigrations marketplace
 python manage.py migrate
+
+hello
