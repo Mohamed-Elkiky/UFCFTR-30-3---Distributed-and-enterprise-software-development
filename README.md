@@ -33,3 +33,6 @@ docker-compose exec web python manage.py migrate
 
 # database viewing 
 psql "postgresql://myuser:mypassword@localhost:5432/mydb"
+
+# database selecting emails
+ psql "postgresql://myuser:mypassword@localhost:5432/mydb" -c "SELECT id, email FROM accounts_user ORDER BY id DESC LIMIT 20;"

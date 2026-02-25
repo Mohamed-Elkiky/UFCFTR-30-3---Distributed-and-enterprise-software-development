@@ -23,6 +23,55 @@
 
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   {% block extra_head %}{% endblock %}
+
+  <!-- Small safe defaults + phone "+" inside input -->
+  <style>
+    /* If your style.css already defines these, it will still work */
+    .form-control {
+      padding: .5rem .75rem;
+      border: 1px solid #ccc;
+      width: 100%;
+      box-sizing: border-box;
+      border-radius: 4px;
+      font: inherit;
+    }
+
+    /* Space for the + prefix shown inside the phone input */
+    input[name="phone"].form-control {
+      padding-left: 2rem;
+    }
+
+    .btn {
+      padding: .55rem .9rem;
+      border: 1px solid #333;
+      background: #fff;
+      cursor: pointer;
+      border-radius: 4px;
+      font: inherit;
+    }
+    .btn:hover { background: #f5f5f5; }
+
+    .auth-card {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .form-row { margin-bottom: 1rem; }
+    .form-help { display:block; font-size: .9rem; opacity: .8; margin-top: .25rem; }
+    .form-error { color: #b02a37; font-size: .9rem; margin-top: .25rem; }
+
+    /* Wrapper to place + inside the phone input */
+    .phone-wrap { position: relative; max-width: 520px; }
+    .phone-prefix {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #555;
+      pointer-events: none;
+      font-size: 0.95rem;
+    }
+  </style>
 </head>
 
 <body class="{% block body_class %}{% endblock %}">
@@ -189,7 +238,7 @@
       <section class="home-filters" aria-label="Quick filters">
         <div class="filter-bar">
 
-          
+          <a
             class="btn btn--ghost btn--sm {% if organic %}btn--active{% endif %}"
             href="{% url 'marketplace:home' %}?organic=1{% if q %}&amp;q={{ q|urlencode }}{% endif %}{% if category %}&amp;category={{ category|urlencode }}{% endif %}{% if allergen %}&amp;allergen={{ allergen|urlencode }}{% endif %}"
             aria-label="Show organic products only"
@@ -219,9 +268,11 @@
       <!-- =========================================================== -->
       <!-- PRODUCT GRID HELPERS (inline, no extra files)               -->
       <!-- =========================================================== -->
+
+      {# Note: `product` objects may not have all fields; template guards avoid crashing. #}
       {% if q %}
         <section class="home-search-results" aria-label="Search results">
-          <h2>Results for "{{ q }}"</h2>
+          <h2>Results for “{{ q }}”</h2>
 
           {% if search_results %}
             <div class="product-grid">
@@ -230,30 +281,49 @@
                   <a class="product-card__link" href="{{ product.get_absolute_url|default:'#' }}">
                     <h3 class="product-title">{{ product.name }}</h3>
                   </a>
+
                   <div class="product-meta">
+                    {# Price (supports discount) #}
                     {% if product.discount_price %}
                       <div class="product-price">
                         <strong>&pound;{{ product.discount_price }}</strong>
-                        {% if product.price %}<span class="price-was">was &pound;{{ product.price }}</span>{% endif %}
+                        {% if product.price %}
+                          <span class="price-was">was &pound;{{ product.price }}</span>
+                        {% endif %}
                       </div>
                     {% elif product.price %}
                       <div class="product-price">&pound;{{ product.price }}</div>
                     {% else %}
                       <div class="product-price muted">Price unavailable</div>
                     {% endif %}
+
+                    {# Producer + origin #}
                     {% if product.producer_name %}
                       <div><strong>Producer:</strong> {{ product.producer_name }}</div>
                     {% elif product.producer %}
                       <div><strong>Producer:</strong> {{ product.producer }}</div>
                     {% endif %}
+
                     {% if product.origin %}
                       <div><strong>Origin:</strong> {{ product.origin }}</div>
                     {% endif %}
-                    <span class="badge {% if product.is_in_season %}badge--good{% elif product.is_in_season == False %}badge--muted{% endif %}">
-                      {% if product.is_in_season %}In Season
-                      {% elif product.is_in_season == False %}Unavailable
-                      {% elif product.season_label %}{{ product.season_label }}
-                      {% else %}Year-round{% endif %}
+
+                    {# Availability / season badge #}
+                    <span
+                      class="badge {% if product.is_in_season %}badge--good{% elif product.is_in_season == False %}badge--muted{% endif %}"
+                      {% if product.season_start and product.season_end %}
+                        title="Season: {{ product.season_start }} – {{ product.season_end }}"
+                      {% endif %}
+                    >
+                      {% if product.is_in_season %}
+                        In Season
+                      {% elif product.is_in_season == False %}
+                        Unavailable
+                      {% elif product.season_label %}
+                        {{ product.season_label }}
+                      {% else %}
+                        Year-round
+                      {% endif %}
                     </span>
                   </div>
                 </article>
@@ -269,7 +339,7 @@
       {% endif %}
 
       <!-- =========================================================== -->
-      <!-- FEATURED PRODUCTS                                           -->
+      <!-- FEATURED PRODUCTS (shown regardless of search; ok if empty) -->
       <!-- =========================================================== -->
       <section class="home-featured" aria-label="Featured products">
         <h2>Featured</h2>
@@ -281,30 +351,46 @@
                 <a class="product-card__link" href="{{ product.get_absolute_url|default:'#' }}">
                   <h3 class="product-title">{{ product.name }}</h3>
                 </a>
+
                 <div class="product-meta">
                   {% if product.discount_price %}
                     <div class="product-price">
                       <strong>&pound;{{ product.discount_price }}</strong>
-                      {% if product.price %}<span class="price-was">was &pound;{{ product.price }}</span>{% endif %}
+                      {% if product.price %}
+                        <span class="price-was">was &pound;{{ product.price }}</span>
+                      {% endif %}
                     </div>
                   {% elif product.price %}
                     <div class="product-price">&pound;{{ product.price }}</div>
                   {% else %}
                     <div class="product-price muted">Price unavailable</div>
                   {% endif %}
+
                   {% if product.producer_name %}
                     <div><strong>Producer:</strong> {{ product.producer_name }}</div>
                   {% elif product.producer %}
                     <div><strong>Producer:</strong> {{ product.producer }}</div>
                   {% endif %}
+
                   {% if product.origin %}
                     <div><strong>Origin:</strong> {{ product.origin }}</div>
                   {% endif %}
-                  <span class="badge {% if product.is_in_season %}badge--good{% elif product.is_in_season == False %}badge--muted{% endif %}">
-                    {% if product.is_in_season %}In Season
-                    {% elif product.is_in_season == False %}Unavailable
-                    {% elif product.season_label %}{{ product.season_label }}
-                    {% else %}Year-round{% endif %}
+
+                  <span
+                    class="badge {% if product.is_in_season %}badge--good{% elif product.is_in_season == False %}badge--muted{% endif %}"
+                    {% if product.season_start and product.season_end %}
+                      title="Season: {{ product.season_start }} – {{ product.season_end }}"
+                    {% endif %}
+                  >
+                    {% if product.is_in_season %}
+                      In Season
+                    {% elif product.is_in_season == False %}
+                      Unavailable
+                    {% elif product.season_label %}
+                      {{ product.season_label }}
+                    {% else %}
+                      Year-round
+                    {% endif %}
                   </span>
                 </div>
               </article>
@@ -329,33 +415,50 @@
                 <a class="product-card__link" href="{{ product.get_absolute_url|default:'#' }}">
                   <h3 class="product-title">{{ product.name }}</h3>
                 </a>
+
                 <div class="product-meta">
                   {% if product.discount_price %}
                     <div class="product-price">
                       <strong>&pound;{{ product.discount_price }}</strong>
-                      {% if product.price %}<span class="price-was">was &pound;{{ product.price }}</span>{% endif %}
+                      {% if product.price %}
+                        <span class="price-was">was &pound;{{ product.price }}</span>
+                      {% endif %}
                     </div>
                   {% elif product.price %}
                     <div class="product-price">&pound;{{ product.price }}</div>
                   {% else %}
                     <div class="product-price muted">Price unavailable</div>
                   {% endif %}
+
                   {% if product.best_before %}
                     <div><strong>Best before:</strong> {{ product.best_before }}</div>
                   {% endif %}
+
                   {% if product.producer_name %}
                     <div><strong>Producer:</strong> {{ product.producer_name }}</div>
                   {% elif product.producer %}
                     <div><strong>Producer:</strong> {{ product.producer }}</div>
                   {% endif %}
+
                   {% if product.origin %}
                     <div><strong>Origin:</strong> {{ product.origin }}</div>
                   {% endif %}
-                  <span class="badge {% if product.is_in_season %}badge--good{% elif product.is_in_season == False %}badge--muted{% endif %}">
-                    {% if product.is_in_season %}In Season
-                    {% elif product.is_in_season == False %}Unavailable
-                    {% elif product.season_label %}{{ product.season_label }}
-                    {% else %}Year-round{% endif %}
+
+                  <span
+                    class="badge {% if product.is_in_season %}badge--good{% elif product.is_in_season == False %}badge--muted{% endif %}"
+                    {% if product.season_start and product.season_end %}
+                      title="Season: {{ product.season_start }} – {{ product.season_end }}"
+                    {% endif %}
+                  >
+                    {% if product.is_in_season %}
+                      In Season
+                    {% elif product.is_in_season == False %}
+                      Unavailable
+                    {% elif product.season_label %}
+                      {{ product.season_label }}
+                    {% else %}
+                      Year-round
+                    {% endif %}
                   </span>
                 </div>
               </article>
@@ -367,10 +470,11 @@
       </section>
 
       <!-- =========================================================== -->
-      <!-- FOOD MILES HOOK                                             -->
+      <!-- FOOD MILES HOOK (UI only)                                   -->
       <!-- =========================================================== -->
       <section id="food-miles" class="home-food-miles" aria-label="Food miles">
         <h2>Food miles</h2>
+
         {% if user_postcode %}
           <p>Using postcode: <strong>{{ user_postcode }}</strong></p>
         {% elif user.is_authenticated %}
@@ -398,6 +502,7 @@
         </div>
       </section>
 
+      <!-- Safe anchor targets -->
       <div id="cart" aria-hidden="true"></div>
       <div id="recipes" aria-hidden="true"></div>
       <div id="farm-stories" aria-hidden="true"></div>
@@ -425,13 +530,13 @@
         const html = document.documentElement;
         const currentTheme = html.getAttribute('data-theme');
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-
+        
         if (newTheme === 'dark') {
           html.setAttribute('data-theme', 'dark');
         } else {
           html.removeAttribute('data-theme');
         }
-
+        
         localStorage.setItem('theme', newTheme);
       });
     })();
