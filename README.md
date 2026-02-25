@@ -17,4 +17,16 @@ python manage.py runserver
 python manage.py makemigrations marketplace
 python manage.py migrate
 
-hello
+
+# Start the project
+docker-compose up
+
+# Stop the project
+docker-compose down
+
+# Create admin user (if needed)
+docker-compose exec web python manage.py createsuperuser
+
+# Run migrations after model changes
+docker-compose exec web python manage.py makemigrations
+docker-compose exec web python manage.py migrate
