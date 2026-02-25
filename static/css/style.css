@@ -793,7 +793,7 @@ img {
 .btn--ghost {
   background: var(--card);
   border-color: var(--border);
-  color: var(--text);
+  color: var(--text-secondary);
 }
 
 .btn--ghost:hover {
@@ -1699,4 +1699,16 @@ img {
   .surplus-text {
     min-width: auto;
   }
+}
+
+[data-theme="dark"] .btn--ghost {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] .btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
 }
