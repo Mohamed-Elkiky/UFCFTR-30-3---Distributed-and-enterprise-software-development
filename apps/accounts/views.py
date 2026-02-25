@@ -5,6 +5,7 @@ from django.contrib.auth import login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.contrib import messages
+from django.db import transaction
 from django.urls import reverse_lazy
 
 from .forms import LoginForm, ProducerRegistrationForm, CustomerRegistrationForm
@@ -17,10 +18,10 @@ class CustomLoginView(LoginView):
     template_name = 'auth/login.html'
     authentication_form = LoginForm
     redirect_authenticated_user = True
-    
+
     def get_success_url(self):
-        return reverse_lazy('accounts:dashboard')
-    
+        return reverse_lazy('marketplace:home')  # go to home after login
+
     def form_invalid(self, form):
         messages.error(self.request, 'Invalid email or password.')
         return super().form_invalid(form)
@@ -32,109 +33,79 @@ def logout_view(request):
     messages.success(request, 'You have been logged out successfully.')
     return redirect('accounts:login')
 
-def register(request):
-    if request.user.is_authenticated:
-        return redirect('accounts:dashboard')
 
-    context = {
-        "customer_form": CustomerRegistrationForm(prefix="customer"),
-        "producer_form": ProducerRegistrationForm(prefix="producer"),
-        # If you add these later:
-        # "community_form": CommunityGroupRegistrationForm(prefix="community"),
-        # "restaurant_form": RestaurantRegistrationForm(prefix="restaurant"),
+def _register_context(customer_form=None, producer_form=None):
+    """Return the context dict that auth/register.html expects."""
+    return {
+        "customer_form": customer_form or CustomerRegistrationForm(prefix="customer"),
+        "producer_form": producer_form or ProducerRegistrationForm(prefix="producer"),
     }
-    return render(request, "auth/register.html", context)
 
 
-
-
-def register_producer(request):
-    """
-    Producer registration view (TC-001).
-    Creates user account with producer role and business profile.
-    """
+def register(request):
+    """Render the combined registration page (GET only)."""
     if request.user.is_authenticated:
-        return redirect('accounts:dashboard')
-    
-    if request.method == 'POST':
-        form = ProducerRegistrationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            messages.success(
-                request,
-                f'Welcome, {user.producer_profile.business_name}! Your producer account has been created.'
-            )
-            return redirect('accounts:dashboard')
-    else:
-        form = ProducerRegistrationForm()
-    
-    return render(request, 'auth/register_producer.html', {'form': form})
+        return redirect('marketplace:home')
+
+    return render(request, 'auth/register.html', _register_context())
 
 
 def register_customer(request):
-    """
-    Customer registration view (TC-002).
-    Creates user account with customer role and delivery profile.
-    """
     if request.user.is_authenticated:
-        return redirect('accounts:dashboard')
-    
-    if request.method == 'POST':
-        form = CustomerRegistrationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            messages.success(
-                request,
-                f'Welcome, {user.customer_profile.full_name}! Your account has been created.'
-            )
-            return redirect('accounts:dashboard')
-    else:
-        form = CustomerRegistrationForm()
-    
-    return render(request, 'auth/register_customer.html', {'form': form})
+        return redirect('marketplace:home')
+
+    if request.method != 'POST':
+        return redirect('accounts:register')
+
+    form = CustomerRegistrationForm(request.POST, prefix="customer")
+
+    if not form.is_valid():
+        return render(request, 'auth/register.html', _register_context(customer_form=form))
+
+    with transaction.atomic():
+        user = form.save()
+
+    login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+    return redirect('accounts:register_success')
+
+
+def register_producer(request):
+    if request.user.is_authenticated:
+        return redirect('marketplace:home')
+
+    if request.method != 'POST':
+        return redirect('accounts:register')
+
+    form = ProducerRegistrationForm(request.POST, prefix="producer")
+
+    if not form.is_valid():
+        return render(request, 'auth/register.html', _register_context(producer_form=form))
+
+    with transaction.atomic():
+        user = form.save()
+
+    login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+    return redirect('accounts:register_success')
+
+
+def register_success(request):
+    """Show confirmation page after successful registration."""
+    return render(request, 'auth/register_success.html')
 
 
 @login_required
 def dashboard(request):
-    """
-    Dashboard view that redirects to role-appropriate dashboard (TC-022).
-    Demonstrates role-based access control.
-    """
-    user = request.user
-    
-    if user.is_producer:
-        return redirect('accounts:producer_dashboard')
-    else:
-        # Default: customer dashboard
-        return redirect('accounts:customer_dashboard')
+    return redirect('marketplace:home')
 
 
 @login_required
 def producer_dashboard(request):
-    """Producer dashboard - only accessible by producers (TC-022)."""
-    if not request.user.is_producer:
-        messages.error(request, 'Access denied. Producer account required.')
-        return redirect('accounts:dashboard')
-    
-    context = {
-        'profile': request.user.producer_profile
-    }
-    return render(request, 'producer/dashboard.html', context)
+    return redirect('marketplace:home')
 
 
 @login_required
 def customer_dashboard(request):
-    """Customer dashboard - accessible by customers."""
-    if not request.user.is_customer:
-        messages.error(request, 'Access denied.')
-        return redirect('accounts:dashboard')
-    
-    context = {
-        'profile': request.user.customer_profile
-    }
-    return render(request, 'customer/dashboard.html', context)
+    return redirect('marketplace:home')
 
 
 def terms_conditions(request):

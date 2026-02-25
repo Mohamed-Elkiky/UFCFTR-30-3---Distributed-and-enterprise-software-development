@@ -8,12 +8,15 @@ urlpatterns = [
     path('login/', views.CustomLoginView.as_view(), name='login'),
     path('logout/', views.logout_view, name='logout'),
 
-    # Single register page (NEW)
+    # Single register page
     path('register/', views.register, name='register'),
 
-    # Existing registration endpoints (keep)
+    # Registration endpoints
     path('register/producer/', views.register_producer, name='register_producer'),
     path('register/customer/', views.register_customer, name='register_customer'),
+
+    # Registration success
+    path('register/success/', views.register_success, name='register_success'),
 
     # Dashboards
     path('dashboard/', views.dashboard, name='dashboard'),
