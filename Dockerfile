@@ -21,7 +21,7 @@ COPY . .
 RUN chmod +x /app/entrypoint.sh
 
 # Set Django settings module
-ENV DJANGO_SETTINGS_MODULE=brfn.settings.dev
+ENV DJANGO_SETTINGS_MODULE=brfn.settings.docker
 
 # Entrypoint: waits for DB, runs migrations, loads seed data
 ENTRYPOINT ["/app/entrypoint.sh"]

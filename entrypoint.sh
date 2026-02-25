@@ -23,7 +23,7 @@ python manage.py migrate --noinput
 # Load seed data only if the DB is empty (no users yet)
 USER_COUNT=$(python -c "
 import django, os
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'brfn.settings.dev')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'brfn.settings.docker')
 django.setup()
 from django.contrib.auth import get_user_model
 print(get_user_model().objects.count())

@@ -45,33 +45,33 @@ class Product(models.Model):
         related_name="products",
     )
 
-    # SQL: name text, description text, price_pence integer, unit text ...
-    name = models.TextField(null=True, blank=True)
-    description = models.TextField(null=True, blank=True)
+    # Product name - REQUIRED
+    name = models.CharField(max_length=255)  # Changed: required, max_length
+    description = models.TextField(blank=True, default='')  # Changed: has default
 
-    price_pence = models.IntegerField(null=True, blank=True)
-    unit = models.TextField(null=True, blank=True)
+    # Price and unit - REQUIRED for commerce
+    price_pence = models.PositiveIntegerField()  # Changed: required, positive only
+    unit = models.CharField(max_length=50)  # Changed: required, max_length
 
     availability = models.CharField(
         max_length=32,
         choices=AvailabilityStatus.choices,
-        null=True,
-        blank=True,
+        default=AvailabilityStatus.AVAILABLE_YEAR_ROUND,  # Changed: has default
     )
 
     seasonal_start_month = models.SmallIntegerField(null=True, blank=True)
     seasonal_end_month = models.SmallIntegerField(null=True, blank=True)
 
-    stock_qty = models.IntegerField(null=True, blank=True)
-    low_stock_threshold = models.IntegerField(null=True, blank=True)
+    stock_qty = models.PositiveIntegerField(default=0)  # Changed: required, default
+    low_stock_threshold = models.PositiveIntegerField(default=10)  # Changed: has default
 
-    organic_certified = models.BooleanField(null=True, blank=True)
+    organic_certified = models.BooleanField(default=False)  # Changed: has default
 
     harvest_date = models.DateField(null=True, blank=True)
     best_before_date = models.DateField(null=True, blank=True)
 
-    created_at = models.DateTimeField(null=True, blank=True)
-    updated_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)  # Changed: auto-populate
+    updated_at = models.DateTimeField(auto_now=True)  # Changed: auto-populate
 
     class Meta:
         db_table = "product"
