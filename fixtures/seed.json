@@ -1,5 +1,19 @@
 [
   {
+    "model": "accounts.user",
+    "pk": 1,
+    "fields": {
+      "email": "admin@brfn.com",
+      "password": "pbkdf2_sha256$600000$TbszxTN1AehYYdk6OZfRhh$P9dNmA+oAkc8enWHmKcPUTlj0EkvrtrHaZFevF2qkKA=",
+      "first_name": "Admin",
+      "last_name": "User",
+      "role": "admin",
+      "is_staff": true,
+      "is_superuser": true,
+      "is_active": true
+    }
+  },
+  {
     "model": "marketplace.productcategory",
     "pk": 1,
     "fields": { "name": "Vegetables", "created_at": null }
