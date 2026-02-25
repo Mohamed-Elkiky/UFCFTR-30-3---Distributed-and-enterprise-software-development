@@ -17,7 +17,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
     # Your apps
     'apps.accounts',
     'apps.marketplace',
@@ -28,7 +28,7 @@ INSTALLED_APPS = [
     'apps.notifications',
     'apps.reviews',
     'apps.content',
-    'apps.reports',
+    # 'apps.reports',  # not yet created
     'apps.common',
 ]
 
@@ -62,7 +62,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'brfn.wsgi.application'
 
-# Database - start with SQLite, your DB team can change to Postgres later
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -87,10 +86,8 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# CRITICAL: Tell Django to use your custom User model
 AUTH_USER_MODEL = 'accounts.User'
 
-# Login/logout redirects
 LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = 'accounts:dashboard'
 LOGOUT_REDIRECT_URL = 'accounts:login'
