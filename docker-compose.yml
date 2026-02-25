@@ -1,6 +1,9 @@
 services:
   db:
-    image: postgres:15
+    # Pull from GitHub Container Registry; fall back to local build
+    image: ghcr.io/mohamed-elkiky/ufcftr-30-3---distributed-and-enterprise-software-development/db:latest
+    build:
+      context: ./docker/postgres
     environment:
       POSTGRES_DB: mydb
       POSTGRES_USER: myuser
@@ -9,8 +12,15 @@ services:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U myuser -d mydb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   web:
+    # Pull from GitHub Container Registry; fall back to local build
+    image: ghcr.io/mohamed-elkiky/ufcftr-30-3---distributed-and-enterprise-software-development/web:latest
     build: .
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
@@ -18,9 +28,11 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       - PYTHONUNBUFFERED=1
+      - DJANGO_SETTINGS_MODULE=brfn.settings.dev
       - DJANGO_DB_NAME=mydb
       - DJANGO_DB_USER=myuser
       - DJANGO_DB_PASSWORD=mypassword

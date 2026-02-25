@@ -1,0 +1,27 @@
+[
+  {
+    "model": "marketplace.productcategory",
+    "pk": 1,
+    "fields": { "name": "Vegetables", "created_at": null }
+  },
+  {
+    "model": "marketplace.productcategory",
+    "pk": 2,
+    "fields": { "name": "Fruit", "created_at": null }
+  },
+  {
+    "model": "marketplace.productcategory",
+    "pk": 3,
+    "fields": { "name": "Dairy", "created_at": null }
+  },
+  {
+    "model": "marketplace.productcategory",
+    "pk": 4,
+    "fields": { "name": "Meat", "created_at": null }
+  },
+  {
+    "model": "marketplace.productcategory",
+    "pk": 5,
+    "fields": { "name": "Bakery", "created_at": null }
+  }
+]
