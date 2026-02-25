@@ -32,7 +32,7 @@ services:
         condition: service_healthy
     environment:
       - PYTHONUNBUFFERED=1
-      - DJANGO_SETTINGS_MODULE=brfn.settings.dev
+      - DJANGO_SETTINGS_MODULE=brfn.settings.docker
       - DJANGO_DB_NAME=mydb
       - DJANGO_DB_USER=myuser
       - DJANGO_DB_PASSWORD=mypassword
