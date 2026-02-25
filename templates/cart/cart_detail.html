@@ -6,47 +6,62 @@
   <h1>Your Cart</h1>
 
   {% if not grouped %}
-    <p class="muted">Your cart is empty.</p>
+    <p>Your cart is empty.</p>
     <a href="{% url 'marketplace:home' %}" class="btn btn--ghost">Browse products</a>
 
   {% else %}
     {% for producer, items in grouped.items %}
       <div style="margin-bottom: 2rem;">
-        <h2 style="font-size: 1.1rem; margin-bottom: 0.75rem;">
+        <h2 style="font-size: 1.1rem; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--border);">
           {{ producer.business_name }}
         </h2>
 
-        {% for item in items %}
-          <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border);">
-            <div>
-              <strong>{{ item.product.name }}</strong>
-              <div class="muted" style="font-size: 0.875rem;">
-                £{{ item.product.price_pence|floatformat:0 }}p each
-              </div>
-            </div>
-
-            <div style="display: flex; align-items: center; gap: 1rem;">
-              <!-- Update quantity -->
-              <form method="post" action="{% url 'cart:cart_update' item.product.id %}" style="display: flex; align-items: center; gap: 0.5rem;">
-                {% csrf_token %}
-                <input
-                  type="number"
-                  name="quantity"
-                  value="{{ item.quantity }}"
-                  min="1"
-                  style="width: 60px; padding: 0.4rem; border: 1px solid var(--border); border-radius: 8px; text-align: center;"
-                />
-                <button class="btn btn--ghost" type="submit" style="padding: 0.4rem 0.75rem;">Update</button>
-              </form>
-
-              <!-- Remove -->
-              <form method="post" action="{% url 'cart:cart_remove' item.product.id %}">
-                {% csrf_token %}
-                <button class="btn btn--ghost" type="submit" style="color: var(--danger); border-color: var(--danger);">Remove</button>
-              </form>
-            </div>
-          </div>
-        {% endfor %}
+        <table style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr style="text-align: left; font-size: 0.875rem; color: var(--text-muted);">
+              <th style="padding: 0.5rem 0;">Product</th>
+              <th style="padding: 0.5rem 0; text-align: center;">Qty</th>
+              <th style="padding: 0.5rem 0; text-align: right;">Unit price</th>
+              <th style="padding: 0.5rem 0; text-align: right;">Line total</th>
+              <th style="padding: 0.5rem 0;"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in items %}
+              <tr style="border-top: 1px solid var(--border);">
+                <td style="padding: 0.75rem 0;">
+                  <strong>{{ item.product.name }}</strong>
+                  <div style="font-size: 0.8rem; color: var(--text-muted);">per {{ item.product.unit }}</div>
+                </td>
+                <td style="padding: 0.75rem 0; text-align: center;">
+                  <form method="post" action="{% url 'cart:cart_update' item.product.id %}" style="display: inline-flex; align-items: center; gap: 0.4rem;">
+                    {% csrf_token %}
+                    <input
+                      type="number"
+                      name="quantity"
+                      value="{{ item.quantity }}"
+                      min="1"
+                      style="width: 55px; padding: 0.35rem; border: 1px solid var(--border); border-radius: 8px; text-align: center;"
+                    />
+                    <button class="btn btn--ghost" type="submit" style="padding: 0.35rem 0.6rem; font-size: 0.8rem;">Update</button>
+                  </form>
+                </td>
+                <td style="padding: 0.75rem 0; text-align: right;">
+                  £{% widthratio item.product.price_pence 100 1 %}
+                </td>
+                <td style="padding: 0.75rem 0; text-align: right; font-weight: 600;">
+                  £{% widthratio item.product.price_pence 100 item.quantity %}
+                </td>
+                <td style="padding: 0.75rem 0; text-align: right;">
+                  <form method="post" action="{% url 'cart:cart_remove' item.product.id %}">
+                    {% csrf_token %}
+                    <button class="btn btn--ghost" type="submit" style="padding: 0.35rem 0.6rem; font-size: 0.8rem;">Remove</button>
+                  </form>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
       </div>
     {% endfor %}
 
@@ -54,13 +69,13 @@
 
     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
       <div>
-        <strong style="font-size: 1.2rem;">
-          Total: £{% widthratio total_pence 100 1 %}.{% with cents=total_pence|add:0 %}{{ cents|divisibleby:100|yesno:"00," }}{% endwith %}
-        </strong>
+        <div style="font-size: 0.9rem; color: var(--text-muted);">Subtotal</div>
+        <div style="font-size: 1.4rem; font-weight: 700;">£{% widthratio total_pence 100 1 %}</div>
+        <div style="font-size: 0.8rem; color: var(--text-muted);">+ 5% commission at checkout</div>
       </div>
       <div style="display: flex; gap: 0.75rem;">
         <a href="{% url 'marketplace:home' %}" class="btn btn--ghost">Continue shopping</a>
-        <a href="#" class="btn btn--primary">Checkout</a>
+        <a href="#" class="btn btn--ghost">Proceed to checkout</a>
       </div>
     </div>
   {% endif %}

@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title %}Checkout | BRFN{% endblock %}
+
+{% block content %}
+<section class="auth-card">
+  <h1>Checkout</h1>
+
+  <form method="post">
+    {% csrf_token %}
+
+    <!-- ORDER SUMMARY BY PRODUCER -->
+    <h2 style="font-size: 1.1rem; margin-bottom: 1rem;">Order summary</h2>
+
+    {% for producer, items in grouped.items %}
+      <div style="margin-bottom: 1.5rem; padding: 1rem; border: 1px solid var(--border); border-radius: 12px;">
+        <h3 style="font-size: 1rem; margin-bottom: 0.75rem;">{{ producer.business_name }}</h3>
+
+        {% for item in items %}
+          <div style="display: flex; justify-content: space-between; padding: 0.4rem 0; font-size: 0.95rem;">
+            <span>{{ item.product.name }} × {{ item.quantity }}</span>
+            <span>£{% widthratio item.product.price_pence 100 item.quantity %}</span>
+          </div>
+        {% endfor %}
+
+        <div style="display: flex; justify-content: space-between; font-weight: 600; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--border);">
+          <span>Subtotal</span>
+          <span>
+            £{% with sub=0 %}
+              {% for item in items %}{% widthratio item.product.price_pence 100 item.quantity %}{% endfor %}
+            {% endwith %}
+          </span>
+        </div>
+
+        <!-- DELIVERY DATE PICKER -->
+        <div class="form-row" style="margin-top: 1rem;">
+          <label for="delivery_date_{{ producer.id }}">Delivery date</label>
+          <input
+            type="date"
+            id="delivery_date_{{ producer.id }}"
+            name="delivery_date_{{ producer.id }}"
+            class="form-control"
+            min="{{ earliest_dates|default_if_none:'' }}"
+            required
+          />
+        </div>
+      </div>
+    {% endfor %}
+
+    <!-- DELIVERY ADDRESS -->
+    <h2 style="font-size: 1.1rem; margin: 1.5rem 0 0.75rem;">Delivery address</h2>
+    <div class="form-row">
+      <label for="street">Street</label>
+      <input type="text" id="street" name="street" class="form-control"
+        value="{{ request.user.customer_profile.street }}" required />
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+      <div class="form-row">
+        <label for="city">City</label>
+        <input type="text" id="city" name="city" class="form-control"
+          value="{{ request.user.customer_profile.city }}" required />
+      </div>
+      <div class="form-row">
+        <label for="state">State / County</label>
+        <input type="text" id="state" name="state" class="form-control"
+          value="{{ request.user.customer_profile.state }}" required />
+      </div>
+      <div class="form-row">
+        <label for="postcode">Postcode</label>
+        <input type="text" id="postcode" name="postcode" class="form-control"
+          value="{{ request.user.customer_profile.postcode }}" required />
+      </div>
+      <div class="form-row">
+        <label for="country">Country</label>
+        <input type="text" id="country" name="country" class="form-control"
+          value="{{ request.user.customer_profile.country }}" required />
+      </div>
+    </div>
+
+    <!-- SPECIAL INSTRUCTIONS (TC-017 community groups) -->
+    <div class="form-row" style="margin-top: 1rem;">
+      <label for="special_instructions">Special delivery instructions <span style="font-weight: 400; color: var(--text-muted);">(optional)</span></label>
+      <textarea
+        id="special_instructions"
+        name="special_instructions"
+        class="form-control"
+        rows="3"
+        placeholder="Any special delivery instructions..."
+      ></textarea>
+    </div>
+
+    <!-- ORDER TOTAL WITH COMMISSION -->
+    <div style="margin: 1.5rem 0; padding: 1rem; background: var(--surface-alt, #f9f6f1); border-radius: 12px;">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;">
+        <span>Subtotal</span>
+        <span>£{% widthratio total_pence 100 1 %}</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem; color: var(--text-muted); font-size: 0.9rem;">
+        <span>Network commission (5%)</span>
+        <span>£{% widthratio commission_pence 100 1 %}</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 1.1rem; padding-top: 0.5rem; border-top: 1px solid var(--border);">
+        <span>Total</span>
+        <span>£{% widthratio grand_total_pence 100 1 %}</span>
+      </div>
+    </div>
+
+    <!-- PAYMENT (mock gateway) -->
+    <h2 style="font-size: 1.1rem; margin-bottom: 0.75rem;">Payment</h2>
+    <div style="padding: 1rem; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 1.5rem; color: var(--text-muted); font-size: 0.9rem;">
+      🔒 Mock payment gateway — no real payment will be taken.
+    </div>
+
+    <button class="btn btn--ghost" type="submit" style="width: 100%; font-size: 1rem; padding: 1rem;">
+      Place order
+    </button>
+  </form>
+</section>
+{% endblock %}

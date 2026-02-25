@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Order Confirmed | BRFN{% endblock %}
+
+{% block content %}
+<section class="auth-card" style="text-align: center;">
+
+  <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
+  <h1>Order confirmed!</h1>
+  <p style="color: var(--text-muted);">
+    Thank you for your order. Your order ID is:
+  </p>
+  <div style="font-family: monospace; font-size: 0.95rem; padding: 0.6rem 1rem; background: var(--surface-alt, #f9f6f1); border-radius: 8px; display: inline-block; margin-bottom: 1.5rem;">
+    {{ order.id }}
+  </div>
+
+  <!-- ORDER SUMMARY -->
+  <div style="text-align: left; margin-bottom: 1.5rem;">
+    <h2 style="font-size: 1.1rem; margin-bottom: 1rem;">Order summary</h2>
+
+    {% for producer_order in order.producer_orders.all %}
+      <div style="margin-bottom: 1rem; padding: 1rem; border: 1px solid var(--border); border-radius: 12px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+          <strong>{{ producer_order.producer.business_name }}</strong>
+          {% if producer_order.delivery_date %}
+            <span style="font-size: 0.875rem; color: var(--text-muted);">
+              Delivery: {{ producer_order.delivery_date|date:"d M Y" }}
+            </span>
+          {% endif %}
+        </div>
+
+        {% for item in order.items.all %}
+          {% if item.product.producer == producer_order.producer %}
+            <div style="display: flex; justify-content: space-between; font-size: 0.95rem; padding: 0.3rem 0;">
+              <span>{{ item.product_name }} × {{ item.quantity }}</span>
+              <span>£{% widthratio item.line_total_pence 100 1 %}</span>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+    <!-- TOTAL -->
+    <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 1.1rem; padding: 0.75rem 0; border-top: 2px solid var(--border);">
+      <span>Total paid</span>
+      <span>£{% widthratio order.total_pence 100 1 %}</span>
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+    <a href="{% url 'orders:order_list' %}" class="btn btn--ghost">View order history</a>
+    <a href="{% url 'marketplace:home' %}" class="btn btn--ghost">Continue shopping</a>
+  </div>
+
+</section>
+{% endblock %}
