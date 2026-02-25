@@ -6,7 +6,6 @@
 <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
 <style>
-  /* Register-only layout (self-contained) */
   .page-register .phone-split {
     display: flex;
     align-items: center;
@@ -37,7 +36,6 @@
     box-sizing: border-box;
   }
 
-  /* Name split */
   .page-register .name-split {
     display: flex;
     gap: 12px;
@@ -53,9 +51,19 @@
     border-radius: 10px;
   }
 
-  /* Hide real Django fields (we fill via JS) */
   .page-register .hidden-field {
     display: none !important;
+  }
+
+  .page-register .address-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    max-width: 520px;
+  }
+
+  .page-register .address-grid .full-width {
+    grid-column: span 2;
   }
 </style>
 {% endblock %}
@@ -86,14 +94,12 @@
         </div>
       {% endif %}
 
-      <!-- NAME (UI split) -->
+      <!-- NAME -->
       <div class="form-row">
         <label>Name</label>
-
         <div class="hidden-field django-fullname-field">
           {{ customer_form.full_name }}
         </div>
-
         <div class="name-split" data-name-split="customer">
           <div>
             <input class="form-control name-input first-name-input" type="text" placeholder="First name" autocomplete="given-name" />
@@ -102,7 +108,6 @@
             <input class="form-control name-input last-name-input" type="text" placeholder="Last name" autocomplete="family-name" />
           </div>
         </div>
-
         {% for e in customer_form.full_name.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
       </div>
 
@@ -113,14 +118,12 @@
         {% for e in customer_form.email.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
       </div>
 
-      <!-- PHONE (UI split) -->
+      <!-- PHONE -->
       <div class="form-row">
         <label>Phone</label>
-
         <div class="hidden-field django-phone-field">
           {{ customer_form.phone }}
         </div>
-
         <div class="phone-split" data-phone-split="customer">
           <select class="form-control phone-country-select" autocomplete="tel-country-code">
             <option value="44" selected>🇬🇧 +44</option>
@@ -187,7 +190,6 @@
             <option value="57">🇨🇴 +57</option>
             <option value="51">🇵🇪 +51</option>
           </select>
-
           <input
             class="form-control phone-number-input"
             type="tel"
@@ -196,10 +198,10 @@
             placeholder="Phone number"
           />
         </div>
-
         {% for e in customer_form.phone.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
       </div>
 
+      <!-- PASSWORD -->
       <div class="form-row">
         <label for="{{ customer_form.password.id_for_label }}">Password</label>
         {{ customer_form.password }}
@@ -213,18 +215,41 @@
         {% for e in customer_form.password_confirm.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
       </div>
 
+      <!-- DELIVERY ADDRESS -->
       <div class="form-row">
-        <label for="{{ customer_form.delivery_address.id_for_label }}">Delivery address</label>
-        {{ customer_form.delivery_address }}
-        {% for e in customer_form.delivery_address.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+        <label>Delivery address</label>
+      </div>
+      <div class="form-row">
+        <div class="address-grid">
+          <div class="full-width">
+            <label for="{{ customer_form.street.id_for_label }}">Street</label>
+            {{ customer_form.street }}
+            {% for e in customer_form.street.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+          </div>
+          <div>
+            <label for="{{ customer_form.city.id_for_label }}">City</label>
+            {{ customer_form.city }}
+            {% for e in customer_form.city.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+          </div>
+          <div>
+            <label for="{{ customer_form.state.id_for_label }}">State / County</label>
+            {{ customer_form.state }}
+            {% for e in customer_form.state.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+          </div>
+          <div>
+            <label for="{{ customer_form.postcode.id_for_label }}">Postcode / Zip</label>
+            {{ customer_form.postcode }}
+            {% for e in customer_form.postcode.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+          </div>
+          <div>
+            <label for="{{ customer_form.country.id_for_label }}">Country</label>
+            {{ customer_form.country }}
+            {% for e in customer_form.country.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+          </div>
+        </div>
       </div>
 
-      <div class="form-row">
-        <label for="{{ customer_form.postcode.id_for_label }}">Postcode</label>
-        {{ customer_form.postcode }}
-        {% for e in customer_form.postcode.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
-      </div>
-
+      <!-- TERMS -->
       <div class="form-row">
         <label>
           {{ customer_form.terms_accepted }} I accept the <a href="{% url 'accounts:terms_conditions' %}">terms and conditions</a>
@@ -232,7 +257,7 @@
         {% for e in customer_form.terms_accepted.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
       </div>
 
-      <button class="btn btn--primary" type="submit">Create customer account</button>
+      <button class="btn btn--ghost" type="submit">Create customer account</button>
     </form>
   </div>
 
@@ -249,14 +274,12 @@
         </div>
       {% endif %}
 
-      <!-- NAME (UI split) -->
+      <!-- NAME -->
       <div class="form-row">
         <label>Name</label>
-
         <div class="hidden-field django-fullname-field">
           {{ producer_form.contact_name }}
         </div>
-
         <div class="name-split" data-name-split="producer">
           <div>
             <input class="form-control name-input first-name-input" type="text" placeholder="First name" autocomplete="given-name" />
@@ -265,24 +288,22 @@
             <input class="form-control name-input last-name-input" type="text" placeholder="Last name" autocomplete="family-name" />
           </div>
         </div>
-
         {% for e in producer_form.contact_name.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
       </div>
 
+      <!-- EMAIL -->
       <div class="form-row">
         <label for="{{ producer_form.email.id_for_label }}">Email</label>
         {{ producer_form.email }}
         {% for e in producer_form.email.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
       </div>
 
-      <!-- PHONE (UI split) -->
+      <!-- PHONE -->
       <div class="form-row">
         <label>Phone</label>
-
         <div class="hidden-field django-phone-field">
           {{ producer_form.phone }}
         </div>
-
         <div class="phone-split" data-phone-split="producer">
           <select class="form-control phone-country-select" autocomplete="tel-country-code">
             <option value="44" selected>🇬🇧 +44</option>
@@ -349,7 +370,6 @@
             <option value="57">🇨🇴 +57</option>
             <option value="51">🇵🇪 +51</option>
           </select>
-
           <input
             class="form-control phone-number-input"
             type="tel"
@@ -358,10 +378,10 @@
             placeholder="Phone number"
           />
         </div>
-
         {% for e in producer_form.phone.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
       </div>
 
+      <!-- PASSWORD -->
       <div class="form-row">
         <label for="{{ producer_form.password.id_for_label }}">Password</label>
         {{ producer_form.password }}
@@ -375,6 +395,7 @@
         {% for e in producer_form.password_confirm.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
       </div>
 
+      <!-- BUSINESS DETAILS -->
       <div class="form-row">
         <label for="{{ producer_form.business_name.id_for_label }}">Business name</label>
         {{ producer_form.business_name }}
@@ -393,7 +414,7 @@
         {% for e in producer_form.postcode.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
       </div>
 
-      <button class="btn btn--primary" type="submit">Create producer account</button>
+      <button class="btn btn--ghost" type="submit">Create producer account</button>
     </form>
   </div>
 
