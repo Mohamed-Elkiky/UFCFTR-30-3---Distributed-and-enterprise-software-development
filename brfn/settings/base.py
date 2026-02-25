@@ -21,15 +21,15 @@ INSTALLED_APPS = [
     # Your apps
     'apps.accounts',
     'apps.marketplace',
-    # 'apps.cart',
-    # 'apps.orders',
-    # 'apps.payments',
-    # 'apps.logistics',
-    # 'apps.notifications',
-    # 'apps.reviews',
-    # 'apps.content',
-    # 'apps.reports',
-    # 'apps.common',
+    'apps.cart',
+    'apps.orders',
+    'apps.payments',
+    'apps.logistics',
+    'apps.notifications',
+    'apps.reviews',
+    'apps.content',
+    'apps.reports',
+    'apps.common',
 ]
 
 MIDDLEWARE = [
