@@ -30,3 +30,6 @@ docker-compose exec web python manage.py createsuperuser
 # Run migrations after model changes
 docker-compose exec web python manage.py makemigrations
 docker-compose exec web python manage.py migrate
+
+# database viewing 
+psql "postgresql://myuser:mypassword@localhost:5432/mydb"
