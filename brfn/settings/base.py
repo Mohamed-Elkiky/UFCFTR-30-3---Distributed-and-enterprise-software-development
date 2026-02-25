@@ -28,7 +28,7 @@ INSTALLED_APPS = [
     'apps.notifications',
     'apps.reviews',
     'apps.content',
-    'apps.reports',
+    #'apps.reports',
     'apps.common',
 ]
 
