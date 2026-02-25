@@ -3,6 +3,9 @@ Django==4.2.11
 # PostgreSQL driver for Django
 psycopg[binary]==3.3.1
 
+# Database URL config
+dj-database-url==2.1.0
+
 # Load .env locally
 python-dotenv==1.0.1
 
