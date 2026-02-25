@@ -137,12 +137,6 @@
         <div class="nav-user">
           <span class="nav-greeting">{{ user.email }}</span>
           <div class="nav-links">
-            <a class="nav-link" href="{% url 'accounts:dashboard' %}">Dashboard</a>
-            {% if user.is_producer %}
-              <a class="nav-link" href="{% url 'accounts:producer_dashboard' %}">Producer</a>
-            {% elif user.is_customer %}
-              <a class="nav-link" href="{% url 'accounts:customer_dashboard' %}">Customer</a>
-            {% endif %}
             <a class="nav-link nav-link--logout" href="{% url 'accounts:logout' %}">Logout</a>
           </div>
         </div>
