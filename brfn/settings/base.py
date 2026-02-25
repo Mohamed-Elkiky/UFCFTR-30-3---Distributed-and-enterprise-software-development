@@ -28,11 +28,7 @@ INSTALLED_APPS = [
     'apps.notifications',
     'apps.reviews',
     'apps.content',
-<<<<<<< HEAD
     # 'apps.reports',  # not yet created
-=======
-    #'apps.reports',
->>>>>>> 4287d161bc7a6deac93cf7b89ceff1cd4dd248a1
     'apps.common',
 ]
 
