@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2>{{ action }} Product</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                            <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Basic Information -->
+                        <h5 class="mb-3">Basic Information</h5>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.name.id_for_label }}" class="form-label">Product Name *</label>
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                            <div class="text-danger">{{ form.name.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.category.id_for_label }}" class="form-label">Category</label>
+                            {{ form.category }}
+                            {% if form.category.errors %}
+                            <div class="text-danger">{{ form.category.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                            <div class="text-danger">{{ form.description.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Pricing & Stock -->
+                        <h5 class="mb-3 mt-4">Pricing & Stock</h5>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.price_pence.id_for_label }}" class="form-label">Price (pence) *</label>
+                                {{ form.price_pence }}
+                                <small class="form-text text-muted">Enter price in pence (e.g., 350 for £3.50)</small>
+                                {% if form.price_pence.errors %}
+                                <div class="text-danger">{{ form.price_pence.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.unit.id_for_label }}" class="form-label">Unit</label>
+                                {{ form.unit }}
+                                <small class="form-text text-muted">e.g., kg, dozen, bunch</small>
+                                {% if form.unit.errors %}
+                                <div class="text-danger">{{ form.unit.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.stock_qty.id_for_label }}" class="form-label">Stock Quantity</label>
+                                {{ form.stock_qty }}
+                                {% if form.stock_qty.errors %}
+                                <div class="text-danger">{{ form.stock_qty.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.low_stock_threshold.id_for_label }}" class="form-label">Low Stock Threshold</label>
+                                {{ form.low_stock_threshold }}
+                                <small class="form-text text-muted">Alert when stock falls below this</small>
+                                {% if form.low_stock_threshold.errors %}
+                                <div class="text-danger">{{ form.low_stock_threshold.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Availability -->
+                        <h5 class="mb-3 mt-4">Availability</h5>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.availability.id_for_label }}" class="form-label">Availability Status</label>
+                            {{ form.availability }}
+                            {% if form.availability.errors %}
+                            <div class="text-danger">{{ form.availability.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.seasonal_start_month.id_for_label }}" class="form-label">Season Start Month</label>
+                                {{ form.seasonal_start_month }}
+                                <small class="form-text text-muted">1 = January, 12 = December</small>
+                                {% if form.seasonal_start_month.errors %}
+                                <div class="text-danger">{{ form.seasonal_start_month.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.seasonal_end_month.id_for_label }}" class="form-label">Season End Month</label>
+                                {{ form.seasonal_end_month }}
+                                {% if form.seasonal_end_month.errors %}
+                                <div class="text-danger">{{ form.seasonal_end_month.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Dates -->
+                        <h5 class="mb-3 mt-4">Dates</h5>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.harvest_date.id_for_label }}" class="form-label">Harvest Date</label>
+                                {{ form.harvest_date }}
+                                {% if form.harvest_date.errors %}
+                                <div class="text-danger">{{ form.harvest_date.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.best_before_date.id_for_label }}" class="form-label">Best Before Date</label>
+                                {{ form.best_before_date }}
+                                {% if form.best_before_date.errors %}
+                                <div class="text-danger">{{ form.best_before_date.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Certifications -->
+                        <h5 class="mb-3 mt-4">Certifications</h5>
+                        
+                        <div class="mb-3 form-check">
+                            {{ form.organic_certified }}
+                            <label for="{{ form.organic_certified.id_for_label }}" class="form-check-label">
+                                Organic Certified
+                            </label>
+                            {% if form.organic_certified.errors %}
+                            <div class="text-danger">{{ form.organic_certified.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Allergens -->
+                        <h5 class="mb-3 mt-4">Allergens (TC-015)</h5>
+                        <p class="text-muted">Select all allergens that apply to this product:</p>
+                        
+                        <div class="mb-3">
+                            {{ form.allergens }}
+                            {% if form.allergens.errors %}
+                            <div class="text-danger">{{ form.allergens.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Submit Buttons -->
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                {% if action == 'Create' %}Create Product{% else %}Save Changes{% endif %}
+                            </button>
+                            <a href="{% url 'marketplace:product_list' %}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

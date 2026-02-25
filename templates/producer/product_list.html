@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>My Products</h2>
+        <a href="{% url 'marketplace:product_create' %}" class="btn btn-primary">
+            + Add New Product
+        </a>
+    </div>
+    
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+    
+    {% if products %}
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Availability</th>
+                    <th>Organic</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td>
+                        <strong>{{ product.name|default:"Unnamed" }}</strong>
+                    </td>
+                    <td>{{ product.category.name|default:"-" }}</td>
+                    <td>
+                        {% if product.price_pence %}
+                        £{{ product.price_pence|floatformat:0 }}p
+                        <small class="text-muted">/ {{ product.unit|default:"unit" }}</small>
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if product.stock_qty is not None %}
+                            {% if product.low_stock_threshold and product.stock_qty <= product.low_stock_threshold %}
+                            <span class="badge bg-warning text-dark">{{ product.stock_qty }} (Low)</span>
+                            {% else %}
+                            <span class="badge bg-success">{{ product.stock_qty }}</span>
+                            {% endif %}
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if product.availability == 'in_season' %}
+                        <span class="badge bg-success">In Season</span>
+                        {% elif product.availability == 'available_year_round' %}
+                        <span class="badge bg-info">Year Round</span>
+                        {% elif product.availability == 'out_of_season' %}
+                        <span class="badge bg-secondary">Out of Season</span>
+                        {% elif product.availability == 'unavailable' %}
+                        <span class="badge bg-danger">Unavailable</span>
+                        {% else %}
+                        <span class="badge bg-light text-dark">Not Set</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if product.organic_certified %}
+                        <span class="badge bg-success">✓ Organic</span>
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-sm" role="group">
+                            <a href="{% url 'marketplace:product_edit' product.id %}" 
+                               class="btn btn-outline-primary" title="Edit">
+                                Edit
+                            </a>
+                            <form action="{% url 'marketplace:product_delete' product.id %}" 
+                                  method="post" 
+                                  style="display: inline;"
+                                  onsubmit="return confirm('Are you sure you want to delete {{ product.name }}?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-danger" title="Delete">
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <h5>No products yet!</h5>
+        <p>You haven't listed any products. Click the button above to add your first product.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
