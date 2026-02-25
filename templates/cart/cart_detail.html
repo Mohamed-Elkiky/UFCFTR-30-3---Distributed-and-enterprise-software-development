@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Your Cart | BRFN{% endblock %}
+
+{% block content %}
+<section class="auth-card">
+  <h1>Your Cart</h1>
+
+  {% if not grouped %}
+    <p class="muted">Your cart is empty.</p>
+    <a href="{% url 'marketplace:home' %}" class="btn btn--ghost">Browse products</a>
+
+  {% else %}
+    {% for producer, items in grouped.items %}
+      <div style="margin-bottom: 2rem;">
+        <h2 style="font-size: 1.1rem; margin-bottom: 0.75rem;">
+          {{ producer.business_name }}
+        </h2>
+
+        {% for item in items %}
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border);">
+            <div>
+              <strong>{{ item.product.name }}</strong>
+              <div class="muted" style="font-size: 0.875rem;">
+                £{{ item.product.price_pence|floatformat:0 }}p each
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <!-- Update quantity -->
+              <form method="post" action="{% url 'cart:cart_update' item.product.id %}" style="display: flex; align-items: center; gap: 0.5rem;">
+                {% csrf_token %}
+                <input
+                  type="number"
+                  name="quantity"
+                  value="{{ item.quantity }}"
+                  min="1"
+                  style="width: 60px; padding: 0.4rem; border: 1px solid var(--border); border-radius: 8px; text-align: center;"
+                />
+                <button class="btn btn--ghost" type="submit" style="padding: 0.4rem 0.75rem;">Update</button>
+              </form>
+
+              <!-- Remove -->
+              <form method="post" action="{% url 'cart:cart_remove' item.product.id %}">
+                {% csrf_token %}
+                <button class="btn btn--ghost" type="submit" style="color: var(--danger); border-color: var(--danger);">Remove</button>
+              </form>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+    <hr style="margin: 1.5rem 0;" />
+
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <strong style="font-size: 1.2rem;">
+          Total: £{% widthratio total_pence 100 1 %}.{% with cents=total_pence|add:0 %}{{ cents|divisibleby:100|yesno:"00," }}{% endwith %}
+        </strong>
+      </div>
+      <div style="display: flex; gap: 0.75rem;">
+        <a href="{% url 'marketplace:home' %}" class="btn btn--ghost">Continue shopping</a>
+        <a href="#" class="btn btn--primary">Checkout</a>
+      </div>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}
