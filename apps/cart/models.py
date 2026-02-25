@@ -1,4 +1,5 @@
 import uuid
+
 from django.db import models
 
 
@@ -12,23 +13,18 @@ class Cart(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f"Cart({self.customer})"
+
 
 class CartItem(models.Model):
-    cart = models.ForeignKey(
-        Cart,
-        on_delete=models.CASCADE,
-        related_name='items',
-    )
-    product = models.ForeignKey(
-        'marketplace.Product',
-        on_delete=models.CASCADE,
-        related_name='cart_items',
-    )
-    quantity = models.PositiveIntegerField()
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
+    product = models.ForeignKey('marketplace.Product', on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
     added_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        # Enforces "composite PK" behavior (one row per cart+product)
-        constraints = [
-            models.UniqueConstraint(fields=['cart', 'product'], name='unique_cart_product')
-        ]
+        unique_together = ('cart', 'product')
+
+    def __str__(self):
+        return f"{self.quantity}x {self.product.name}"
