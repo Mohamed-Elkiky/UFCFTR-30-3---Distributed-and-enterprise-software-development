@@ -15,11 +15,14 @@
 
   <!-- Search & Filter Section -->
   <section class="search-filter-section">
-    <form class="search-filter-form" action="" method="get">
+    <form class="search-filter-form" action="" method="get" id="filter-form">
+      <!-- Hidden category field, set by pill clicks -->
+      <input type="hidden" name="category" id="category-input" value="{{ selected_category }}">
+
       <!-- Main Search Bar -->
       <div class="search-bar-wrapper">
         <svg class="search-bar-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-        <input type="search" name="q" class="search-bar-input" placeholder="Search products, producers, or keywords..." value="">
+        <input type="search" name="q" class="search-bar-input" placeholder="Search products, producers, or keywords..." value="{{ q }}">
         <button type="submit" class="search-bar-btn">Search</button>
       </div>
 
@@ -27,65 +30,36 @@
       <div class="filter-categories">
         <span class="filter-label">Browse:</span>
         <div class="category-pills">
-          <button type="button" class="category-pill active" data-category="all">
+          <button type="button" class="category-pill {% if not selected_category %}active{% endif %}" data-category="">
             <span>All Products</span>
           </button>
-          <button type="button" class="category-pill" data-category="vegetables">
-            <span class="pill-icon">🥬</span>
-            <span>Vegetables</span>
+          {% for cat in categories %}
+          <button type="button" class="category-pill {% if selected_category == cat.id|stringformat:"d" %}active{% endif %}" data-category="{{ cat.id }}">
+            <span class="pill-icon">
+              {% if cat.name == "Vegetables" %}🥬
+              {% elif cat.name == "Fruit" %}🍎
+              {% elif cat.name == "Dairy" %}🥛
+              {% elif cat.name == "Bakery" %}🍞
+              {% elif cat.name == "Meat" %}🥩
+              {% elif cat.name == "Preserves" %}🍯
+              {% elif cat.name == "Seasonal Specialities" %}🌱
+              {% else %}🛒{% endif %}
+            </span>
+            <span>{{ cat.name }}</span>
           </button>
-          <button type="button" class="category-pill" data-category="fruits">
-            <span class="pill-icon">🍎</span>
-            <span>Fruits</span>
-          </button>
-          <button type="button" class="category-pill" data-category="dairy">
-            <span class="pill-icon">🥛</span>
-            <span>Dairy & Eggs</span>
-          </button>
-          <button type="button" class="category-pill" data-category="bakery">
-            <span class="pill-icon">🍞</span>
-            <span>Bakery</span>
-          </button>
-          <button type="button" class="category-pill" data-category="meat">
-            <span class="pill-icon">🥩</span>
-            <span>Meat</span>
-          </button>
-          <button type="button" class="category-pill" data-category="preserves">
-            <span class="pill-icon">🍯</span>
-            <span>Preserves</span>
-          </button>
+          {% endfor %}
         </div>
       </div>
 
       <!-- Additional Filters -->
       <div class="filter-row">
         <div class="filter-group">
-          <label class="filter-group-label">Dietary & Allergens:</label>
+          <label class="filter-group-label">Dietary:</label>
           <div class="filter-checkboxes">
             <label class="filter-checkbox">
-              <input type="checkbox" name="organic" value="1">
+              <input type="checkbox" name="organic" value="1" {% if filter_organic %}checked{% endif %}>
               <span class="checkbox-custom"></span>
               <span>Organic Only</span>
-            </label>
-            <label class="filter-checkbox">
-              <input type="checkbox" name="gluten_free" value="1">
-              <span class="checkbox-custom"></span>
-              <span>Gluten-Free</span>
-            </label>
-            <label class="filter-checkbox">
-              <input type="checkbox" name="dairy_free" value="1">
-              <span class="checkbox-custom"></span>
-              <span>Dairy-Free</span>
-            </label>
-            <label class="filter-checkbox">
-              <input type="checkbox" name="nut_free" value="1">
-              <span class="checkbox-custom"></span>
-              <span>Nut-Free</span>
-            </label>
-            <label class="filter-checkbox">
-              <input type="checkbox" name="vegan" value="1">
-              <span class="checkbox-custom"></span>
-              <span>Vegan</span>
             </label>
           </div>
         </div>
@@ -93,20 +67,25 @@
           <label class="filter-group-label">Availability:</label>
           <div class="filter-checkboxes">
             <label class="filter-checkbox">
-              <input type="checkbox" name="in_season" value="1">
+              <input type="checkbox" name="in_season" value="1" {% if filter_in_season %}checked{% endif %}>
               <span class="checkbox-custom"></span>
               <span>In Season</span>
-            </label>
-            <label class="filter-checkbox">
-              <input type="checkbox" name="surplus" value="1">
-              <span class="checkbox-custom"></span>
-              <span>Surplus Deals</span>
             </label>
           </div>
         </div>
       </div>
     </form>
   </section>
+
+  <script>
+    // Category pill clicks set the hidden input and submit the form
+    document.querySelectorAll('.category-pill').forEach(function(pill) {
+      pill.addEventListener('click', function() {
+        document.getElementById('category-input').value = this.dataset.category;
+        document.getElementById('filter-form').submit();
+      });
+    });
+  </script>
 
   <!-- Featured Products Section -->
   <section class="products-section">

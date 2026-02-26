@@ -13,17 +13,51 @@ from .forms import ProductForm
 def home(request):
     """
     Marketplace homepage showing featured products and categories.
+    Supports filtering by category, organic, in_season, and search query.
     """
     categories = ProductCategory.objects.all()
-    products = Product.objects.filter(
-        availability__isnull=False
-    ).exclude(
+
+    products = Product.objects.exclude(
         availability='unavailable'
-    ).order_by('-created_at')[:8]
-    
+    ).exclude(
+        availability='out_of_season'
+    ).select_related('producer', 'category').prefetch_related('allergen_links__allergen')
+
+    # --- Search ---
+    q = request.GET.get('q', '').strip()
+    if q:
+        from django.db.models import Q
+        products = products.filter(
+            Q(name__icontains=q) |
+            Q(description__icontains=q) |
+            Q(producer__business_name__icontains=q)
+        )
+
+    # --- Category filter ---
+    category_id = request.GET.get('category', '').strip()
+    if category_id:
+        try:
+            products = products.filter(category__id=int(category_id))
+        except (ValueError, TypeError):
+            category_id = "" 
+
+    # --- Organic filter ---
+    if request.GET.get('organic'):
+        products = products.filter(organic_certified=True)
+
+    # --- In season filter ---
+    if request.GET.get('in_season'):
+        products = products.filter(availability='in_season')
+
+    products = products.order_by('-created_at')[:24]
+
     context = {
         'categories': categories,
         'products': products,
+        'q': q,
+        'selected_category': category_id,
+        'filter_organic': request.GET.get('organic', ''),
+        'filter_in_season': request.GET.get('in_season', ''),
     }
     return render(request, 'marketplace/home.html', context)
 
