@@ -38,6 +38,7 @@ services:
       - DJANGO_DB_PASSWORD=mypassword
       - DJANGO_DB_HOST=db
       - DJANGO_DB_PORT=5432
+      - DATABASE_URL=postgresql://myuser:mypassword@db:5432/mydb
 
 volumes:
   postgres_data:

@@ -8,34 +8,1197 @@
       "first_name": "Admin",
       "last_name": "User",
       "role": "admin",
+      "phone": "",
       "is_staff": true,
       "is_superuser": true,
-      "is_active": true
+      "is_active": true,
+      "date_joined": "2026-01-01T09:00:00Z",
+      "last_login": null
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 2,
+    "fields": {
+      "email": "jane.smith@bristolvalleyfarm.com",
+      "password": "pbkdf2_sha256$600000$fixedsaltprod01$6iousOoBLHkd5CIbjMYNwmoHitwM/omE4w7WzFyZ5Aw=",
+      "first_name": "Jane",
+      "last_name": "Smith",
+      "role": "producer",
+      "phone": "01179 123456",
+      "is_staff": false,
+      "is_superuser": false,
+      "is_active": true,
+      "date_joined": "2026-01-01T09:00:00Z",
+      "last_login": null
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 3,
+    "fields": {
+      "email": "tom.hartley@hillsidedairy.co.uk",
+      "password": "pbkdf2_sha256$600000$fixedsaltprod02$ZKNilrc2ze7REkq8WenL7brKbND4gV60QBAbq0qk544=",
+      "first_name": "Tom",
+      "last_name": "Hartley",
+      "role": "producer",
+      "phone": "01179 654321",
+      "is_staff": false,
+      "is_superuser": false,
+      "is_active": true,
+      "date_joined": "2026-01-01T09:00:00Z",
+      "last_login": null
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 4,
+    "fields": {
+      "email": "david.marsh@greenacresfarm.co.uk",
+      "password": "pbkdf2_sha256$600000$fixedsaltprod03$XQDJ4iu3N+IPygnwiRUp9gh8ZRD9NEizyvCDqhr7nwQ=",
+      "first_name": "David",
+      "last_name": "Marsh",
+      "role": "producer",
+      "phone": "01179 789012",
+      "is_staff": false,
+      "is_superuser": false,
+      "is_active": true,
+      "date_joined": "2026-01-01T09:00:00Z",
+      "last_login": null
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 5,
+    "fields": {
+      "email": "helen.price@orchardviewfarm.co.uk",
+      "password": "pbkdf2_sha256$600000$fixedsaltprod04$g4G4qlnycsnJpkWxcDcR20EHoWCbCy+Z2TvA5HfwSOE=",
+      "first_name": "Helen",
+      "last_name": "Price",
+      "role": "producer",
+      "phone": "01179 321098",
+      "is_staff": false,
+      "is_superuser": false,
+      "is_active": true,
+      "date_joined": "2026-01-01T09:00:00Z",
+      "last_login": null
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 6,
+    "fields": {
+      "email": "paul.baker@severnvalleybakers.co.uk",
+      "password": "pbkdf2_sha256$600000$fixedsaltprod05$s4Ne+/Cz0KM5bvJqFvDyYKmjAFRp2+xP1Qv94KVzjoY=",
+      "first_name": "Paul",
+      "last_name": "Baker",
+      "role": "producer",
+      "phone": "01179 456789",
+      "is_staff": false,
+      "is_superuser": false,
+      "is_active": true,
+      "date_joined": "2026-01-01T09:00:00Z",
+      "last_login": null
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 7,
+    "fields": {
+      "email": "sarah.bee@hartcliffehoney.co.uk",
+      "password": "pbkdf2_sha256$600000$fixedsaltprod06$QzsETc9JKvEg1GxD6G7wDoSw4/X9dwlSCZLPZxmt1ZI=",
+      "first_name": "Sarah",
+      "last_name": "Bee",
+      "role": "producer",
+      "phone": "01179 567890",
+      "is_staff": false,
+      "is_superuser": false,
+      "is_active": true,
+      "date_joined": "2026-01-01T09:00:00Z",
+      "last_login": null
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 8,
+    "fields": {
+      "email": "neil.foster@redlandfreerange.co.uk",
+      "password": "pbkdf2_sha256$600000$fixedsaltprod07$9KI7zCXh0hGZuR818HrW2TdqJRp2scDNUvrHjlftHbE=",
+      "first_name": "Neil",
+      "last_name": "Foster",
+      "role": "producer",
+      "phone": "01179 678901",
+      "is_staff": false,
+      "is_superuser": false,
+      "is_active": true,
+      "date_joined": "2026-01-01T09:00:00Z",
+      "last_login": null
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 9,
+    "fields": {
+      "email": "margaret.cook@cliftonpreserves.co.uk",
+      "password": "pbkdf2_sha256$600000$fixedsaltprod08$EnYxYm7mj3ODkddbBNcko+zDBu17qdXcQ9BS7IYqHEA=",
+      "first_name": "Margaret",
+      "last_name": "Cook",
+      "role": "producer",
+      "phone": "01179 890123",
+      "is_staff": false,
+      "is_superuser": false,
+      "is_active": true,
+      "date_joined": "2026-01-01T09:00:00Z",
+      "last_login": null
+    }
+  },
+  {
+    "model": "accounts.producerprofile",
+    "pk": 1,
+    "fields": {
+      "user": 2,
+      "business_name": "Bristol Valley Farm",
+      "contact_name": "Jane Smith",
+      "business_address": "Stoke Park Road, Bristol",
+      "postcode": "BS16 1GW",
+      "latitude": "51.490200",
+      "longitude": "-2.531400",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "accounts.producerprofile",
+    "pk": 2,
+    "fields": {
+      "user": 3,
+      "business_name": "Hillside Dairy",
+      "contact_name": "Tom Hartley",
+      "business_address": "Clifton Down Road, Bristol",
+      "postcode": "BS8 1TH",
+      "latitude": "51.461200",
+      "longitude": "-2.614300",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "accounts.producerprofile",
+    "pk": 3,
+    "fields": {
+      "user": 4,
+      "business_name": "Green Acres Farm",
+      "contact_name": "David Marsh",
+      "business_address": "Westbury Lane, Bristol",
+      "postcode": "BS9 1JG",
+      "latitude": "51.487500",
+      "longitude": "-2.635200",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "accounts.producerprofile",
+    "pk": 4,
+    "fields": {
+      "user": 5,
+      "business_name": "Orchard View Farm",
+      "contact_name": "Helen Price",
+      "business_address": "Long Ashton Road, Bristol",
+      "postcode": "BS41 9LB",
+      "latitude": "51.430100",
+      "longitude": "-2.659800",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "accounts.producerprofile",
+    "pk": 5,
+    "fields": {
+      "user": 6,
+      "business_name": "Severn Valley Bakers",
+      "contact_name": "Paul Baker",
+      "business_address": "Bedminster Down Road, Bristol",
+      "postcode": "BS13 7AB",
+      "latitude": "51.426500",
+      "longitude": "-2.601700",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "accounts.producerprofile",
+    "pk": 6,
+    "fields": {
+      "user": 7,
+      "business_name": "Hartcliffe Honey",
+      "contact_name": "Sarah Bee",
+      "business_address": "Hartcliffe Way, Bristol",
+      "postcode": "BS13 0JA",
+      "latitude": "51.408900",
+      "longitude": "-2.594600",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "accounts.producerprofile",
+    "pk": 7,
+    "fields": {
+      "user": 8,
+      "business_name": "Redland Free Range",
+      "contact_name": "Neil Foster",
+      "business_address": "Redland Road, Bristol",
+      "postcode": "BS6 6YB",
+      "latitude": "51.468300",
+      "longitude": "-2.601200",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "accounts.producerprofile",
+    "pk": 8,
+    "fields": {
+      "user": 9,
+      "business_name": "Clifton Preserves",
+      "contact_name": "Margaret Cook",
+      "business_address": "Whiteladies Road, Bristol",
+      "postcode": "BS8 2NT",
+      "latitude": "51.463700",
+      "longitude": "-2.608900",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
     }
   },
   {
     "model": "marketplace.productcategory",
     "pk": 1,
-    "fields": { "name": "Vegetables", "created_at": null }
+    "fields": {
+      "name": "Vegetables"
+    }
   },
   {
     "model": "marketplace.productcategory",
     "pk": 2,
-    "fields": { "name": "Fruit", "created_at": null }
+    "fields": {
+      "name": "Fruit"
+    }
   },
   {
     "model": "marketplace.productcategory",
     "pk": 3,
-    "fields": { "name": "Dairy", "created_at": null }
+    "fields": {
+      "name": "Dairy"
+    }
   },
   {
     "model": "marketplace.productcategory",
     "pk": 4,
-    "fields": { "name": "Meat", "created_at": null }
+    "fields": {
+      "name": "Meat"
+    }
   },
   {
     "model": "marketplace.productcategory",
     "pk": 5,
-    "fields": { "name": "Bakery", "created_at": null }
+    "fields": {
+      "name": "Bakery"
+    }
+  },
+  {
+    "model": "marketplace.productcategory",
+    "pk": 6,
+    "fields": {
+      "name": "Preserves"
+    }
+  },
+  {
+    "model": "marketplace.productcategory",
+    "pk": 7,
+    "fields": {
+      "name": "Seasonal Specialities"
+    }
+  },
+  {
+    "model": "marketplace.allergen",
+    "pk": 1,
+    "fields": {
+      "name": "Celery"
+    }
+  },
+  {
+    "model": "marketplace.allergen",
+    "pk": 2,
+    "fields": {
+      "name": "Cereals containing gluten (Wheat)"
+    }
+  },
+  {
+    "model": "marketplace.allergen",
+    "pk": 3,
+    "fields": {
+      "name": "Crustaceans"
+    }
+  },
+  {
+    "model": "marketplace.allergen",
+    "pk": 4,
+    "fields": {
+      "name": "Eggs"
+    }
+  },
+  {
+    "model": "marketplace.allergen",
+    "pk": 5,
+    "fields": {
+      "name": "Fish"
+    }
+  },
+  {
+    "model": "marketplace.allergen",
+    "pk": 6,
+    "fields": {
+      "name": "Lupin"
+    }
+  },
+  {
+    "model": "marketplace.allergen",
+    "pk": 7,
+    "fields": {
+      "name": "Milk"
+    }
+  },
+  {
+    "model": "marketplace.allergen",
+    "pk": 8,
+    "fields": {
+      "name": "Molluscs"
+    }
+  },
+  {
+    "model": "marketplace.allergen",
+    "pk": 9,
+    "fields": {
+      "name": "Mustard"
+    }
+  },
+  {
+    "model": "marketplace.allergen",
+    "pk": 10,
+    "fields": {
+      "name": "Tree Nuts"
+    }
+  },
+  {
+    "model": "marketplace.allergen",
+    "pk": 11,
+    "fields": {
+      "name": "Peanuts"
+    }
+  },
+  {
+    "model": "marketplace.allergen",
+    "pk": 12,
+    "fields": {
+      "name": "Sesame"
+    }
+  },
+  {
+    "model": "marketplace.allergen",
+    "pk": 13,
+    "fields": {
+      "name": "Soya"
+    }
+  },
+  {
+    "model": "marketplace.allergen",
+    "pk": 14,
+    "fields": {
+      "name": "Sulphur Dioxide / Sulphites"
+    }
+  },
+  {
+    "model": "marketplace.product",
+    "pk": "a1b2c3d4-0001-0001-0001-000000000001",
+    "fields": {
+      "producer": 1,
+      "category": 1,
+      "name": "Organic Carrots",
+      "description": "Freshly harvested organic Chantenay carrots, grown without pesticides. Sweet and tender, perfect for roasting or juicing.",
+      "price_pence": 250,
+      "unit": "kg",
+      "availability": "in_season",
+      "seasonal_start_month": 6,
+      "seasonal_end_month": 11,
+      "stock_qty": 80,
+      "low_stock_threshold": 10,
+      "organic_certified": true,
+      "harvest_date": "2026-02-20",
+      "best_before_date": "2026-03-06",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "marketplace.product",
+    "pk": "a1b2c3d4-0001-0001-0001-000000000002",
+    "fields": {
+      "producer": 1,
+      "category": 1,
+      "name": "Organic Tomatoes",
+      "description": "Vine-ripened organic tomatoes, rich in flavour. Hand-picked daily from our polytunnels. Ideal for salads, sauces, and slow-roasting.",
+      "price_pence": 300,
+      "unit": "kg",
+      "availability": "in_season",
+      "seasonal_start_month": 6,
+      "seasonal_end_month": 10,
+      "stock_qty": 60,
+      "low_stock_threshold": 10,
+      "organic_certified": true,
+      "harvest_date": "2026-02-22",
+      "best_before_date": "2026-03-01",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "marketplace.product",
+    "pk": "a1b2c3d4-0001-0001-0001-000000000003",
+    "fields": {
+      "producer": 1,
+      "category": 1,
+      "name": "Courgettes",
+      "description": "Tender organic courgettes, harvested young for the best flavour. Versatile in stir-fries, pasta dishes, or simply grilled with olive oil.",
+      "price_pence": 180,
+      "unit": "each",
+      "availability": "in_season",
+      "seasonal_start_month": 6,
+      "seasonal_end_month": 9,
+      "stock_qty": 45,
+      "low_stock_threshold": 8,
+      "organic_certified": true,
+      "harvest_date": "2026-02-23",
+      "best_before_date": "2026-03-02",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "marketplace.product",
+    "pk": "a1b2c3d4-0001-0001-0001-000000000004",
+    "fields": {
+      "producer": 3,
+      "category": 1,
+      "name": "Salad Potatoes",
+      "description": "Creamy Nicola salad potatoes, excellent boiled, roasted, or in potato salads. Consistent, smooth-skinned, and full of flavour.",
+      "price_pence": 200,
+      "unit": "kg",
+      "availability": "available_year_round",
+      "seasonal_start_month": null,
+      "seasonal_end_month": null,
+      "stock_qty": 120,
+      "low_stock_threshold": 15,
+      "organic_certified": false,
+      "harvest_date": "2026-02-15",
+      "best_before_date": "2026-03-15",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "marketplace.product",
+    "pk": "a1b2c3d4-0001-0001-0001-000000000005",
+    "fields": {
+      "producer": 3,
+      "category": 1,
+      "name": "Red Onions",
+      "description": "Mild, sweet red onions straight from our fields. Great raw in salads, caramelised in a pan, or slow-roasted whole.",
+      "price_pence": 150,
+      "unit": "kg",
+      "availability": "available_year_round",
+      "seasonal_start_month": null,
+      "seasonal_end_month": null,
+      "stock_qty": 100,
+      "low_stock_threshold": 15,
+      "organic_certified": false,
+      "harvest_date": "2026-02-10",
+      "best_before_date": "2026-03-25",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "marketplace.product",
+    "pk": "a1b2c3d4-0001-0001-0001-000000000006",
+    "fields": {
+      "producer": 1,
+      "category": 1,
+      "name": "Organic Lettuce",
+      "description": "Crisp organic butterhead lettuce, freshly cut. A staple for any salad lover. Grown in our open fields with no artificial inputs.",
+      "price_pence": 120,
+      "unit": "head",
+      "availability": "in_season",
+      "seasonal_start_month": 4,
+      "seasonal_end_month": 10,
+      "stock_qty": 50,
+      "low_stock_threshold": 10,
+      "organic_certified": true,
+      "harvest_date": "2026-02-24",
+      "best_before_date": "2026-02-28",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "marketplace.product",
+    "pk": "a1b2c3d4-0001-0001-0001-000000000007",
+    "fields": {
+      "producer": 3,
+      "category": 1,
+      "name": "Stored Potatoes",
+      "description": "Classic Maris Piper baking and chipping potatoes, stored from our autumn harvest. Available year-round and perfect for every cooking method.",
+      "price_pence": 150,
+      "unit": "kg",
+      "availability": "available_year_round",
+      "seasonal_start_month": null,
+      "seasonal_end_month": null,
+      "stock_qty": 200,
+      "low_stock_threshold": 20,
+      "organic_certified": false,
+      "harvest_date": "2025-10-01",
+      "best_before_date": "2026-04-01",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "marketplace.product",
+    "pk": "a1b2c3d4-0001-0001-0001-000000000008",
+    "fields": {
+      "producer": 1,
+      "category": 1,
+      "name": "Mixed Salad Leaves",
+      "description": "A seasonal blend of rocket, mizuna, spinach, and mustard leaves. Harvested fresh each morning and ready to eat straight from the bag.",
+      "price_pence": 200,
+      "unit": "100g bag",
+      "availability": "in_season",
+      "seasonal_start_month": 3,
+      "seasonal_end_month": 10,
+      "stock_qty": 35,
+      "low_stock_threshold": 8,
+      "organic_certified": true,
+      "harvest_date": "2026-02-25",
+      "best_before_date": "2026-02-28",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "marketplace.product",
+    "pk": "a1b2c3d4-0001-0001-0001-000000000009",
+    "fields": {
+      "producer": 3,
+      "category": 1,
+      "name": "Butternut Squash",
+      "description": "Dense and sweet butternut squash from our autumn crop. Perfect for soups, roasting, or stuffed as a centrepiece dish.",
+      "price_pence": 180,
+      "unit": "each",
+      "availability": "available_year_round",
+      "seasonal_start_month": null,
+      "seasonal_end_month": null,
+      "stock_qty": 55,
+      "low_stock_threshold": 10,
+      "organic_certified": false,
+      "harvest_date": "2025-10-20",
+      "best_before_date": "2026-03-20",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "marketplace.product",
+    "pk": "a1b2c3d4-0001-0001-0001-000000000010",
+    "fields": {
+      "producer": 4,
+      "category": 2,
+      "name": "Fresh Apples",
+      "description": "Crisp Cox and Bramley apples, hand-picked from our heritage orchard. A classic British apple, great for eating, baking, and juicing.",
+      "price_pence": 200,
+      "unit": "kg",
+      "availability": "available_year_round",
+      "seasonal_start_month": null,
+      "seasonal_end_month": null,
+      "stock_qty": 80,
+      "low_stock_threshold": 10,
+      "organic_certified": false,
+      "harvest_date": "2025-10-05",
+      "best_before_date": "2026-03-10",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "marketplace.product",
+    "pk": "a1b2c3d4-0001-0001-0001-000000000011",
+    "fields": {
+      "producer": 1,
+      "category": 2,
+      "name": "Strawberries",
+      "description": "Sweet, locally grown organic strawberries, picked at peak ripeness. Available June to August \u2014 the taste of summer.",
+      "price_pence": 350,
+      "unit": "punnet (400g)",
+      "availability": "out_of_season",
+      "seasonal_start_month": 6,
+      "seasonal_end_month": 8,
+      "stock_qty": 0,
+      "low_stock_threshold": 10,
+      "organic_certified": true,
+      "harvest_date": null,
+      "best_before_date": null,
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "marketplace.product",
+    "pk": "a1b2c3d4-0001-0001-0001-000000000012",
+    "fields": {
+      "producer": 4,
+      "category": 2,
+      "name": "Conference Pears",
+      "description": "Juicy, perfectly ripe Conference pears from our orchard. Long-keeping variety, ideal for eating fresh or poaching in spiced wine.",
+      "price_pence": 220,
+      "unit": "kg",
+      "availability": "available_year_round",
+      "seasonal_start_month": null,
+      "seasonal_end_month": null,
+      "stock_qty": 60,
+      "low_stock_threshold": 10,
+      "organic_certified": false,
+      "harvest_date": "2025-10-10",
+      "best_before_date": "2026-03-01",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "marketplace.product",
+    "pk": "a1b2c3d4-0001-0001-0001-000000000013",
+    "fields": {
+      "producer": 7,
+      "category": 3,
+      "name": "Organic Free Range Eggs",
+      "description": "Fresh organic eggs from free-range hens, collected daily. Our hens roam open pastures and are fed a certified organic diet. Rich, deep-yellow yolks.",
+      "price_pence": 350,
+      "unit": "dozen",
+      "availability": "available_year_round",
+      "seasonal_start_month": null,
+      "seasonal_end_month": null,
+      "stock_qty": 50,
+      "low_stock_threshold": 10,
+      "organic_certified": true,
+      "harvest_date": "2026-02-25",
+      "best_before_date": "2026-03-25",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "marketplace.product",
+    "pk": "a1b2c3d4-0001-0001-0001-000000000014",
+    "fields": {
+      "producer": 2,
+      "category": 3,
+      "name": "Fresh Whole Milk",
+      "description": "Unhomogenised whole milk from our grass-fed Friesian herd, bottled daily at the farm. Creamy, fresh, and full of natural goodness.",
+      "price_pence": 120,
+      "unit": "litre",
+      "availability": "available_year_round",
+      "seasonal_start_month": null,
+      "seasonal_end_month": null,
+      "stock_qty": 80,
+      "low_stock_threshold": 15,
+      "organic_certified": false,
+      "harvest_date": "2026-02-26",
+      "best_before_date": "2026-03-03",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "marketplace.product",
+    "pk": "a1b2c3d4-0001-0001-0001-000000000015",
+    "fields": {
+      "producer": 2,
+      "category": 3,
+      "name": "Mature Cheddar Cheese",
+      "description": "Traditionally made mature cheddar, aged for 12 months in our cellars. A robust, nutty flavour with a crumbly texture.",
+      "price_pence": 550,
+      "unit": "200g",
+      "availability": "available_year_round",
+      "seasonal_start_month": null,
+      "seasonal_end_month": null,
+      "stock_qty": 40,
+      "low_stock_threshold": 8,
+      "organic_certified": false,
+      "harvest_date": null,
+      "best_before_date": "2026-06-01",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "marketplace.product",
+    "pk": "a1b2c3d4-0001-0001-0001-000000000016",
+    "fields": {
+      "producer": 2,
+      "category": 3,
+      "name": "Natural Yoghurt",
+      "description": "Thick, creamy natural set yoghurt made from our fresh whole milk. Live cultures, no additives or sweeteners. Perfect with fruit, granola, or savoury dishes.",
+      "price_pence": 200,
+      "unit": "500g",
+      "availability": "available_year_round",
+      "seasonal_start_month": null,
+      "seasonal_end_month": null,
+      "stock_qty": 35,
+      "low_stock_threshold": 8,
+      "organic_certified": false,
+      "harvest_date": null,
+      "best_before_date": "2026-03-10",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "marketplace.product",
+    "pk": "a1b2c3d4-0001-0001-0001-000000000017",
+    "fields": {
+      "producer": 2,
+      "category": 3,
+      "name": "Double Cream",
+      "description": "Rich, indulgent double cream from our Jersey-Friesian cross herd. 48% butterfat for the most luxurious whipping or pouring cream.",
+      "price_pence": 180,
+      "unit": "250ml",
+      "availability": "available_year_round",
+      "seasonal_start_month": null,
+      "seasonal_end_month": null,
+      "stock_qty": 30,
+      "low_stock_threshold": 6,
+      "organic_certified": false,
+      "harvest_date": null,
+      "best_before_date": "2026-03-08",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "marketplace.product",
+    "pk": "a1b2c3d4-0001-0001-0001-000000000018",
+    "fields": {
+      "producer": 2,
+      "category": 3,
+      "name": "Soft Goat's Cheese",
+      "description": "Fresh, mild soft goat's cheese from our small herd of Saanen goats. Beautifully spreadable with a clean, lightly tangy flavour.",
+      "price_pence": 420,
+      "unit": "150g",
+      "availability": "available_year_round",
+      "seasonal_start_month": null,
+      "seasonal_end_month": null,
+      "stock_qty": 20,
+      "low_stock_threshold": 5,
+      "organic_certified": false,
+      "harvest_date": null,
+      "best_before_date": "2026-03-15",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "marketplace.product",
+    "pk": "a1b2c3d4-0001-0001-0001-000000000019",
+    "fields": {
+      "producer": 5,
+      "category": 5,
+      "name": "Walnut Bread",
+      "description": "A rustic sourdough loaf packed with whole walnuts and a hint of honey. Baked fresh each morning in our wood-fired oven.",
+      "price_pence": 350,
+      "unit": "loaf",
+      "availability": "available_year_round",
+      "seasonal_start_month": null,
+      "seasonal_end_month": null,
+      "stock_qty": 15,
+      "low_stock_threshold": 3,
+      "organic_certified": false,
+      "harvest_date": null,
+      "best_before_date": "2026-02-28",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "marketplace.product",
+    "pk": "a1b2c3d4-0001-0001-0001-000000000020",
+    "fields": {
+      "producer": 5,
+      "category": 5,
+      "name": "Sourdough Loaf",
+      "description": "Classic white sourdough made from a 20-year-old starter. Long fermented for great flavour and a chewy, open crumb with a crackling crust.",
+      "price_pence": 300,
+      "unit": "loaf",
+      "availability": "available_year_round",
+      "seasonal_start_month": null,
+      "seasonal_end_month": null,
+      "stock_qty": 18,
+      "low_stock_threshold": 3,
+      "organic_certified": false,
+      "harvest_date": null,
+      "best_before_date": "2026-02-28",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "marketplace.product",
+    "pk": "a1b2c3d4-0001-0001-0001-000000000021",
+    "fields": {
+      "producer": 5,
+      "category": 5,
+      "name": "Seeded Batch Loaf",
+      "description": "Soft, pillowy batch loaf topped with sunflower seeds, pumpkin seeds, and sesame. Made with stoneground wholemeal flour from a local mill.",
+      "price_pence": 280,
+      "unit": "loaf",
+      "availability": "available_year_round",
+      "seasonal_start_month": null,
+      "seasonal_end_month": null,
+      "stock_qty": 12,
+      "low_stock_threshold": 3,
+      "organic_certified": false,
+      "harvest_date": null,
+      "best_before_date": "2026-02-28",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "marketplace.product",
+    "pk": "a1b2c3d4-0001-0001-0001-000000000022",
+    "fields": {
+      "producer": 5,
+      "category": 5,
+      "name": "Blueberry Muffins",
+      "description": "Light, fluffy muffins bursting with fresh blueberries. Baked in small batches using free-range eggs and locally milled flour.",
+      "price_pence": 320,
+      "unit": "pack of 4",
+      "availability": "available_year_round",
+      "seasonal_start_month": null,
+      "seasonal_end_month": null,
+      "stock_qty": 20,
+      "low_stock_threshold": 4,
+      "organic_certified": false,
+      "harvest_date": null,
+      "best_before_date": "2026-02-28",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "marketplace.product",
+    "pk": "a1b2c3d4-0001-0001-0001-000000000023",
+    "fields": {
+      "producer": 8,
+      "category": 6,
+      "name": "Strawberry Jam",
+      "description": "Traditional whole-fruit strawberry jam made in small batches. Low sugar, high fruit content \u2014 nothing artificial.",
+      "price_pence": 380,
+      "unit": "340g jar",
+      "availability": "available_year_round",
+      "seasonal_start_month": null,
+      "seasonal_end_month": null,
+      "stock_qty": 25,
+      "low_stock_threshold": 5,
+      "organic_certified": false,
+      "harvest_date": null,
+      "best_before_date": "2027-06-01",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "marketplace.product",
+    "pk": "a1b2c3d4-0001-0001-0001-000000000024",
+    "fields": {
+      "producer": 8,
+      "category": 6,
+      "name": "Apple Chutney",
+      "description": "A rich, tangy chutney made from Cox apples, onions, and warming spices. Perfect with cheese, cold cuts, or a ploughman's lunch.",
+      "price_pence": 350,
+      "unit": "300g jar",
+      "availability": "available_year_round",
+      "seasonal_start_month": null,
+      "seasonal_end_month": null,
+      "stock_qty": 20,
+      "low_stock_threshold": 5,
+      "organic_certified": false,
+      "harvest_date": null,
+      "best_before_date": "2027-09-01",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "marketplace.product",
+    "pk": "a1b2c3d4-0001-0001-0001-000000000025",
+    "fields": {
+      "producer": 6,
+      "category": 6,
+      "name": "Wildflower Honey",
+      "description": "Raw, unfiltered wildflower honey from our hives on the edge of the Mendip Hills. Lightly floral with a smooth, lingering sweetness.",
+      "price_pence": 650,
+      "unit": "340g jar",
+      "availability": "available_year_round",
+      "seasonal_start_month": null,
+      "seasonal_end_month": null,
+      "stock_qty": 30,
+      "low_stock_threshold": 6,
+      "organic_certified": false,
+      "harvest_date": null,
+      "best_before_date": "2028-01-01",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "marketplace.product",
+    "pk": "a1b2c3d4-0001-0001-0001-000000000026",
+    "fields": {
+      "producer": 3,
+      "category": 4,
+      "name": "Pork Sausages",
+      "description": "Traditional pork sausages made from our own Gloucester Old Spot pigs. Coarsely ground with sage and black pepper. 70% pork content.",
+      "price_pence": 480,
+      "unit": "pack of 6",
+      "availability": "available_year_round",
+      "seasonal_start_month": null,
+      "seasonal_end_month": null,
+      "stock_qty": 25,
+      "low_stock_threshold": 5,
+      "organic_certified": false,
+      "harvest_date": null,
+      "best_before_date": "2026-03-04",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "marketplace.product",
+    "pk": "a1b2c3d4-0001-0001-0001-000000000027",
+    "fields": {
+      "producer": 3,
+      "category": 4,
+      "name": "Free Range Chicken",
+      "description": "Whole free-range chicken from our slow-growth Hubbard breed. Raised outdoors on pasture. Dressed and ready for the oven.",
+      "price_pence": 1200,
+      "unit": "whole bird (approx 1.8kg)",
+      "availability": "available_year_round",
+      "seasonal_start_month": null,
+      "seasonal_end_month": null,
+      "stock_qty": 12,
+      "low_stock_threshold": 3,
+      "organic_certified": false,
+      "harvest_date": "2026-02-23",
+      "best_before_date": "2026-03-01",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "marketplace.product",
+    "pk": "a1b2c3d4-0001-0001-0001-000000000028",
+    "fields": {
+      "producer": 1,
+      "category": 7,
+      "name": "Purple Sprouting Broccoli",
+      "description": "Tender shoots of purple sprouting broccoli, the true taste of late winter. Harvested early morning for maximum freshness. Steam, stir-fry, or roast.",
+      "price_pence": 280,
+      "unit": "250g bunch",
+      "availability": "in_season",
+      "seasonal_start_month": 2,
+      "seasonal_end_month": 4,
+      "stock_qty": 40,
+      "low_stock_threshold": 8,
+      "organic_certified": true,
+      "harvest_date": "2026-02-25",
+      "best_before_date": "2026-03-01",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "marketplace.product",
+    "pk": "a1b2c3d4-0001-0001-0001-000000000029",
+    "fields": {
+      "producer": 3,
+      "category": 7,
+      "name": "Pumpkin",
+      "description": "Large Crown Prince pumpkins from our autumn harvest, stored under cover for winter use. Exceptional in soups and curries.",
+      "price_pence": 280,
+      "unit": "each",
+      "availability": "in_season",
+      "seasonal_start_month": 9,
+      "seasonal_end_month": 12,
+      "stock_qty": 30,
+      "low_stock_threshold": 5,
+      "organic_certified": false,
+      "harvest_date": "2025-10-15",
+      "best_before_date": "2026-03-01",
+      "created_at": "2026-01-01T09:00:00Z",
+      "updated_at": "2026-01-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "marketplace.productallergen",
+    "pk": 1,
+    "fields": {
+      "product": "a1b2c3d4-0001-0001-0001-000000000013",
+      "allergen": 4
+    }
+  },
+  {
+    "model": "marketplace.productallergen",
+    "pk": 2,
+    "fields": {
+      "product": "a1b2c3d4-0001-0001-0001-000000000014",
+      "allergen": 7
+    }
+  },
+  {
+    "model": "marketplace.productallergen",
+    "pk": 3,
+    "fields": {
+      "product": "a1b2c3d4-0001-0001-0001-000000000015",
+      "allergen": 7
+    }
+  },
+  {
+    "model": "marketplace.productallergen",
+    "pk": 4,
+    "fields": {
+      "product": "a1b2c3d4-0001-0001-0001-000000000016",
+      "allergen": 7
+    }
+  },
+  {
+    "model": "marketplace.productallergen",
+    "pk": 5,
+    "fields": {
+      "product": "a1b2c3d4-0001-0001-0001-000000000017",
+      "allergen": 7
+    }
+  },
+  {
+    "model": "marketplace.productallergen",
+    "pk": 6,
+    "fields": {
+      "product": "a1b2c3d4-0001-0001-0001-000000000018",
+      "allergen": 7
+    }
+  },
+  {
+    "model": "marketplace.productallergen",
+    "pk": 7,
+    "fields": {
+      "product": "a1b2c3d4-0001-0001-0001-000000000019",
+      "allergen": 2
+    }
+  },
+  {
+    "model": "marketplace.productallergen",
+    "pk": 8,
+    "fields": {
+      "product": "a1b2c3d4-0001-0001-0001-000000000019",
+      "allergen": 10
+    }
+  },
+  {
+    "model": "marketplace.productallergen",
+    "pk": 9,
+    "fields": {
+      "product": "a1b2c3d4-0001-0001-0001-000000000020",
+      "allergen": 2
+    }
+  },
+  {
+    "model": "marketplace.productallergen",
+    "pk": 10,
+    "fields": {
+      "product": "a1b2c3d4-0001-0001-0001-000000000021",
+      "allergen": 2
+    }
+  },
+  {
+    "model": "marketplace.productallergen",
+    "pk": 11,
+    "fields": {
+      "product": "a1b2c3d4-0001-0001-0001-000000000021",
+      "allergen": 12
+    }
+  },
+  {
+    "model": "marketplace.productallergen",
+    "pk": 12,
+    "fields": {
+      "product": "a1b2c3d4-0001-0001-0001-000000000022",
+      "allergen": 2
+    }
+  },
+  {
+    "model": "marketplace.productallergen",
+    "pk": 13,
+    "fields": {
+      "product": "a1b2c3d4-0001-0001-0001-000000000022",
+      "allergen": 4
+    }
+  },
+  {
+    "model": "marketplace.productallergen",
+    "pk": 14,
+    "fields": {
+      "product": "a1b2c3d4-0001-0001-0001-000000000022",
+      "allergen": 7
+    }
+  },
+  {
+    "model": "marketplace.productallergen",
+    "pk": 15,
+    "fields": {
+      "product": "a1b2c3d4-0001-0001-0001-000000000026",
+      "allergen": 2
+    }
+  },
+  {
+    "model": "marketplace.productallergen",
+    "pk": 16,
+    "fields": {
+      "product": "a1b2c3d4-0001-0001-0001-000000000026",
+      "allergen": 14
+    }
+  },
+  {
+    "model": "marketplace.productallergen",
+    "pk": 17,
+    "fields": {
+      "product": "a1b2c3d4-0001-0001-0001-000000000024",
+      "allergen": 14
+    }
+  },
+  {
+    "model": "marketplace.productallergen",
+    "pk": 18,
+    "fields": {
+      "product": "a1b2c3d4-0001-0001-0001-000000000023",
+      "allergen": 14
+    }
   }
 ]
