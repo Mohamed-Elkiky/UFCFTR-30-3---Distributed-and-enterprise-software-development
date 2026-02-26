@@ -1,5 +1,7 @@
 # brfn/settings/dev.py
 
+#merge test
+
 from .base import *
 import os
 
