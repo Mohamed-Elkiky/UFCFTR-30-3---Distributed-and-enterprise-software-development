@@ -1,10 +1,11 @@
 # brfn/settings/dev.py
 
-from .base import *
 import os
+
+os.environ.setdefault('DATABASE_URL', 'postgresql://myuser:mypassword@localhost:5432/mydb')
+
+from .base import *
 
 DEBUG = True
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-os.environ.setdefault('DATABASE_URL', 'postgresql://postgres:postgres@db:5432/brfn')

@@ -32,6 +32,7 @@ docker-compose exec web python manage.py makemigrations
 docker-compose exec web python manage.py migrate
 
 # database viewing 
+ docker-compose exec db psql -U myuser -d mydb
 psql "postgresql://myuser:mypassword@localhost:5432/mydb"
 
 # database selecting emails

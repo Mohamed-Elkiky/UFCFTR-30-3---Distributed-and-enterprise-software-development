@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Products</h1>
+<h1>{% if category %}{{ category.name }}{% else %}Products{% endif %}</h1>
 
 <form method="get" style="margin-bottom: 1rem;">
   <input type="text" name="q" value="{{ q|default:'' }}" placeholder="Search products..." />
@@ -12,13 +12,13 @@
     {% for p in products %}
       <li style="margin-bottom: 0.75rem;">
         <strong>{{ p.name|default:"Unnamed product" }}</strong>
-        {% if p.price %}- £{{ p.price }}{% endif %}
+        - {{ p.price_display }}
         <br />
-        {% if p.producer_name %}
-          <small>Producer: {{ p.producer_name }}</small><br />
+        {% if p.producer %}
+          <small>Producer: {{ p.producer.business_name }}</small><br />
         {% endif %}
         {% if p.id %}
-          <a href="{% url 'product_detail' p.id %}">View</a>
+          <a href="{% url 'marketplace:product_detail' p.id %}">View</a>
         {% endif %}
       </li>
     {% endfor %}
