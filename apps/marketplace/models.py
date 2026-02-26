@@ -76,6 +76,11 @@ class Product(models.Model):
     class Meta:
         db_table = "product"
 
+    @property
+    def price_display(self):
+        """Return price formatted as £X.XX"""
+        return f"£{self.price_pence / 100:.2f}"
+
     def __str__(self) -> str:
         return str(self.name) if self.name else str(self.id)
 
