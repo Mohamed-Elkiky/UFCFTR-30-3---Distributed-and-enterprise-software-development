@@ -15,6 +15,7 @@ python manage.py runserver
 
 # Marketplace Migrations
 python manage.py makemigrations marketplace
+<<<<<<< Updated upstream
 python manage.py migrate
 
 
@@ -37,3 +38,6 @@ psql "postgresql://myuser:mypassword@localhost:5432/mydb"
 
 # database selecting emails
  psql "postgresql://myuser:mypassword@localhost:5432/mydb" -c "SELECT id, email FROM accounts_user ORDER BY id DESC LIMIT 20;"
+=======
+python manage.py migrate
+>>>>>>> Stashed changes
