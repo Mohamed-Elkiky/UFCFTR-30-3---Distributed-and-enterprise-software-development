@@ -42,6 +42,24 @@
       {% endif %}
     </div>
 
+    <!-- Add to Basket -->
+    {% if product.stock_qty > 0 %}
+      {% if user.is_authenticated and user.is_customer %}
+        <form method="post" action="{% url 'cart:cart_add' product.pk %}" class="add-to-basket-form">
+          {% csrf_token %}
+          <div class="qty-row">
+            <label for="qty">Quantity:</label>
+            <input type="number" id="qty" name="quantity" value="1" min="1" max="{{ product.stock_qty }}" class="qty-input">
+          </div>
+          <button type="submit" class="btn btn--primary btn--lg">Add to Basket</button>
+        </form>
+      {% elif user.is_authenticated %}
+        <p class="muted">Only customer accounts can add items to a basket.</p>
+      {% else %}
+        <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn--primary btn--lg">Login to add to basket</a>
+      {% endif %}
+    {% endif %}
+
     <!-- Allergen Warning Section (TC-015) -->
     <div class="allergen-section">
       <h3>⚠️ Allergen Information</h3>
@@ -102,5 +120,9 @@
   .product-images { margin: 20px 0; }
   .product-image { max-width: 300px; margin: 10px 10px 10px 0; border-radius: 8px; }
   .back-link { margin-top: 20px; }
+  .add-to-basket-form { margin: 20px 0; }
+  .qty-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .qty-input { width: 70px; padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px; font: inherit; }
+  .btn--lg { padding: .7rem 1.6rem; font-size: 1rem; }
 </style>
 {% endblock %}
