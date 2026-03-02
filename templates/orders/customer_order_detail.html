@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Order {{ order.id }} | BRFN{% endblock %}
+
+{% block content %}
+<section class="auth-card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+    <h1 style="margin: 0;">Order detail</h1>
+    <a href="{% url 'orders:customer_orders' %}" class="btn btn--ghost" style="font-size: 0.85rem;">← All orders</a>
+  </div>
+
+  <div style="font-family: monospace; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">{{ order.id }}</div>
+
+  <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-muted);">
+    <span>Placed: {{ order.created_at|date:"d M Y, H:i" }}</span>
+    <span>Status: <strong style="color: var(--text);">{{ order.get_status_display }}</strong></span>
+    <span>Delivery: {{ order.delivery_date|date:"d M Y" }}</span>
+  </div>
+
+  <!-- Items by producer -->
+  <h2 style="font-size: 1.1rem; margin-bottom: 0.75rem;">Items</h2>
+  {% for producer_order in order.producer_orders.all %}
+    <div style="margin-bottom: 1rem; padding: 1rem; border: 1px solid var(--border); border-radius: 12px;">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+        <strong>{{ producer_order.producer.business_name }}</strong>
+        {% if producer_order.delivery_date %}
+          <span style="font-size: 0.85rem; color: var(--text-muted);">Delivery: {{ producer_order.delivery_date|date:"d M Y" }}</span>
+        {% endif %}
+      </div>
+
+      {% for item in order.items.all %}
+        {% if item.product.producer == producer_order.producer %}
+          <div style="display: flex; justify-content: space-between; font-size: 0.95rem; padding: 0.3rem 0;">
+            <span>{{ item.product_name }} × {{ item.quantity }}</span>
+            <span>£{% widthratio item.line_total_pence 100 1 %}</span>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  {% endfor %}
+
+  <!-- Totals -->
+  <div style="margin-top: 1rem; padding: 1rem; background: var(--surface-alt, #f9f6f1); border-radius: 12px;">
+    <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;">
+      <span>Subtotal</span>
+      <span>£{% widthratio order.subtotal_pence 100 1 %}</span>
+    </div>
+    <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem; color: var(--text-muted); font-size: 0.9rem;">
+      <span>Network commission (5%)</span>
+      <span>£{% widthratio order.commission_pence 100 1 %}</span>
+    </div>
+    <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 1.1rem; padding-top: 0.5rem; border-top: 1px solid var(--border);">
+      <span>Total paid</span>
+      <span>£{% widthratio order.total_pence 100 1 %}</span>
+    </div>
+  </div>
+
+  <!-- Delivery address -->
+  <h2 style="font-size: 1.1rem; margin: 1.5rem 0 0.5rem;">Delivery address</h2>
+  <p style="font-size: 0.95rem; white-space: pre-line; color: var(--text-muted);">{{ order.delivery_address }}</p>
+
+  {% if order.special_instructions %}
+    <h2 style="font-size: 1.1rem; margin: 1rem 0 0.5rem;">Special instructions</h2>
+    <p style="font-size: 0.95rem; color: var(--text-muted);">{{ order.special_instructions }}</p>
+  {% endif %}
+
+  {% if payment %}
+    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 1.5rem;">
+      Payment ref: <code>{{ payment.provider_ref }}</code>
+    </p>
+  {% endif %}
+</section>
+{% endblock %}

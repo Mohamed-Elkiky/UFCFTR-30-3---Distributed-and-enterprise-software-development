@@ -36,6 +36,7 @@
             name="delivery_date_{{ producer.pk }}"
             class="form-control"
             min="{{ data.earliest_delivery }}"
+            {% if data.latest_delivery %}max="{{ data.latest_delivery }}"{% endif %}
             required
           />
         </div>

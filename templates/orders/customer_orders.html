@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}My Orders | BRFN{% endblock %}
+
+{% block content %}
+<section class="auth-card">
+  <h1>My Orders</h1>
+
+  {% if orders %}
+    <div style="display: flex; flex-direction: column; gap: 1rem;">
+      {% for order in orders %}
+        <div style="padding: 1rem; border: 1px solid var(--border); border-radius: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <div>
+              <span style="font-family: monospace; font-size: 0.85rem; color: var(--text-muted);">{{ order.id }}</span>
+            </div>
+            <span style="font-size: 0.85rem; padding: 0.2rem 0.6rem; border-radius: 6px; background: var(--surface-alt, #f9f6f1);">
+              {{ order.get_status_display }}
+            </span>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+            <div style="font-size: 0.9rem; color: var(--text-muted);">
+              Placed: {{ order.created_at|date:"d M Y" }}
+              &nbsp;·&nbsp;
+              {{ order.producer_orders.count }} producer{{ order.producer_orders.count|pluralize }}
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <strong>£{% widthratio order.total_pence 100 1 %}</strong>
+              <a href="{% url 'orders:customer_order_detail' order.id %}" class="btn btn--ghost" style="font-size: 0.85rem; padding: 0.35rem 0.75rem;">View</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p style="color: var(--text-muted);">You haven't placed any orders yet.</p>
+    <a href="{% url 'marketplace:home' %}" class="btn btn--primary" style="margin-top: 1rem;">Browse products</a>
+  {% endif %}
+</section>
+{% endblock %}

@@ -4,6 +4,7 @@ from datetime import date
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
@@ -62,7 +63,10 @@ def add_to_cart_view(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
     quantity = int(request.POST.get("quantity", 1))
     add_to_cart(cart, product, quantity)
-    messages.success(request, f'"{product.name}" added to your basket.')
+
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+        return JsonResponse({"status": "ok", "cart_count": cart.items.count()})
+
     referer = request.META.get("HTTP_REFERER", "")
     return redirect(referer if referer else "cart:cart_detail")
 
@@ -148,6 +152,23 @@ def checkout(request):
                 )
                 continue
 
+            # Delivery must not be after the earliest best-before date in this group
+            if producer:
+                items_for_producer = grouped[producer]
+                best_befores = [
+                    i.product.best_before_date
+                    for i in items_for_producer
+                    if i.product.best_before_date
+                ]
+                if best_befores:
+                    latest_allowed = min(best_befores)
+                    if parsed > latest_allowed:
+                        errors.append(
+                            f"Delivery date for {producer_name} must be on or before "
+                            f"{latest_allowed} (earliest best-before date in your order)."
+                        )
+                        continue
+
             if producer:
                 delivery_dates_by_producer[str(producer.pk)] = parsed
 
@@ -181,16 +202,15 @@ def checkout(request):
             except Exception as e:
                 messages.error(request, f"There was a problem placing your order: {e}")
 
-    grouped_with_dates = {
-        producer: {
+    grouped_with_dates = {}
+    for producer, items in grouped.items():
+        best_befores = [i.product.best_before_date for i in items if i.product.best_before_date]
+        grouped_with_dates[producer] = {
             "items": items,
             "earliest_delivery": earliest_delivery.isoformat(),
-            "subtotal_pence": sum(
-                i.product.price_pence * i.quantity for i in items
-            ),
+            "latest_delivery": min(best_befores).isoformat() if best_befores else "",
+            "subtotal_pence": sum(i.product.price_pence * i.quantity for i in items),
         }
-        for producer, items in grouped.items()
-    }
 
     total_pence = get_cart_total_pence(cart)
     commission_pence = int(total_pence * 0.05)

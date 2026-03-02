@@ -1,10 +1,11 @@
 # apps/orders/views.py
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 
 from apps.common.permissions import producer_required
-from apps.orders.models import ProducerOrder
+from apps.orders.models import CustomerOrder, ProducerOrder
 
 
 @login_required
@@ -40,4 +41,51 @@ def producer_order_detail(request, order_id):
         request,
         "producer/order_detail.html",
         {"producer_order": producer_order},
+    )
+
+
+@login_required
+def customer_orders(request):
+    """
+    Customer order history list view.
+    Shows all CustomerOrders for the logged-in customer.
+    """
+    if not hasattr(request.user, "customer_profile"):
+        messages.error(request, "You need a customer account to view orders.")
+        return redirect("accounts:dashboard")
+
+    orders = (
+        CustomerOrder.objects
+        .filter(customer=request.user.customer_profile)
+        .prefetch_related("producer_orders__producer")
+        .order_by("-created_at")
+    )
+
+    return render(request, "orders/customer_orders.html", {"orders": orders})
+
+
+@login_required
+def customer_order_detail(request, order_id):
+    """
+    Customer order detail view.
+    Only allows access to orders belonging to the logged-in customer.
+    """
+    if not hasattr(request.user, "customer_profile"):
+        messages.error(request, "You need a customer account to view orders.")
+        return redirect("accounts:dashboard")
+
+    order = get_object_or_404(
+        CustomerOrder,
+        id=order_id,
+        customer=request.user.customer_profile,
+    )
+    payment = getattr(order, "payment", None)
+
+    return render(
+        request,
+        "orders/customer_order_detail.html",
+        {
+            "order": order,
+            "payment": payment,
+        },
     )

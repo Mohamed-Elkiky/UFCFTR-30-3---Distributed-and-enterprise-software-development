@@ -507,6 +507,30 @@
 
   {% block extra_js %}{% endblock %}
 
+  <!-- Add-to-basket AJAX: submit without page reload -->
+  <script>
+    (function () {
+      document.addEventListener('submit', function (e) {
+        var form = e.target;
+        if (!form.action || !form.action.includes('/cart/add/')) return;
+        e.preventDefault();
+        fetch(form.action, {
+          method: 'POST',
+          headers: { 'X-Requested-With': 'XMLHttpRequest' },
+          body: new FormData(form),
+        })
+          .then(function (res) { return res.json(); })
+          .then(function (data) {
+            var badge = document.querySelector('.cart-badge');
+            if (badge && data.cart_count !== undefined) {
+              badge.textContent = data.cart_count;
+            }
+          })
+          .catch(function () { form.submit(); });
+      });
+    })();
+  </script>
+
   <!-- Theme Toggle Script -->
   <script>
     (function() {
