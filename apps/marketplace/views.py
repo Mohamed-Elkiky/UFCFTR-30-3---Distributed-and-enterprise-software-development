@@ -21,7 +21,7 @@ def home(request):
         availability='unavailable'
     ).exclude(
         availability='out_of_season'
-    ).select_related('producer', 'category').prefetch_related('allergen_links__allergen')
+    ).select_related('producer', 'category').prefetch_related('allergen_links__allergen', 'images')
 
     # --- Search ---
     q = request.GET.get('q', '').strip()

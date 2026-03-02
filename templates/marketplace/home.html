@@ -99,9 +99,15 @@
       <article class="product-card">
         <a href="{% url 'marketplace:product_detail' product.pk %}" class="product-card-link">
           <div class="product-image">
-            <div class="product-image-placeholder">
-              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Z"/><path d="M12 6v6l4 2"/></svg>
-            </div>
+            {% with img=product.images.first %}
+              {% if img and img.url %}
+                <img src="{{ img.url }}" alt="{{ product.name }}" class="product-img" style="width:100%;height:100%;object-fit:cover;" loading="lazy">
+              {% else %}
+                <div class="product-image-placeholder">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Z"/><path d="M12 6v6l4 2"/></svg>
+                </div>
+              {% endif %}
+            {% endwith %}
             {% if product.organic_certified %}
               <span class="product-badge badge-organic">Organic</span>
             {% endif %}
