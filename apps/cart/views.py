@@ -22,6 +22,7 @@ from apps.orders.services.lead_time import (
     validate_delivery_date,
 )
 from apps.orders.services.create_order import create_orders_from_cart
+from apps.payments.gateways.mock import MockGateway
 
 
 def _customer_required(request):
@@ -61,7 +62,9 @@ def add_to_cart_view(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
     quantity = int(request.POST.get("quantity", 1))
     add_to_cart(cart, product, quantity)
-    return redirect(request.META.get("HTTP_REFERER", "cart:cart_detail"))
+    messages.success(request, f'"{product.name}" added to your basket.')
+    referer = request.META.get("HTTP_REFERER", "")
+    return redirect(referer if referer else "cart:cart_detail")
 
 
 @login_required
@@ -95,7 +98,7 @@ def update_cart_view(request, product_id):
 def checkout(request):
     """
     GET: Show checkout page with cart grouped by producer and min delivery dates.
-    POST: Validate delivery dates, create orders, redirect to confirmation.
+    POST: Validate delivery dates, create orders, process payment, redirect to confirmation.
     TC-007 (single vendor), TC-008 (multi-vendor).
     """
     if not _customer_required(request):
@@ -124,26 +127,18 @@ def checkout(request):
                 if producer
                 else "delivery_date_default"
             )
-            raw_date = request.POST.get(field_name) or request.POST.get(
-                "delivery_date"
-            )
+            raw_date = request.POST.get(field_name) or request.POST.get("delivery_date")
 
-            producer_name = (
-                producer.business_name if producer else "your order"
-            )
+            producer_name = producer.business_name if producer else "your order"
 
             if not raw_date:
-                errors.append(
-                    f"Please select a delivery date for {producer_name}."
-                )
+                errors.append(f"Please select a delivery date for {producer_name}.")
                 continue
 
             try:
                 parsed = date.fromisoformat(raw_date)
             except ValueError:
-                errors.append(
-                    f"Invalid delivery date for {producer_name}."
-                )
+                errors.append(f"Invalid delivery date for {producer_name}.")
                 continue
 
             if not validate_delivery_date(parsed):
@@ -174,19 +169,17 @@ def checkout(request):
                     delivery_dates_by_producer=delivery_dates_by_producer,
                     special_instructions=special_instructions,
                 )
-                messages.success(
-                    request,
-                    "Your order has been placed successfully!",
-                )
-                return redirect(
-                    "cart:order_confirmed",
-                    order_id=customer_order.pk,
-                )
+
+                # Process payment via mock gateway
+                gw = MockGateway()
+                result = gw.initiate(customer_order.total_pence, customer_order.pk)
+                gw.capture(result["ref"])
+
+                messages.success(request, "Your order has been placed successfully!")
+                return redirect("cart:order_confirmed", order_id=customer_order.pk)
+
             except Exception as e:
-                messages.error(
-                    request,
-                    f"There was a problem placing your order: {e}",
-                )
+                messages.error(request, f"There was a problem placing your order: {e}")
 
     grouped_with_dates = {
         producer: {
@@ -201,6 +194,7 @@ def checkout(request):
 
     total_pence = get_cart_total_pence(cart)
     commission_pence = int(total_pence * 0.05)
+    grand_total_pence = total_pence + commission_pence
 
     return render(
         request,
@@ -209,6 +203,7 @@ def checkout(request):
             "grouped": grouped_with_dates,
             "total_pence": total_pence,
             "commission_pence": commission_pence,
+            "grand_total_pence": grand_total_pence,
             "earliest_delivery": earliest_delivery.isoformat(),
             "customer_profile": request.user.customer_profile,
         },
@@ -227,14 +222,14 @@ def order_confirmed(request, order_id):
     order = get_object_or_404(CustomerOrder, id=order_id)
 
     if order.customer != request.user.customer_profile:
-        messages.error(
-            request,
-            "You do not have permission to view this order.",
-        )
+        messages.error(request, "You do not have permission to view this order.")
         return redirect("marketplace:home")
 
     producer_orders = order.producer_orders.select_related("producer").all()
     items = order.items.select_related("product").all()
+
+    # Fetch payment info if available
+    payment = getattr(order, "payment", None)
 
     return render(
         request,
@@ -243,5 +238,6 @@ def order_confirmed(request, order_id):
             "order": order,
             "producer_orders": producer_orders,
             "items": items,
+            "payment": payment,
         },
     )

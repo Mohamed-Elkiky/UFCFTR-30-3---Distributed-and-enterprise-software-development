@@ -801,6 +801,12 @@ img {
   border-color: var(--border-strong);
 }
 
+.btn--full {
+  width: 100%;
+  box-sizing: border-box;
+  justify-content: center;
+}
+
 /* ---------- Product grid/cards ---------- */
 .grid {
   margin-top: 1.25rem;

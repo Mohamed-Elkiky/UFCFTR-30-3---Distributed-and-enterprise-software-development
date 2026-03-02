@@ -1,12 +1,13 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block body_class %}page-home
-  <style>
-    .product-card-actions { padding: 0 1rem 1rem; }
-    .product-card-actions form, .product-card-actions a { display: block; }
-    .btn--full { width: 100%; text-align: center; box-sizing: border-box; }
-  </style>
+{% block body_class %}page-home{% endblock %}
+
+{% block extra_head %}
+<style>
+  .product-card-actions { padding: 0 1rem 1rem; }
+  .product-card-actions form, .product-card-actions a { display: block; }
+</style>
 {% endblock %}
 
 {% block content %}
