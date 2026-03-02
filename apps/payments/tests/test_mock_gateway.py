@@ -44,12 +44,17 @@ class MockGatewayInitiateTests(TestCase):
         result = self.gw.initiate(1000, self.order.id)
         self.assertTrue(result["ref"].startswith("MOCK-"))
 
-    def test_creates_pending_transaction(self):
+    def test_creates_authorised_transaction(self):
         result = self.gw.initiate(1000, self.order.id)
-        tx = PaymentTransaction.objects.get(external_reference=result["ref"])
-        self.assertEqual(tx.status, PaymentTransaction.Status.PENDING)
+        tx = PaymentTransaction.objects.get(provider_ref=result["ref"])
+        self.assertEqual(tx.status, PaymentTransaction.Status.AUTHORISED)
         self.assertEqual(tx.amount_pence, 1000)
-        self.assertEqual(tx.payment_method, PaymentTransaction.PaymentMethod.MOCK)
+        self.assertEqual(tx.provider, "mock")
+
+    def test_links_to_correct_order(self):
+        result = self.gw.initiate(1000, self.order.id)
+        tx = PaymentTransaction.objects.get(provider_ref=result["ref"])
+        self.assertEqual(tx.customer_order_id, self.order.id)
 
 
 class MockGatewayCaptureTests(TestCase):
@@ -62,7 +67,7 @@ class MockGatewayCaptureTests(TestCase):
         result = self.gw.capture(self.ref)
         self.assertEqual(result["status"], "captured")
 
-    def test_updates_transaction_to_completed(self):
+    def test_updates_transaction_to_captured(self):
         self.gw.capture(self.ref)
-        tx = PaymentTransaction.objects.get(external_reference=self.ref)
-        self.assertEqual(tx.status, PaymentTransaction.Status.COMPLETED)
+        tx = PaymentTransaction.objects.get(provider_ref=self.ref)
+        self.assertEqual(tx.status, PaymentTransaction.Status.CAPTURED)

@@ -2,71 +2,53 @@
 
 from __future__ import annotations
 
-from decimal import Decimal
-from typing import Union, Iterable
+import datetime
 
 from django.db import transaction
 
-from apps.orders.models import CustomerOrder, ProducerOrder
-from apps.payments.models import CommissionRecord
-
-# 5% = 500 basis points
-COMMISSION_RATE_BP = 500
-COMMISSION_RATE_DECIMAL = Decimal("0.05")
+from apps.orders.models import CustomerOrder
+from apps.payments.models import CommissionPolicy, OrderCommission
 
 
-def calculate_commission(gross_pence: int) -> int:
-    """
-    Returns round(gross_pence * 500 / 10000) as int.
-    """
-    return int(round(gross_pence * COMMISSION_RATE_BP / 10000))
+def get_active_policy(on_date: datetime.date | None = None) -> CommissionPolicy:
+    """Return the CommissionPolicy active on *on_date* (defaults to today)."""
+    if on_date is None:
+        on_date = datetime.date.today()
+    policy = (
+        CommissionPolicy.objects.filter(valid_from__lte=on_date)
+        .filter(valid_to__isnull=True) | CommissionPolicy.objects.filter(
+            valid_from__lte=on_date, valid_to__gte=on_date
+        )
+    ).order_by("-valid_from").first()
+    if policy is None:
+        raise ValueError("No active CommissionPolicy found for date %s" % on_date)
+    return policy
 
 
-def calculate_producer_payout(gross_pence: int) -> int:
-    """
-    Returns gross_pence - calculate_commission(gross_pence).
-    """
-    return gross_pence - calculate_commission(gross_pence)
+def calculate_commission(gross_pence: int, rate_bp: int) -> int:
+    """Returns round(gross_pence * rate_bp / 10000) as int."""
+    return int(round(gross_pence * rate_bp / 10000))
 
 
 @transaction.atomic
-def record_order_commission(customer_order: CustomerOrder) -> list[CommissionRecord]:
+def record_order_commission(customer_order: CustomerOrder) -> OrderCommission:
     """
-    Create/update CommissionRecord rows for ALL ProducerOrders belonging to this CustomerOrder.
+    Create or update the OrderCommission for a CustomerOrder.
 
-    - Uses ProducerOrder.subtotal_pence as the gross amount for that producer
-    - Stores commission + payout in CommissionRecord
-    - Also updates ProducerOrder.commission_pence and ProducerOrder.producer_payment_pence
-      to keep the order tables consistent.
+    Uses the active CommissionPolicy and the order's total_pence as gross.
     """
-    records: list[CommissionRecord] = []
+    policy = get_active_policy(customer_order.created_at.date() if customer_order.created_at else None)
+    gross_pence = int(customer_order.total_pence or 0)
+    commission_pence = calculate_commission(gross_pence, policy.rate_bp)
+    net_pence = gross_pence - commission_pence
 
-    producer_orders: Iterable[ProducerOrder] = customer_order.producer_orders.all()
-
-    for po in producer_orders:
-        gross_pence = int(po.subtotal_pence or 0)
-        commission_pence = calculate_commission(gross_pence)
-        payout_pence = gross_pence - commission_pence
-
-        # Keep ProducerOrder totals consistent with service calculation
-        if po.commission_pence != commission_pence or po.producer_payment_pence != payout_pence:
-            po.commission_pence = commission_pence
-            po.producer_payment_pence = payout_pence
-            po.save(update_fields=["commission_pence", "producer_payment_pence"])
-
-        record, _created = CommissionRecord.objects.update_or_create(
-            producer_order=po,
-            defaults={
-                "order_value_pence": gross_pence,
-                "commission_rate": COMMISSION_RATE_DECIMAL,
-                "commission_pence": commission_pence,
-                "producer_payout_pence": payout_pence,
-            },
-        )
-        records.append(record)
-
-    # Optional: you could also sync CustomerOrder.commission_pence here if you want:
-    # customer_order.commission_pence = sum(r.commission_pence for r in records)
-    # customer_order.save(update_fields=["commission_pence"])
-
-    return records
+    record, _ = OrderCommission.objects.update_or_create(
+        customer_order=customer_order,
+        defaults={
+            "commission_policy": policy,
+            "gross_pence": gross_pence,
+            "commission_pence": commission_pence,
+            "net_pence": net_pence,
+        },
+    )
+    return record

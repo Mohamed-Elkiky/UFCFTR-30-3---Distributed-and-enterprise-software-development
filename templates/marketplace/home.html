@@ -1,7 +1,13 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block body_class %}page-home{% endblock %}
+{% block body_class %}page-home
+  <style>
+    .product-card-actions { padding: 0 1rem 1rem; }
+    .product-card-actions form, .product-card-actions a { display: block; }
+    .btn--full { width: 100%; text-align: center; box-sizing: border-box; }
+  </style>
+{% endblock %}
 
 {% block content %}
   <!-- Hero Section -->
@@ -151,6 +157,19 @@
             </div>
           </div>
         </a>
+        <div class="product-card-actions">
+          {% if user.is_authenticated and user.is_customer %}
+            <form method="post" action="{% url 'cart:cart_add' product.pk %}">
+              {% csrf_token %}
+              <input type="hidden" name="quantity" value="1">
+              <button type="submit" class="btn btn--primary btn--full">Add to Basket</button>
+            </form>
+          {% elif user.is_authenticated %}
+            {# Producer/admin accounts do not have a basket #}
+          {% else %}
+            <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn--ghost btn--full">Login to add</a>
+          {% endif %}
+        </div>
       </article>
       {% empty %}
         <p class="no-products">No products available at the moment.</p>

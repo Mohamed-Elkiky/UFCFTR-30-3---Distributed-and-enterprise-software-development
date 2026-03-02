@@ -1,147 +1,149 @@
 # apps/payments/models.py
 """
 Payment models for Bristol Regional Food Network.
-Handles payment transactions, commission tracking, and weekly settlements.
-Related test cases: TC-012, TC-025
+TC-007: PaymentTransaction, CommissionPolicy, OrderCommission
+TC-012: SettlementWeek, ProducerSettlement, ProducerOrderSettlementLink
 """
 
 import uuid
 from django.db import models
-from django.utils import timezone
 
 
 class PaymentTransaction(models.Model):
-    """
-    Records individual payment transactions for orders.
-    """
-    
+    """Records a single payment attempt against a customer order (TC-007)."""
+
     class Status(models.TextChoices):
-        PENDING = 'pending', 'Pending'
-        COMPLETED = 'completed', 'Completed'
+        INITIATED = 'initiated', 'Initiated'
+        AUTHORISED = 'authorised', 'Authorised'
+        CAPTURED = 'captured', 'Captured'
         FAILED = 'failed', 'Failed'
         REFUNDED = 'refunded', 'Refunded'
-    
-    class PaymentMethod(models.TextChoices):
-        CARD = 'card', 'Card'
-        BANK_TRANSFER = 'bank_transfer', 'Bank Transfer'
-        MOCK = 'mock', 'Mock Payment (Testing)'
-    
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    
-    # Link to the order
-    order = models.OneToOneField(
+    customer_order = models.OneToOneField(
         'orders.CustomerOrder',
         on_delete=models.CASCADE,
-        related_name='payment'
+        related_name='payment',
     )
-    
-    amount_pence = models.IntegerField()  # Total amount paid
-    payment_method = models.CharField(
-        max_length=20,
-        choices=PaymentMethod.choices,
-        default=PaymentMethod.MOCK
-    )
-    
+    provider = models.CharField(max_length=50)          # e.g. 'mock', 'stripe'
+    provider_ref = models.CharField(max_length=255)     # gateway's transaction ref
     status = models.CharField(
         max_length=20,
         choices=Status.choices,
-        default=Status.PENDING
+        default=Status.INITIATED,
     )
-    
-    # External payment reference (e.g., Stripe payment intent ID)
-    external_reference = models.CharField(max_length=255, blank=True, default='')
-    
+    amount_pence = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
     def __str__(self):
-        return f"Payment {self.id} - £{self.amount_pence/100:.2f}"
+        return f"PaymentTransaction {self.provider_ref} ({self.status})"
+
+
+class CommissionPolicy(models.Model):
+    """Defines the commission rate in basis points for a date range (TC-007)."""
+
+    rate_bp = models.IntegerField(help_text="Rate in basis points; 500 = 5%")
+    valid_from = models.DateField()
+    valid_to = models.DateField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-valid_from']
+        verbose_name_plural = 'Commission policies'
+
+    def __str__(self):
+        return f"{self.rate_bp}bp from {self.valid_from}"
+
+
+class OrderCommission(models.Model):
+    """Commission record for a single customer order (TC-007)."""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    customer_order = models.OneToOneField(
+        'orders.CustomerOrder',
+        on_delete=models.CASCADE,
+        related_name='commission',
+    )
+    commission_policy = models.ForeignKey(
+        CommissionPolicy,
+        on_delete=models.PROTECT,
+        related_name='order_commissions',
+    )
+    gross_pence = models.IntegerField()
+    commission_pence = models.IntegerField()
+    net_pence = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Commission on order {self.customer_order_id}: {self.commission_pence}p"
+
+
+class SettlementWeek(models.Model):
+    """Represents a weekly settlement period (TC-012)."""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    week_start = models.DateField(unique=True)
+    week_end = models.DateField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-week_start']
+
+    def __str__(self):
+        return f"Week {self.week_start} – {self.week_end}"
 
 
 class ProducerSettlement(models.Model):
-    """
-    Weekly payment settlement to a producer (TC-012).
-    Aggregates all completed orders for a week and calculates the payout.
-    """
-    
+    """Payout record for one producer within a settlement week (TC-012)."""
+
     class Status(models.TextChoices):
         PENDING = 'pending', 'Pending'
         PROCESSED = 'processed', 'Processed'
-        PAID = 'paid', 'Paid'
-        FAILED = 'failed', 'Failed'
-    
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    
+    settlement_week = models.ForeignKey(
+        SettlementWeek,
+        on_delete=models.CASCADE,
+        related_name='producer_settlements',
+    )
     producer = models.ForeignKey(
         'accounts.ProducerProfile',
         on_delete=models.CASCADE,
-        related_name='settlements'
+        related_name='settlements',
     )
-    
-    # Settlement period (week)
-    week_start = models.DateField()
-    week_end = models.DateField()
-    
-    # Financial summary
-    total_order_value_pence = models.IntegerField(default=0)  # Gross sales
-    commission_pence = models.IntegerField(default=0)  # 5% to network
-    settlement_amount_pence = models.IntegerField(default=0)  # 95% to producer
-    
-    order_count = models.IntegerField(default=0)
-    
+    commission_pence = models.IntegerField(default=0)
+    payout_pence = models.IntegerField(default=0)
     status = models.CharField(
         max_length=20,
         choices=Status.choices,
-        default=Status.PENDING
+        default=Status.PENDING,
     )
-    
-    # Bank transfer reference
-    payment_reference = models.CharField(max_length=255, blank=True, default='')
-    
+    processed_ref = models.CharField(max_length=255, blank=True, default='')
     created_at = models.DateTimeField(auto_now_add=True)
-    paid_at = models.DateTimeField(null=True, blank=True)
-    
+
     class Meta:
-        ordering = ['-week_start']
-        unique_together = ['producer', 'week_start']
-    
+        ordering = ['-created_at']
+        unique_together = [('settlement_week', 'producer')]
+
     def __str__(self):
-        return f"Settlement {self.producer} - {self.week_start}"
+        return f"Settlement {self.producer} / {self.settlement_week}"
 
 
-class CommissionRecord(models.Model):
-    """
-    Individual commission record for audit trail (TC-025).
-    One record per producer order.
-    """
-    
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    
+class ProducerOrderSettlementLink(models.Model):
+    """Links a ProducerOrder to the ProducerSettlement it was included in (TC-012)."""
+
     producer_order = models.OneToOneField(
         'orders.ProducerOrder',
         on_delete=models.CASCADE,
-        related_name='commission_record'
+        primary_key=True,
+        related_name='settlement_link',
     )
-    
-    order_value_pence = models.IntegerField()  # Value of producer's items
-    commission_rate = models.DecimalField(
-        max_digits=5, 
-        decimal_places=4, 
-        default=0.05  # 5%
-    )
-    commission_pence = models.IntegerField()  # Calculated commission
-    producer_payout_pence = models.IntegerField()  # Amount due to producer
-    
-    # Link to settlement (null until settled)
-    settlement = models.ForeignKey(
+    producer_settlement = models.ForeignKey(
         ProducerSettlement,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='commission_records'
+        on_delete=models.CASCADE,
+        related_name='order_links',
     )
-    
-    created_at = models.DateTimeField(auto_now_add=True)
-    
+
     def __str__(self):
-        return f"Commission {self.id} - £{self.commission_pence/100:.2f}"
+        return f"ProducerOrder {self.producer_order_id} → Settlement {self.producer_settlement_id}"
