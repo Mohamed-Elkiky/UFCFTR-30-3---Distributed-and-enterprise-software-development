@@ -37,3 +37,9 @@ psql "postgresql://myuser:mypassword@localhost:5432/mydb"
 
 # database selecting emails
  psql "postgresql://myuser:mypassword@localhost:5432/mydb" -c "SELECT id, email FROM accounts_user ORDER BY id DESC LIMIT 20;"
+
+
+
+# admin account login
+user name = admin@brfn.com
+password = Admin123
