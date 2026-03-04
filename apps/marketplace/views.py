@@ -236,3 +236,32 @@ def product_detail(request, product_id):
         'images': images,
     }
     return render(request, 'marketplace/product_detail.html', context)
+
+
+def product_search(request):
+    """
+    Dedicated search endpoint (TC-005).
+    Searches name, description, and producer business name.
+    Empty query returns all available products.
+    """
+    from django.db.models import Q
+
+    q = request.GET.get('q', '').strip()
+
+    products = Product.objects.filter(
+        availability__in=['in_season', 'available_year_round']
+    ).select_related('producer', 'category')
+
+    if q:
+        products = products.filter(
+            Q(name__icontains=q) |
+            Q(description__icontains=q) |
+            Q(producer__business_name__icontains=q)
+        )
+
+    products = products.order_by('-created_at')
+
+    return render(request, 'marketplace/product_list.html', {
+        'products': products,
+        'query': q,
+    })

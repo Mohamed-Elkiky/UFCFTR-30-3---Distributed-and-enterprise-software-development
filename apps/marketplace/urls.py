@@ -14,6 +14,7 @@ urlpatterns = [
     path('products/<uuid:product_id>/delete/', views.product_delete, name='product_delete'),
     
     # Customer browsing (DESDG2-14)
+    path('search/', views.product_search, name='product_search'),
     path('categories/', views.category_list, name='category_list'),
     path('category/<int:category_id>/', views.product_list_by_category, name='product_list_by_category'),
     path('product/<uuid:product_id>/', views.product_detail, name='product_detail'),

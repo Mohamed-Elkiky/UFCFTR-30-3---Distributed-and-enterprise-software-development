@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="CommissionPolicy",
             fields=[
-                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
                 ("rate_bp", models.IntegerField(help_text="Rate in basis points; 500 = 5%")),
                 ("valid_from", models.DateField()),
                 ("valid_to", models.DateField(blank=True, null=True)),
