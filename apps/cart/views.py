@@ -3,11 +3,11 @@
 from datetime import date
 
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
+from apps.common.permissions import customer_required
 from apps.cart.services.pricing import (
     add_to_cart,
     get_cart_total_pence,
@@ -26,17 +26,9 @@ from apps.orders.services.create_order import create_orders_from_cart
 from apps.payments.gateways.mock import MockGateway
 
 
-def _customer_required(request):
-    """Return True if user has a customer profile, else False."""
-    return hasattr(request.user, "customer_profile")
-
-
-@login_required
+@customer_required
 def cart_detail(request):
     """GET — display the shopping-cart page."""
-    if not _customer_required(request):
-        return redirect("accounts:dashboard")
-
     cart = get_or_create_cart(request.user)
     grouped = group_cart_by_producer(cart)
     total_pence = get_cart_total_pence(cart)
@@ -52,13 +44,10 @@ def cart_detail(request):
     )
 
 
-@login_required
+@customer_required
 @require_POST
 def add_to_cart_view(request, product_id):
     """POST — add a product to the cart, then redirect back."""
-    if not _customer_required(request):
-        return redirect("accounts:dashboard")
-
     cart = get_or_create_cart(request.user)
     product = get_object_or_404(Product, pk=product_id)
     quantity = int(request.POST.get("quantity", 1))
@@ -71,26 +60,20 @@ def add_to_cart_view(request, product_id):
     return redirect(referer if referer else "cart:cart_detail")
 
 
-@login_required
+@customer_required
 @require_POST
 def remove_from_cart_view(request, product_id):
     """POST — remove a product from the cart, then redirect to cart."""
-    if not _customer_required(request):
-        return redirect("accounts:dashboard")
-
     cart = get_or_create_cart(request.user)
     product = get_object_or_404(Product, pk=product_id)
     remove_from_cart(cart, product)
     return redirect("cart:cart_detail")
 
 
-@login_required
+@customer_required
 @require_POST
 def update_cart_view(request, product_id):
     """POST — update the quantity of a product in the cart."""
-    if not _customer_required(request):
-        return redirect("accounts:dashboard")
-
     cart = get_or_create_cart(request.user)
     product = get_object_or_404(Product, pk=product_id)
     quantity = int(request.POST.get("quantity", 1))
@@ -98,17 +81,13 @@ def update_cart_view(request, product_id):
     return redirect("cart:cart_detail")
 
 
-@login_required
+@customer_required
 def checkout(request):
     """
     GET: Show checkout page with cart grouped by producer and min delivery dates.
     POST: Validate delivery dates, create orders, process payment, redirect to confirmation.
     TC-007 (single vendor), TC-008 (multi-vendor).
     """
-    if not _customer_required(request):
-        messages.error(request, "You need a customer account to checkout.")
-        return redirect("accounts:dashboard")
-
     cart = get_or_create_cart(request.user)
     grouped = group_cart_by_producer(cart)
 
@@ -204,7 +183,9 @@ def checkout(request):
 
     grouped_with_dates = {}
     for producer, items in grouped.items():
-        best_befores = [i.product.best_before_date for i in items if i.product.best_before_date]
+        best_befores = [
+            i.product.best_before_date for i in items if i.product.best_before_date
+        ]
         grouped_with_dates[producer] = {
             "items": items,
             "earliest_delivery": earliest_delivery.isoformat(),
@@ -230,15 +211,12 @@ def checkout(request):
     )
 
 
-@login_required
+@customer_required
 def order_confirmed(request, order_id):
     """
     GET: Show order confirmation page.
     TC-007, TC-008.
     """
-    if not _customer_required(request):
-        return redirect("accounts:dashboard")
-
     order = get_object_or_404(CustomerOrder, id=order_id)
 
     if order.customer != request.user.customer_profile:
