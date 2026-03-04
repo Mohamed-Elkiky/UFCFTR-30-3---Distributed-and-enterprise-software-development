@@ -40,6 +40,24 @@
       {% else %}
         <p class="out-of-stock"><strong>Out of Stock</strong></p>
       {% endif %}
+
+      <!-- Allergen Warning Section (TC-015) -->
+      {% if allergens %}
+        <div class="allergen-section allergen-section--warning">
+          <span class="allergen-icon">⚠️</span>
+          <div>
+            <strong>Contains:</strong>
+            {% for pa in allergens %}
+              <span class="allergen-tag">{{ pa.allergen.name }}</span>
+            {% endfor %}
+          </div>
+        </div>
+      {% else %}
+        <div class="allergen-section allergen-section--clear">
+          <span class="allergen-icon">✅</span>
+          <span>No common allergens declared.</span>
+        </div>
+      {% endif %}
     </div>
 
     <!-- Add to Basket -->
@@ -60,34 +78,6 @@
       {% endif %}
     {% endif %}
 
-    <!-- Allergen Warning Section (TC-015) -->
-    <div class="allergen-section">
-      <h3>⚠️ Allergen Information</h3>
-      {% if allergens %}
-        <div class="allergen-warning">
-          <p><strong>Contains:</strong></p>
-          <ul class="allergen-list">
-            {% for pa in allergens %}
-              <li class="allergen-item">{{ pa.allergen.name }}</li>
-            {% endfor %}
-          </ul>
-        </div>
-      {% else %}
-        <p class="no-allergens">No common allergens.</p>
-      {% endif %}
-      <p class="allergen-note"><small>For full allergen information, please contact the producer.</small></p>
-    </div>
-
-    <!-- Product Images -->
-    {% if images %}
-      <div class="product-images">
-        <h3>Product Images</h3>
-        {% for image in images %}
-          <img src="{{ image.url }}" alt="{{ product.name }}" class="product-image">
-        {% endfor %}
-      </div>
-    {% endif %}
-
     <p class="back-link">
       <a href="{% url 'marketplace:home' %}">← Back to marketplace</a>
     </p>
@@ -102,23 +92,30 @@
   .product-description { color: #666; margin: 15px 0; }
   .organic-badge { color: #2e7d32; }
   .out-of-stock { color: #d32f2f; }
-  
+
   .allergen-section {
-    background: #fff3cd;
-    border: 2px solid #ffc107;
-    border-radius: 8px;
-    padding: 15px 20px;
-    margin: 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    margin: 16px 0;
+    font-size: .95rem;
   }
-  .allergen-section h3 { margin-top: 0; color: #856404; }
-  .allergen-warning { background: #fff; padding: 10px; border-radius: 4px; }
-  .allergen-list { margin: 10px 0; padding-left: 20px; }
-  .allergen-item { color: #d32f2f; font-weight: 500; margin: 5px 0; }
-  .no-allergens { color: #2e7d32; font-weight: 500; }
-  .allergen-note { color: #666; margin-top: 10px; }
-  
-  .product-images { margin: 20px 0; }
-  .product-image { max-width: 300px; margin: 10px 10px 10px 0; border-radius: 8px; }
+  .allergen-section--warning { background: #fff3cd; border-left: 4px solid #f0a500; }
+  .allergen-section--clear   { background: #f0faf0; border-left: 4px solid #4caf50; color: #2e7d32; }
+  .allergen-icon { font-size: 1.1rem; flex-shrink: 0; }
+  .allergen-tag {
+    display: inline-block;
+    background: #f0a500;
+    color: #fff;
+    font-size: .8rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 12px;
+    margin: 2px 3px;
+  }
+
   .back-link { margin-top: 20px; }
   .add-to-basket-form { margin: 20px 0; }
   .qty-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
