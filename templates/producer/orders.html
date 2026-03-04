@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Producer Orders{% endblock %}
+
+{% block content %}
+  <section class="card" style="max-width: 1100px; margin: 0 auto;">
+    <h1 class="card__title">Your Orders</h1>
+    <p class="muted" style="margin-top: 0;">Orders assigned to your producer account.</p>
+
+    {% if orders %}
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr>
+              <th style="text-align:left; padding: .6rem; border-bottom: 1px solid var(--border);">Delivery date</th>
+              <th style="text-align:left; padding: .6rem; border-bottom: 1px solid var(--border);">Order</th>
+              <th style="text-align:left; padding: .6rem; border-bottom: 1px solid var(--border);">Customer order</th>
+              <th style="text-align:left; padding: .6rem; border-bottom: 1px solid var(--border);">Status</th>
+              <th style="text-align:left; padding: .6rem; border-bottom: 1px solid var(--border);">Subtotal (pence)</th>
+              <th style="text-align:left; padding: .6rem; border-bottom: 1px solid var(--border);">Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for o in orders %}
+              <tr>
+                <td style="padding: .6rem; border-bottom: 1px solid var(--border);">
+                  {{ o.delivery_date|default:"—" }}
+                </td>
+
+                <td style="padding: .6rem; border-bottom: 1px solid var(--border);">
+                  {{ o.id }}
+                </td>
+
+                <td style="padding: .6rem; border-bottom: 1px solid var(--border);">
+                  {{ o.customer_order.id }}
+                </td>
+
+                <td style="padding: .6rem; border-bottom: 1px solid var(--border);">
+                  {{ o.get_status_display }}
+                </td>
+
+                <td style="padding: .6rem; border-bottom: 1px solid var(--border);">
+                  {{ o.subtotal_pence|default:"0" }}
+                </td>
+
+                <td style="padding: .6rem; border-bottom: 1px solid var(--border);">
+                  <a class="btn btn--ghost" href="{% url 'orders:producer_order_detail' o.id %}">
+                    View
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="muted" style="margin: 0;">No orders yet.</p>
+    {% endif %}
+  </section>
+{% endblock %}

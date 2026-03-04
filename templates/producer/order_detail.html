@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Producer Order{% endblock %}
+
+{% block content %}
+  <section class="card" style="max-width: 900px; margin: 0 auto;">
+    <h1 class="card__title">Producer Order</h1>
+
+    <div class="card__meta">
+      <span><strong>Order:</strong> {{ producer_order.id }}</span>
+      <span><strong>Customer order:</strong> {{ producer_order.customer_order.id }}</span>
+      <span><strong>Delivery:</strong> {{ producer_order.delivery_date|default:"—" }}</span>
+      <span><strong>Status:</strong> {{ producer_order.get_status_display }}</span>
+    </div>
+
+    {% if producer_order.status_notes %}
+      <p class="muted" style="margin: 0;">{{ producer_order.status_notes }}</p>
+    {% endif %}
+
+    <hr class="hr" />
+
+    <h2 class="card__title" style="font-size: 1.05rem;">Update status</h2>
+
+    <form method="post" action="{% url 'orders:update_producer_order_status' producer_order.id %}">
+      {% csrf_token %}
+
+      <div class="form-row" style="align-items: flex-end;">
+        <div style="flex: 1 1 260px; min-width: 240px;">
+          <label for="new_status" class="muted" style="display:block; margin-bottom: .35rem; font-weight: 600;">
+            New status
+          </label>
+
+          <select id="new_status" name="new_status" class="select" required
+            {% if producer_order.status == "delivered" or producer_order.status == "cancelled" %}disabled{% endif %}
+          >
+            <option value="">Select…</option>
+
+            {% if producer_order.status == "pending" %}
+              <option value="confirmed">Confirmed</option>
+              <option value="cancelled">Cancelled</option>
+            {% elif producer_order.status == "confirmed" %}
+              <option value="ready">Ready</option>
+              <option value="cancelled">Cancelled</option>
+            {% elif producer_order.status == "ready" %}
+              <option value="delivered">Delivered</option>
+            {% endif %}
+          </select>
+
+          {% if producer_order.status == "delivered" or producer_order.status == "cancelled" %}
+            <small class="muted" style="display:block; margin-top: .35rem;">
+              This order can no longer be updated.
+            </small>
+          {% endif %}
+        </div>
+
+        <button
+          type="submit"
+          class="btn btn--primary"
+          {% if producer_order.status == "delivered" or producer_order.status == "cancelled" %}disabled{% endif %}
+        >
+          Update
+        </button>
+
+        <a class="btn btn--ghost" href="{% url 'orders:producer_orders' %}">
+          Back to orders
+        </a>
+      </div>
+    </form>
+
+    <hr class="hr" />
+
+    <h2 class="card__title" style="font-size: 1.05rem;">Status history</h2>
+
+    {% if producer_order.status_history.all %}
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr>
+              <th style="text-align:left; padding: .6rem; border-bottom: 1px solid var(--border);">When</th>
+              <th style="text-align:left; padding: .6rem; border-bottom: 1px solid var(--border);">Change</th>
+              <th style="text-align:left; padding: .6rem; border-bottom: 1px solid var(--border);">By</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for h in producer_order.status_history.all %}
+              <tr>
+                <td style="padding: .6rem; border-bottom: 1px solid var(--border);">
+                  {{ h.changed_at }}
+                </td>
+                <td style="padding: .6rem; border-bottom: 1px solid var(--border);">
+                  {{ h.old_status }} → {{ h.new_status }}
+                </td>
+                <td style="padding: .6rem; border-bottom: 1px solid var(--border);">
+                  {{ h.changed_by|default:"—" }}
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="3" class="muted" style="padding: .6rem;">No status changes yet.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="muted" style="margin: 0;">No status changes yet.</p>
+    {% endif %}
+  </section>
+{% endblock %}
