@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}My Settlements | BRFN{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto; padding: 20px;">
+  <h1>Weekly Settlements</h1>
+
+  {% if settlements %}
+    <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+      <thead>
+        <tr style="border-bottom: 2px solid var(--border); text-align: left;">
+          <th style="padding: 10px;">Week</th>
+          <th style="padding: 10px;">Gross</th>
+          <th style="padding: 10px;">Commission (5%)</th>
+          <th style="padding: 10px;">Payout (95%)</th>
+          <th style="padding: 10px;">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in settlements %}
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 10px;">
+              {{ s.settlement_week.week_start }} – {{ s.settlement_week.week_end }}
+            </td>
+            <td style="padding: 10px;">
+              £{% widthratio s.payout_pence|add:s.commission_pence 100 1 %}
+            </td>
+            <td style="padding: 10px;">£{% widthratio s.commission_pence 100 1 %}</td>
+            <td style="padding: 10px;"><strong>£{% widthratio s.payout_pence 100 1 %}</strong></td>
+            <td style="padding: 10px;">
+              {% if s.status == 'processed' %}
+                <span style="color: #2e7d32; font-weight: 600;">✅ Processed</span>
+              {% else %}
+                <span style="color: #f0a500; font-weight: 600;">⏳ Pending</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p style="color: #666; margin-top: 1rem;">No settlements yet. Settlements are processed weekly every Monday.</p>
+  {% endif %}
+</div>
+{% endblock %}

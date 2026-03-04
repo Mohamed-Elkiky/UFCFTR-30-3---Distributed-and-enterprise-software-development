@@ -4,6 +4,16 @@
   <h1>{{ product.name|default:"Product" }}</h1>
 
   {% if product %}
+    {% with img=product.images.first %}
+      {% if img %}
+        {% if img.image %}
+          <img src="{{ img.image.url }}" alt="{{ product.name }}" style="max-width:400px; width:100%; border-radius:12px; margin-bottom:20px; display:block;">
+        {% elif img.url %}
+          <img src="{{ img.url }}" alt="{{ product.name }}" style="max-width:400px; width:100%; border-radius:12px; margin-bottom:20px; display:block;">
+        {% endif %}
+      {% endif %}
+    {% endwith %}
+
     <div class="product-detail-info">
       <p><strong>Price:</strong> {{ product.price_display }}</p>
       

@@ -127,7 +127,6 @@ class ProductAllergen(models.Model):
 
 
 class ProductImage(models.Model):
-    # SQL: product_image(id uuid PK, product_id uuid, url text, created_at timestamptz)
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     product = models.ForeignKey(
         Product,
@@ -136,6 +135,7 @@ class ProductImage(models.Model):
         related_name="images",
     )
     url = models.TextField(null=True, blank=True)
+    image = models.ImageField(upload_to='products/', null=True, blank=True)
     created_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:

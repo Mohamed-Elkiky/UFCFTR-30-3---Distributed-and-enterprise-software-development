@@ -9,6 +9,9 @@ dj-database-url==2.1.0
 # Load .env locally
 python-dotenv==1.0.1
 
+# Image handling
+Pillow==10.3.0
+
 # Testing
 pytest==8.0.2
 pytest-django==4.8.0

@@ -105,11 +105,14 @@
       <!-- Divider -->
       <span class="nav-divider"></span>
 
-      <!-- Auth links -->
-      {% if user.is_authenticated %}
+{% if user.is_authenticated %}
         <div class="nav-user">
           <span class="nav-greeting">{{ user.email }}</span>
           <div class="nav-links">
+            {% if user.role == 'producer' %}
+              <a class="nav-link" href="{% url 'marketplace:product_list' %}">My Products</a>
+              <a class="nav-link" href="{% url 'payments:producer_settlements' %}">Settlements</a>
+            {% endif %}
             <a class="nav-link nav-link--logout" href="{% url 'accounts:logout' %}">Logout</a>
           </div>
         </div>

@@ -9,7 +9,7 @@
                     <h2>{{ action }} Product</h2>
                 </div>
                 <div class="card-body">
-                    <form method="post" novalidate>
+                    <form method="post" enctype="multipart/form-data" novalidate>
                         {% csrf_token %}
                         
                         {% if form.non_field_errors %}
@@ -47,6 +47,26 @@
                             {% endif %}
                         </div>
                         
+                        <!-- Product Image -->
+                        <h5 class="mb-3 mt-4">Product Image</h5>
+                        <div class="mb-3">
+                            {% if product.images.first %}
+                                <img src="{{ product.images.first.image.url }}" alt="Current image" style="max-width:200px; border-radius:8px; margin-bottom:10px; display:block;">
+                                <p class="text-muted" style="font-size:.9rem;">Upload a new image to replace the current one.</p>
+                            {% endif %}
+                            <label for="image-upload-input" class="form-label">Upload Image</label>
+                            <div class="image-drop-zone" id="image-drop-zone">
+                                <div class="drop-zone-text" id="drop-zone-text">
+                                    <span>📷 Drag & drop an image here, or click to browse</span>
+                                </div>
+                                <img id="image-preview" src="#" alt="Preview" style="display:none; max-width:200px; border-radius:8px; margin-top:10px;" />
+                                {{ form.image }}
+                            </div>
+                            {% if form.image.errors %}
+                            <div class="text-danger">{{ form.image.errors }}</div>
+                            {% endif %}
+                        </div>
+
                         <!-- Pricing & Stock -->
                         <h5 class="mb-3 mt-4">Pricing & Stock</h5>
                         
@@ -177,4 +197,67 @@
         </div>
     </div>
 </div>
+
+<style>
+  .image-drop-zone {
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    background: #fafafa;
+  }
+  .image-drop-zone.drag-over {
+    border-color: #8B6914;
+    background: #fff8ee;
+  }
+  .drop-zone-text { color: #888; font-size: 0.95rem; }
+  #image-upload-input { display: none; }
+</style>
+
+<script>
+  const dropZone = document.getElementById('image-drop-zone');
+  const input = document.getElementById('image-upload-input');
+  const preview = document.getElementById('image-preview');
+  const dropText = document.getElementById('drop-zone-text');
+
+  dropZone.addEventListener('click', () => input.click());
+
+  dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('drag-over');
+  });
+
+  dropZone.addEventListener('dragleave', () => {
+    dropZone.classList.remove('drag-over');
+  });
+
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      input.files = dt.files;
+      showPreview(file);
+    }
+  });
+
+  input.addEventListener('change', () => {
+    if (input.files[0]) showPreview(input.files[0]);
+  });
+
+  function showPreview(file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      preview.src = e.target.result;
+      preview.style.display = 'block';
+      dropText.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  }
+</script>
+
 {% endblock %}

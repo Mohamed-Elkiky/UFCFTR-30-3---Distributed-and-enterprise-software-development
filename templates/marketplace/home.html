@@ -106,8 +106,10 @@
       <article class="product-card">
         <a href="{% url 'marketplace:product_detail' product.pk %}" class="product-card-link">
           <div class="product-image">
-            {% with img=product.images.first %}
-              {% if img and img.url %}
+{% with img=product.images.first %}
+              {% if img and img.image %}
+                <img src="{{ img.image.url }}" alt="{{ product.name }}" class="product-img" style="width:100%;height:100%;object-fit:cover;" loading="lazy">
+              {% elif img and img.url %}
                 <img src="{{ img.url }}" alt="{{ product.name }}" class="product-img" style="width:100%;height:100%;object-fit:cover;" loading="lazy">
               {% else %}
                 <div class="product-image-placeholder">
