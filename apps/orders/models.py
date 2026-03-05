@@ -113,6 +113,7 @@ class ProducerOrder(models.Model):
     
     class Meta:
         ordering = ['-created_at']
+        unique_together = [('customer_order', 'producer')]
     
     def __str__(self):
         producer_name = self.producer.business_name if self.producer else 'Unknown'

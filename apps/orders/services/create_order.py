@@ -5,8 +5,10 @@ Handles both single-vendor (TC-007) and multi-vendor (TC-008) orders.
 """
 
 from django.db import transaction
+from django.db.models import F
 
 from apps.cart.services.pricing import group_cart_by_producer
+from apps.marketplace.models import Product
 from apps.orders.models import CustomerOrder, OrderItem, ProducerOrder
 
 
@@ -76,6 +78,7 @@ def create_orders_from_cart(
                 quantity=cart_item.quantity,
                 line_total_pence=line_total,
             )
+            Product.objects.filter(pk=product.pk).update(stock_qty=F('stock_qty') - cart_item.quantity)
 
         commission = int(producer_subtotal * 0.05)
         producer_payment = producer_subtotal - commission

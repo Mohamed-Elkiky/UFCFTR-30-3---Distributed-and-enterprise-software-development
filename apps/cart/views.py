@@ -24,6 +24,7 @@ from apps.orders.services.lead_time import (
 )
 from apps.orders.services.create_order import create_orders_from_cart
 from apps.payments.gateways.mock import MockGateway
+from apps.payments.services.commission import record_order_commission
 
 
 @customer_required
@@ -174,6 +175,7 @@ def checkout(request):
                 gw = MockGateway()
                 result = gw.initiate(customer_order.total_pence, customer_order.pk)
                 gw.capture(result["ref"])
+                record_order_commission(customer_order)
 
                 messages.success(request, "Your order has been placed successfully!")
                 return redirect("cart:order_confirmed", order_id=customer_order.pk)

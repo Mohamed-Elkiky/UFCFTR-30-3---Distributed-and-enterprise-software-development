@@ -61,3 +61,31 @@ class CustomerRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
     """
     def test_func(self):
         return bool(getattr(self.request.user, "is_customer", False))
+
+
+def admin_required(view_func):
+    """
+    Decorator that checks request.user is authenticated and request.user.role == 'admin'.
+    Otherwise returns HttpResponseForbidden.
+    """
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        user = request.user
+
+        if not user.is_authenticated:
+            return HttpResponseForbidden("Authentication required.")
+
+        if getattr(user, "role", None) != "admin":
+            return HttpResponseForbidden("Admin access required.")
+
+        return view_func(request, *args, **kwargs)
+
+    return _wrapped_view
+
+
+class AdminRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
+    """
+    LoginRequiredMixin + UserPassesTestMixin that tests self.request.user.role == 'admin'.
+    """
+    def test_func(self):
+        return getattr(self.request.user, "role", None) == "admin"

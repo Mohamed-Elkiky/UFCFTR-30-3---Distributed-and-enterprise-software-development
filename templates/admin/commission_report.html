@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Commission Report{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width:960px; margin:2rem auto; padding:0 1rem;">
+  <h1>Commission Report</h1>
+
+  <form method="get" style="display:flex; gap:1rem; align-items:flex-end; margin-bottom:1.5rem; flex-wrap:wrap;">
+    <div>
+      <label for="date_from">From</label><br>
+      <input type="date" id="date_from" name="date_from" value="{{ date_from }}" class="form-control">
+    </div>
+    <div>
+      <label for="date_to">To</label><br>
+      <input type="date" id="date_to" name="date_to" value="{{ date_to }}" class="form-control">
+    </div>
+    <div>
+      <button type="submit" class="btn btn-primary">Filter</button>
+    </div>
+    <div style="margin-left:auto;">
+      <a href="?format=csv&date_from={{ date_from }}&date_to={{ date_to }}" class="btn btn-secondary">Download CSV</a>
+    </div>
+  </form>
+
+  <table style="width:100%; border-collapse:collapse;">
+    <thead>
+      <tr style="border-bottom:2px solid #dee2e6; text-align:left;">
+        <th style="padding:0.5rem 0.75rem;">Order ID</th>
+        <th style="padding:0.5rem 0.75rem;">Order Date</th>
+        <th style="padding:0.5rem 0.75rem; text-align:right;">Gross</th>
+        <th style="padding:0.5rem 0.75rem; text-align:right;">Commission</th>
+        <th style="padding:0.5rem 0.75rem; text-align:right;">Net</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in rows %}
+      <tr style="border-bottom:1px solid #dee2e6;">
+        <td style="padding:0.5rem 0.75rem; font-family:monospace; font-size:0.85rem;">{{ r.order_id }}</td>
+        <td style="padding:0.5rem 0.75rem;">{{ r.order_date }}</td>
+        <td style="padding:0.5rem 0.75rem; text-align:right;">£{{ r.gross }}</td>
+        <td style="padding:0.5rem 0.75rem; text-align:right;">£{{ r.commission }}</td>
+        <td style="padding:0.5rem 0.75rem; text-align:right;">£{{ r.net }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5" style="padding:1rem 0.75rem; text-align:center; color:#6c757d;">No commission records found for this period.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr style="border-top:2px solid #dee2e6; font-weight:600;">
+        <td colspan="2" style="padding:0.5rem 0.75rem;">Totals</td>
+        <td style="padding:0.5rem 0.75rem; text-align:right;">£{{ total_gross }}</td>
+        <td style="padding:0.5rem 0.75rem; text-align:right;">£{{ total_commission }}</td>
+        <td style="padding:0.5rem 0.75rem; text-align:right;">£{{ total_net }}</td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+{% endblock %}
