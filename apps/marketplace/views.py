@@ -194,3 +194,42 @@ def product_search(request):
         'products': products,
         'query': q,
     })
+from django.http import JsonResponse
+
+def product_search_json(request):
+    q = request.GET.get('q', '').strip()
+    products = Product.objects.filter(
+        availability__in=['in_season', 'available_year_round']
+    ).select_related('producer', 'category').prefetch_related('images')
+
+    if q:
+        products = products.filter(
+            Q(name__icontains=q) |
+            Q(description__icontains=q) |
+            Q(producer__business_name__icontains=q)
+        )
+
+    results = []
+    for p in products[:24]:
+        img = p.images.first()
+        if img and img.image:
+            image_url = img.image.url
+        elif img and img.url:
+            image_url = img.url
+        else:
+            image_url = None
+
+        results.append({
+            'id': str(p.pk),
+            'name': p.name,
+            'url': f'/product/{p.pk}/',
+            'price_display': p.price_display,
+            'unit': p.unit,
+            'category': p.category.name if p.category else '',
+            'producer': p.producer.business_name if p.producer else '',
+            'availability': p.availability,
+            'organic_certified': p.organic_certified,
+            'image_url': image_url,
+        })
+
+    return JsonResponse({'results': results})

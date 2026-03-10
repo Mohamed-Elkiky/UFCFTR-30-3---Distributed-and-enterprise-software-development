@@ -23,17 +23,14 @@
   <!-- Search & Filter Section -->
   <section class="search-filter-section">
     <form class="search-filter-form" action="" method="get" id="filter-form">
-      <!-- Hidden category field, set by pill clicks -->
       <input type="hidden" name="category" id="category-input" value="{{ selected_category }}">
 
-      <!-- Main Search Bar -->
       <div class="search-bar-wrapper">
         <svg class="search-bar-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-        <input type="search" name="q" class="search-bar-input" placeholder="Search products, producers, or keywords..." value="{{ q }}">
+        <input type="search" name="q" id="live-search-input" class="search-bar-input" placeholder="Search products, producers, or keywords..." value="{{ q }}" autocomplete="off">
         <button type="submit" class="search-bar-btn">Search</button>
       </div>
 
-      <!-- Category Filter Pills -->
       <div class="filter-categories">
         <span class="filter-label">Browse:</span>
         <div class="category-pills">
@@ -45,7 +42,7 @@
             <span class="pill-icon">
               {% if cat.name == "Vegetables" %}🥬
               {% elif cat.name == "Fruit" %}🍎
-              {% elif cat.name == "Dairy" %}🥛
+              {% elif cat.name == "Dairy & Eggs" %}🥛
               {% elif cat.name == "Bakery" %}🍞
               {% elif cat.name == "Meat" %}🥩
               {% elif cat.name == "Preserves" %}🍯
@@ -58,7 +55,6 @@
         </div>
       </div>
 
-      <!-- Additional Filters -->
       <div class="filter-row">
         <div class="filter-group">
           <label class="filter-group-label">Dietary:</label>
@@ -85,7 +81,6 @@
   </section>
 
   <script>
-    // Category pill clicks set the hidden input and submit the form
     document.querySelectorAll('.category-pill').forEach(function(pill) {
       pill.addEventListener('click', function() {
         document.getElementById('category-input').value = this.dataset.category;
@@ -106,7 +101,7 @@
       <article class="product-card">
         <a href="{% url 'marketplace:product_detail' product.pk %}" class="product-card-link">
           <div class="product-image">
-{% with img=product.images.first %}
+            {% with img=product.images.first %}
               {% if img and img.image %}
                 <img src="{{ img.image.url }}" alt="{{ product.name }}" class="product-img" style="width:100%;height:100%;object-fit:cover;" loading="lazy">
               {% elif img and img.url %}
@@ -174,7 +169,6 @@
               <button type="submit" class="btn btn--primary btn--full">Add to Basket</button>
             </form>
           {% elif user.is_authenticated %}
-            {# Producer/admin accounts do not have a basket #}
           {% else %}
             <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn--ghost btn--full">Login to add</a>
           {% endif %}
@@ -199,4 +193,93 @@
       </div>
     </div>
   </section>
+
+<script>
+(function () {
+  const input = document.getElementById('live-search-input');
+  const grid = document.querySelector('.product-grid');
+  const sectionTitle = document.querySelector('.section-title');
+  const originalHTML = grid.innerHTML;
+  const originalTitle = sectionTitle.textContent;
+  let debounceTimer;
+
+  const isCustomer = {{ user.is_authenticated|yesno:"true,false" }} && '{{ user.role }}' === 'customer';
+  const isAuthenticated = {{ user.is_authenticated|yesno:"true,false" }};
+
+  function renderProducts(results, q) {
+    if (!results.length) {
+      grid.innerHTML = '<p class="no-products">No products found for "' + q + '".</p>';
+      return;
+    }
+
+    grid.innerHTML = results.map(function(p) {
+      const imgHTML = p.image_url
+        ? `<img src="${p.image_url}" alt="${p.name}" class="product-img" style="width:100%;height:100%;object-fit:cover;" loading="lazy">`
+        : `<div class="product-image-placeholder"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Z"/><path d="M12 6v6l4 2"/></svg></div>`;
+
+      const organicBadge = p.organic_certified
+        ? `<span class="product-badge badge-organic">Organic</span>` : '';
+
+      const availClass = p.availability === 'in_season'
+        ? 'availability-in-season'
+        : p.availability === 'available_year_round'
+        ? 'availability-available' : 'availability-unavailable';
+
+      const availLabel = p.availability === 'in_season' ? 'In Season'
+        : p.availability === 'available_year_round' ? 'Available' : p.availability;
+
+      const actionHTML = isCustomer
+        ? `<form method="post" action="/cart/add/${p.id}/"><input type="hidden" name="csrfmiddlewaretoken" value="${getCookie('csrftoken')}"><input type="hidden" name="quantity" value="1"><button type="submit" class="btn btn--primary btn--full">Add to Basket</button></form>`
+        : isAuthenticated ? ''
+        : `<a href="/accounts/login/" class="btn btn--ghost btn--full">Login to add</a>`;
+
+      return `
+        <article class="product-card">
+          <a href="${p.url}" class="product-card-link">
+            <div class="product-image">
+              ${imgHTML}
+              ${organicBadge}
+            </div>
+            <div class="product-info">
+              ${p.category ? `<span class="product-category">${p.category}</span>` : ''}
+              <h3 class="product-name">${p.name}</h3>
+              ${p.producer ? `<p class="product-producer">${p.producer}</p>` : ''}
+              <div class="product-footer">
+                <span class="product-price">${p.price_display} <span class="product-unit">/ ${p.unit}</span></span>
+                <span class="product-availability ${availClass}">${availLabel}</span>
+              </div>
+            </div>
+          </a>
+          <div class="product-card-actions">${actionHTML}</div>
+        </article>`;
+    }).join('');
+  }
+
+  function getCookie(name) {
+    const v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+    return v ? v[2] : '';
+  }
+
+  input.addEventListener('input', function () {
+    const q = this.value.trim();
+    clearTimeout(debounceTimer);
+
+    if (!q) {
+      grid.innerHTML = originalHTML;
+      sectionTitle.textContent = originalTitle;
+      return;
+    }
+
+    debounceTimer = setTimeout(function () {
+      fetch('/search/json/?q=' + encodeURIComponent(q))
+        .then(res => res.json())
+        .then(data => {
+          sectionTitle.textContent = 'Results for "' + q + '"';
+          renderProducts(data.results, q);
+        })
+        .catch(() => {});
+    }, 300);
+  });
+})();
+</script>
 {% endblock %}
