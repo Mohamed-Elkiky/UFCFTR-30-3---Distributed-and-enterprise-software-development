@@ -44,3 +44,9 @@ docker-compose exec web pytest -q
 # admin account login
 user name = admin@brfn.com
 password = Admin123
+
+
+# if changes was made to db run
+git pull
+docker compose down -v
+docker compose up
