@@ -6,3 +6,5 @@ paul.baker@severnvalleybakers.co.uk | 12345678
 sarah.bee@hartcliffehoney.co.uk | 12345678
 neil.foster@redlandfreerange.co.uk | 12345678
 margaret.cook@cliftonpreserves.co.uk | 12345678
+test@producer.com |12345678
+test@test.com |12345678 (customer)
