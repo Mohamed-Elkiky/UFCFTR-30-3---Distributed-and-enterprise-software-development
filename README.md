@@ -50,3 +50,8 @@ password = Admin123
 git pull
 docker compose down -v
 docker compose up
+
+# command to make the order show up as delievered (swap out the fake order id with the real one that shows up when the order is delivered)
+docker compose exec web python manage.py deliver_order --order-id a1b2c3d4-0001-0001-0001-000000000001
+# command to get the latest order 
+docker compose exec web python manage.py shell -c "from apps.orders.models import CustomerOrder; print(CustomerOrder.objects.latest('created_at').pk)"
