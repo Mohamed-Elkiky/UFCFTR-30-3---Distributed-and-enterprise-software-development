@@ -28,8 +28,8 @@ def producer_required(view_func):
 
 def customer_required(view_func):
     """
-    Decorator that checks request.user is authenticated and request.user.role == 'customer'.
-    Otherwise returns HttpResponseForbidden.
+    Decorator that checks request.user is authenticated, has role == 'customer',
+    and has a customer_profile. Otherwise returns HttpResponseForbidden.
     """
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
@@ -41,6 +41,9 @@ def customer_required(view_func):
         if getattr(user, "role", None) != "customer":
             return HttpResponseForbidden("Customer access required.")
 
+        if not hasattr(user, "customer_profile"):
+            return HttpResponseForbidden("Customer profile not found. Please complete registration.")
+
         return view_func(request, *args, **kwargs)
 
     return _wrapped_view
@@ -48,8 +51,7 @@ def customer_required(view_func):
 
 class ProducerRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
     """
-    LoginRequiredMixin + UserPassesTestMixin that tests self.request.user.is_producer
-    (as per Jira requirement).
+    LoginRequiredMixin + UserPassesTestMixin that tests self.request.user.is_producer.
     """
     def test_func(self):
         return bool(getattr(self.request.user, "is_producer", False))

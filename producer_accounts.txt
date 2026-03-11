@@ -8,3 +8,4 @@ neil.foster@redlandfreerange.co.uk | 12345678
 margaret.cook@cliftonpreserves.co.uk | 12345678
 test@producer.com |12345678
 test@test.com |12345678 (customer)
+test@cart.com |12345678 (customer)
