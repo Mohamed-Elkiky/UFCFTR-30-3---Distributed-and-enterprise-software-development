@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.db.models import Q
 
 from apps.common.permissions import producer_required
+from apps.notifications.services.low_stock import check_and_notify_low_stock
 
 from .models import Product, ProductCategory, ProductAllergen
 from .forms import ProductForm
@@ -157,6 +158,37 @@ def product_list_by_category(request, category_id):
         'products': products,
     })
 
+@producer_required
+def update_stock(request, product_id):
+    """POST only — update stock_qty and availability for a product (TC-011)."""
+    if request.method != 'POST':
+        return HttpResponseForbidden('POST only.')
+
+    product = get_object_or_404(Product, id=product_id)
+
+    if product.producer != request.user.producer_profile:
+        return HttpResponseForbidden('You do not own this product.')
+
+    raw_qty = request.POST.get('stock_qty', '').strip()
+    availability = request.POST.get('availability', '').strip()
+
+    try:
+        stock_qty = int(raw_qty)
+        if stock_qty < 0:
+            raise ValueError
+    except ValueError:
+        messages.error(request, 'Stock quantity must be a whole number of 0 or more.')
+        return redirect('marketplace:product_list')
+
+    product.stock_qty = stock_qty
+    if availability:
+        product.availability = availability
+    product.save()
+
+    check_and_notify_low_stock(product)
+
+    messages.success(request, f'Stock updated for "{product.name}".')
+    return redirect('marketplace:product_list')
 
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)

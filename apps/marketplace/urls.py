@@ -12,7 +12,7 @@ urlpatterns = [
     path('products/new/', views.product_create, name='product_create'),
     path('products/<uuid:product_id>/edit/', views.product_edit, name='product_edit'),
     path('products/<uuid:product_id>/delete/', views.product_delete, name='product_delete'),
-    
+    path('products/<uuid:product_id>/stock/', views.update_stock, name='update_stock'),
     # Customer browsing (DESDG2-14)
     path('search/', views.product_search, name='product_search'),
     path('categories/', views.category_list, name='category_list'),
