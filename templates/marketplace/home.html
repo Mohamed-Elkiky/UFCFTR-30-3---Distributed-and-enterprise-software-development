@@ -87,6 +87,12 @@
         document.getElementById('filter-form').submit();
       });
     });
+
+    document.querySelectorAll('.filter-checkbox input[type="checkbox"]').forEach(function(cb) {
+      cb.addEventListener('change', function() {
+        document.getElementById('filter-form').submit();
+      });
+    });
   </script>
 
   <!-- Featured Products Section -->

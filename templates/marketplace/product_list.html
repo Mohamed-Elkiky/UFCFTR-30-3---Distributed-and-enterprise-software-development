@@ -2,8 +2,12 @@
 {% block content %}
 <h1>{% if category %}{{ category.name }}{% else %}Products{% endif %}</h1>
 
-<form method="get" style="margin-bottom: 1rem;">
-  <input type="text" name="q" value="{{ q|default:'' }}" placeholder="Search products..." />
+<form method="get" style="margin-bottom: 1rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+  <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Search products..." />
+  <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.9rem;">
+    <input type="checkbox" name="organic" value="1" {% if organic == '1' %}checked{% endif %} />
+    🌿 Certified Organic only
+  </label>
   <button type="submit">Search</button>
 </form>
 
@@ -13,6 +17,9 @@
       <li style="margin-bottom: 0.75rem;">
         <strong>{{ p.name|default:"Unnamed product" }}</strong>
         - {{ p.price_display }}
+        {% if p.organic_certified %}
+          <span style="color: #2e7d32; font-size: 0.85rem;">🌿 Organic</span>
+        {% endif %}
         <br />
         {% if p.producer %}
           <small>Producer: {{ p.producer.business_name }}</small><br />
@@ -24,7 +31,7 @@
     {% endfor %}
   </ul>
 {% else %}
-  <p>No products found.</p>
+  <p>No products found{% if organic == '1' %} — no certified organic products in this selection{% endif %}.</p>
 {% endif %}
 
 {% endblock %}

@@ -147,15 +147,21 @@ def category_list(request):
 
 def product_list_by_category(request, category_id):
     category = get_object_or_404(ProductCategory, id=category_id)
+    organic = request.GET.get('organic', '')
+
     products = Product.objects.filter(
         category=category
     ).exclude(
         availability='unavailable'
     ).order_by('-created_at')
 
+    if organic == '1':
+        products = products.filter(organic_certified=True)
+
     return render(request, 'marketplace/product_list.html', {
         'category': category,
         'products': products,
+        'organic': organic,
     })
 
 @producer_required
@@ -218,6 +224,7 @@ def product_detail(request, product_id):
 
 def product_search(request):
     q = request.GET.get('q', '').strip()
+    organic = request.GET.get('organic', '')
 
     products = Product.objects.filter(
         availability__in=['in_season', 'available_year_round']
@@ -230,12 +237,17 @@ def product_search(request):
             Q(producer__business_name__icontains=q)
         )
 
+    if organic == '1':
+        products = products.filter(organic_certified=True)
+
     products = products.order_by('-created_at')
 
     return render(request, 'marketplace/product_list.html', {
         'products': products,
         'query': q,
+        'organic': organic,
     })
+
 from django.http import JsonResponse
 
 def product_search_json(request):
