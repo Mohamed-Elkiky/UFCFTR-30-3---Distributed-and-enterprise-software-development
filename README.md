@@ -58,3 +58,15 @@ docker compose exec web python manage.py shell -c "from apps.orders.models impor
 
 # geocode test
 docker exec -it ufcftr-30-3---distributed-and-enterprise-software-development-web-1 python manage.py shell -c "from apps.logistics.services.geocoding import geocode_postcode; print(geocode_postcode('BS1 4DJ'))"
+
+# food miles distance calculation 
+docker exec -it ufcftr-30-3---distributed-and-enterprise-software-development-web-1 python manage.py shell -c "
+from apps.logistics.services.distance import haversine_miles, get_food_miles
+from apps.marketplace.models import Product
+from apps.accounts.models import CustomerProfile, ProducerProfile
+from apps.logistics.services.geocoding import geocode_postcode
+customer_lat, customer_lng = geocode_postcode('BS1 5JG')
+for producer in ProducerProfile.objects.filter(latitude__isnull=False):
+    miles = haversine_miles(producer.latitude, producer.longitude, customer_lat, customer_lng)
+    print(f'{producer.business_name} ({producer.postcode}) -> {miles} miles from BS1 5JG')
+"
