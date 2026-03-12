@@ -34,6 +34,29 @@ def cart_detail(request):
     grouped = group_cart_by_producer(cart)
     total_pence = get_cart_total_pence(cart)
 
+    total_food_miles = None
+    if request.user.is_authenticated:
+        try:
+            from apps.logistics.services.distance import get_food_miles
+            customer_profile = request.user.customer_profile
+            if customer_profile.latitude and customer_profile.longitude:
+                seen_producers = set()
+                total = 0.0
+                any_valid = False
+                for item in cart.items.select_related('product__producer'):
+                    producer = item.product.producer
+                    if producer.id in seen_producers:
+                        continue
+                    seen_producers.add(producer.id)
+                    miles = get_food_miles(item.product, customer_profile)
+                    if miles is not None:
+                        total += miles
+                        any_valid = True
+                if any_valid:
+                    total_food_miles = round(total, 1)
+        except Exception:
+            pass
+
     return render(
         request,
         "cart/cart_detail.html",
@@ -41,9 +64,9 @@ def cart_detail(request):
             "cart": cart,
             "grouped": grouped,
             "total_pence": total_pence,
+            "total_food_miles": total_food_miles,
         },
     )
-
 
 @customer_required
 @require_POST

@@ -72,6 +72,9 @@
         <div style="font-size: 0.9rem; color: var(--text-muted);">Subtotal</div>
         <div style="font-size: 1.4rem; font-weight: 700;">£{% widthratio total_pence 100 1 %}</div>
         <div style="font-size: 0.8rem; color: var(--text-muted);">+ 5% commission at checkout</div>
+        {% if total_food_miles is not None %}
+          <div style="font-size: 0.85rem; color: #2e7d32; margin-top: 0.5rem;">🌱 {{ total_food_miles }} total food miles</div>
+        {% endif %}
       </div>
       <div style="display: flex; gap: 0.75rem;">
         <a href="{% url 'marketplace:home' %}" class="btn btn--ghost">Continue shopping</a>

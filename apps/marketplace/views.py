@@ -199,12 +199,22 @@ def product_detail(request, product_id):
 
     images = product.images.all()
 
+    food_miles = None
+    if request.user.is_authenticated:
+        try:
+            from apps.logistics.services.distance import get_food_miles
+            customer_profile = request.user.customer_profile
+            if customer_profile.latitude and customer_profile.longitude:
+                food_miles = get_food_miles(product, customer_profile)
+        except Exception:
+            pass
+
     return render(request, 'marketplace/product_detail.html', {
         'product': product,
         'allergens': allergens,
         'images': images,
+        'food_miles': food_miles,
     })
-
 
 def product_search(request):
     q = request.GET.get('q', '').strip()

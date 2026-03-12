@@ -37,6 +37,10 @@
         <p class="organic-badge"><strong>🌿 Certified Organic</strong></p>
       {% endif %}
 
+      {% if food_miles is not None %}
+        <p class="food-miles-badge">🌱 {{ food_miles }} miles from farm to you</p>
+      {% endif %}
+
       {% if product.harvest_date %}
         <p><strong>Harvest Date:</strong> {{ product.harvest_date|date:"j M Y" }}</p>
       {% endif %}
