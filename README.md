@@ -55,3 +55,6 @@ docker compose up
 docker compose exec web python manage.py deliver_order --order-id a1b2c3d4-0001-0001-0001-000000000001
 # command to get the latest order 
 docker compose exec web python manage.py shell -c "from apps.orders.models import CustomerOrder; print(CustomerOrder.objects.latest('created_at').pk)"
+
+# geocode test
+docker exec -it ufcftr-30-3---distributed-and-enterprise-software-development-web-1 python manage.py shell -c "from apps.logistics.services.geocoding import geocode_postcode; print(geocode_postcode('BS1 4DJ'))"
