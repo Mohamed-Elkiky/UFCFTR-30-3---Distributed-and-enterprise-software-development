@@ -66,7 +66,7 @@
 
         <td>
           {% if product.price_pence %}
-            <span style="font-weight:600;">£{{ product.price_pence|floatformat:0 }}p</span>
+            <span style="font-weight:600;">{{ product.price_display }}</span>
             <span style="opacity:0.5; font-size:0.8rem;"> / {{ product.unit|default:"unit" }}</span>
           {% else %}—{% endif %}
         </td>

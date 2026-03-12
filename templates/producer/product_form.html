@@ -1,263 +1,931 @@
 {% extends "base.html" %}
 
-{% block content %}
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h2>{{ action }} Product</h2>
-                </div>
-                <div class="card-body">
-                    <form method="post" enctype="multipart/form-data" novalidate>
-                        {% csrf_token %}
-                        
-                        {% if form.non_field_errors %}
-                        <div class="alert alert-danger">
-                            {% for error in form.non_field_errors %}
-                            <p>{{ error }}</p>
-                            {% endfor %}
-                        </div>
-                        {% endif %}
-                        
-                        <!-- Basic Information -->
-                        <h5 class="mb-3">Basic Information</h5>
-                        
-                        <div class="mb-3">
-                            <label for="{{ form.name.id_for_label }}" class="form-label">Product Name *</label>
-                            {{ form.name }}
-                            {% if form.name.errors %}
-                            <div class="text-danger">{{ form.name.errors }}</div>
-                            {% endif %}
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="{{ form.category.id_for_label }}" class="form-label">Category</label>
-                            {{ form.category }}
-                            {% if form.category.errors %}
-                            <div class="text-danger">{{ form.category.errors }}</div>
-                            {% endif %}
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
-                            {{ form.description }}
-                            {% if form.description.errors %}
-                            <div class="text-danger">{{ form.description.errors }}</div>
-                            {% endif %}
-                        </div>
-                        
-                        <!-- Product Image -->
-                        <h5 class="mb-3 mt-4">Product Image</h5>
-                        <div class="mb-3">
-                            {% if product.images.first %}
-                                <img src="{{ product.images.first.image.url }}" alt="Current image" style="max-width:200px; border-radius:8px; margin-bottom:10px; display:block;">
-                                <p class="text-muted" style="font-size:.9rem;">Upload a new image to replace the current one.</p>
-                            {% endif %}
-                            <label for="image-upload-input" class="form-label">Upload Image</label>
-                            <div class="image-drop-zone" id="image-drop-zone">
-                                <div class="drop-zone-text" id="drop-zone-text">
-                                    <span>📷 Drag & drop an image here, or click to browse</span>
-                                </div>
-                                <img id="image-preview" src="#" alt="Preview" style="display:none; max-width:200px; border-radius:8px; margin-top:10px;" />
-                                {{ form.image }}
-                            </div>
-                            {% if form.image.errors %}
-                            <div class="text-danger">{{ form.image.errors }}</div>
-                            {% endif %}
-                        </div>
+{% block title %}{{ action }} Product — BRFN{% endblock %}
 
-                        <!-- Pricing & Stock -->
-                        <h5 class="mb-3 mt-4">Pricing & Stock</h5>
-                        
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.price_pence.id_for_label }}" class="form-label">Price (pence) *</label>
-                                {{ form.price_pence }}
-                                <small class="form-text text-muted">Enter price in pence (e.g., 350 for £3.50)</small>
-                                {% if form.price_pence.errors %}
-                                <div class="text-danger">{{ form.price_pence.errors }}</div>
-                                {% endif %}
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.unit.id_for_label }}" class="form-label">Unit</label>
-                                {{ form.unit }}
-                                <small class="form-text text-muted">e.g., kg, dozen, bunch</small>
-                                {% if form.unit.errors %}
-                                <div class="text-danger">{{ form.unit.errors }}</div>
-                                {% endif %}
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.stock_qty.id_for_label }}" class="form-label">Stock Quantity</label>
-                                {{ form.stock_qty }}
-                                {% if form.stock_qty.errors %}
-                                <div class="text-danger">{{ form.stock_qty.errors }}</div>
-                                {% endif %}
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.low_stock_threshold.id_for_label }}" class="form-label">Low Stock Threshold</label>
-                                {{ form.low_stock_threshold }}
-                                <small class="form-text text-muted">Alert when stock falls below this</small>
-                                {% if form.low_stock_threshold.errors %}
-                                <div class="text-danger">{{ form.low_stock_threshold.errors }}</div>
-                                {% endif %}
-                            </div>
-                        </div>
-                        
-                        <!-- Availability -->
-                        <h5 class="mb-3 mt-4">Availability</h5>
-                        
-                        <div class="mb-3">
-                            <label for="{{ form.availability.id_for_label }}" class="form-label">Availability Status</label>
-                            {{ form.availability }}
-                            {% if form.availability.errors %}
-                            <div class="text-danger">{{ form.availability.errors }}</div>
-                            {% endif %}
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.seasonal_start_month.id_for_label }}" class="form-label">Season Start Month</label>
-                                {{ form.seasonal_start_month }}
-                                <small class="form-text text-muted">1 = January, 12 = December</small>
-                                {% if form.seasonal_start_month.errors %}
-                                <div class="text-danger">{{ form.seasonal_start_month.errors }}</div>
-                                {% endif %}
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.seasonal_end_month.id_for_label }}" class="form-label">Season End Month</label>
-                                {{ form.seasonal_end_month }}
-                                {% if form.seasonal_end_month.errors %}
-                                <div class="text-danger">{{ form.seasonal_end_month.errors }}</div>
-                                {% endif %}
-                            </div>
-                        </div>
-                        
-                        <!-- Dates -->
-                        <h5 class="mb-3 mt-4">Dates</h5>
-                        
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.harvest_date.id_for_label }}" class="form-label">Harvest Date</label>
-                                {{ form.harvest_date }}
-                                {% if form.harvest_date.errors %}
-                                <div class="text-danger">{{ form.harvest_date.errors }}</div>
-                                {% endif %}
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.best_before_date.id_for_label }}" class="form-label">Best Before Date</label>
-                                {{ form.best_before_date }}
-                                {% if form.best_before_date.errors %}
-                                <div class="text-danger">{{ form.best_before_date.errors }}</div>
-                                {% endif %}
-                            </div>
-                        </div>
-                        
-                        <!-- Certifications -->
-                        <h5 class="mb-3 mt-4">Certifications</h5>
-                        
-                        <div class="mb-3 form-check">
-                            {{ form.organic_certified }}
-                            <label for="{{ form.organic_certified.id_for_label }}" class="form-check-label">
-                                Organic Certified
-                            </label>
-                            {% if form.organic_certified.errors %}
-                            <div class="text-danger">{{ form.organic_certified.errors }}</div>
-                            {% endif %}
-                        </div>
-                        
-                        <!-- Allergens -->
-                        <h5 class="mb-3 mt-4">Allergens (TC-015)</h5>
-                        <p class="text-muted">Select all allergens that apply to this product:</p>
-                        
-                        <div class="mb-3">
-                            {{ form.allergens }}
-                            {% if form.allergens.errors %}
-                            <div class="text-danger">{{ form.allergens.errors }}</div>
-                            {% endif %}
-                        </div>
-                        
-                        <!-- Submit Buttons -->
-                        <div class="mt-4">
-                            <button type="submit" class="btn btn-primary">
-                                {% if action == 'Create' %}Create Product{% else %}Save Changes{% endif %}
-                            </button>
-                            <a href="{% url 'marketplace:product_list' %}" class="btn btn-secondary">Cancel</a>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
+{% block extra_head %}
 <style>
-  .image-drop-zone {
-    border: 2px dashed #ccc;
-    border-radius: 8px;
-    padding: 24px;
+  .pf-page {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 0 1.5rem 5rem;
+  }
+
+  .pf-header {
+    margin-bottom: 2rem;
+  }
+
+  .pf-header h1 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    margin: 0 0 0.25rem;
+  }
+
+  .pf-header p {
+    color: var(--muted);
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  /* Progress bar */
+  .pf-progress {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .pf-progress-step {
+    flex: 1;
+    height: 4px;
+    border-radius: 99px;
+    background: var(--border);
+    transition: background 0.3s ease;
+  }
+
+  .pf-progress-step.filled {
+    background: var(--brand);
+  }
+
+  /* Sections */
+  .pf-section {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 1rem;
+    overflow: hidden;
+  }
+
+  .pf-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 1.5rem;
+    cursor: pointer;
+    user-select: none;
+    gap: 1rem;
+  }
+
+  .pf-section-header:hover {
+    background: var(--bg-secondary);
+  }
+
+  .pf-section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+
+  .pf-section-icon {
+    font-size: 1.1rem;
+  }
+
+  .pf-section-status {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 99px;
+    background: var(--brand-light);
+    color: var(--brand);
+    white-space: nowrap;
+  }
+
+  .pf-section-chevron {
+    color: var(--muted);
+    transition: transform 0.25s ease;
+    flex-shrink: 0;
+  }
+
+  .pf-section.open .pf-section-chevron {
+    transform: rotate(180deg);
+  }
+
+  .pf-section-body {
+    display: none;
+    padding: 0 1.5rem 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .pf-section.open .pf-section-body {
+    display: block;
+  }
+
+  /* Fields */
+  .pf-field {
+    margin-top: 1.1rem;
+  }
+
+  .pf-label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+
+  .pf-label span {
+    color: var(--danger);
+    margin-left: 2px;
+  }
+
+  .pf-input,
+  .pf-select,
+  .pf-textarea {
+    width: 100%;
+    padding: 0.65rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.92rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+  }
+
+  .pf-input:focus,
+  .pf-select:focus,
+  .pf-textarea:focus {
+    outline: none;
+    border-color: var(--brand);
+    box-shadow: var(--focus);
+  }
+
+  .pf-input.error,
+  .pf-select.error,
+  .pf-textarea.error {
+    border-color: var(--danger);
+  }
+
+  .pf-textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  .pf-help {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 0.3rem;
+  }
+
+  .pf-error {
+    font-size: 0.8rem;
+    color: var(--danger);
+    margin-top: 0.3rem;
+  }
+
+  /* Two column grid */
+  .pf-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 1.25rem;
+  }
+
+  @media (max-width: 600px) {
+    .pf-grid-2 { grid-template-columns: 1fr; }
+  }
+
+  /* Price input with £ prefix */
+  .pf-price-wrap {
+    position: relative;
+  }
+
+  .pf-price-prefix {
+    position: absolute;
+    left: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: 700;
+    color: var(--muted);
+    pointer-events: none;
+    font-size: 0.92rem;
+  }
+
+  .pf-price-wrap .pf-input {
+    padding-left: 1.75rem;
+  }
+
+  /* Month select */
+  .pf-month-select {
+    width: 100%;
+    padding: 0.65rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.92rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+    appearance: none;
+  }
+
+  .pf-month-select:focus {
+    outline: none;
+    border-color: var(--brand);
+    box-shadow: var(--focus);
+  }
+
+  /* Availability radio buttons */
+  .pf-avail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+    margin-top: 0.4rem;
+  }
+
+  @media (max-width: 600px) {
+    .pf-avail-grid { grid-template-columns: 1fr; }
+  }
+
+  .pf-avail-option {
+    position: relative;
+  }
+
+  .pf-avail-option input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .pf-avail-label {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.75rem 1rem;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.88rem;
+    font-weight: 600;
+  }
+
+  .pf-avail-option input:checked + .pf-avail-label {
+    border-color: var(--brand);
+    background: var(--brand-light);
+    color: var(--brand);
+  }
+
+  .pf-avail-label:hover {
+    border-color: var(--border-strong);
+    background: var(--bg-secondary);
+  }
+
+  .pf-avail-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* Organic toggle */
+  .pf-toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-top: 0.4rem;
+  }
+
+  .pf-toggle-info strong {
+    display: block;
+    font-size: 0.9rem;
+    margin-bottom: 0.1rem;
+  }
+
+  .pf-toggle-info span {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .pf-toggle {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+
+  .pf-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .pf-toggle-slider {
+    position: absolute;
+    inset: 0;
+    background: var(--border-strong);
+    border-radius: 99px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .pf-toggle-slider::before {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    left: 3px;
+    top: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.2s;
+  }
+
+  .pf-toggle input:checked + .pf-toggle-slider {
+    background: var(--brand);
+  }
+
+  .pf-toggle input:checked + .pf-toggle-slider::before {
+    transform: translateX(20px);
+  }
+
+  /* Image upload */
+  .pf-image-drop {
+    border: 2px dashed var(--border-strong);
+    border-radius: 12px;
+    padding: 2rem;
     text-align: center;
     cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
-    background: #fafafa;
+    transition: all 0.2s;
+    background: var(--bg-secondary);
+    margin-top: 0.4rem;
   }
-  .image-drop-zone.drag-over {
-    border-color: #8B6914;
-    background: #fff8ee;
+
+  .pf-image-drop:hover,
+  .pf-image-drop.drag-over {
+    border-color: var(--brand);
+    background: var(--brand-light);
   }
-  .drop-zone-text { color: #888; font-size: 0.95rem; }
-  #image-upload-input { display: none; }
+
+  .pf-image-drop p {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin: 0.5rem 0 0;
+  }
+
+  .pf-image-preview {
+    max-width: 200px;
+    border-radius: 10px;
+    margin: 1rem auto 0;
+    display: none;
+  }
+
+  .pf-current-image {
+    max-width: 200px;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+  }
+
+  /* Allergens */
+  .allergen-checkbox-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 0.5rem;
+    margin-top: 0.4rem;
+  }
+
+  .allergen-checkbox-list li {
+    list-style: none;
+  }
+
+  .allergen-checkbox-list label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+  }
+
+  .allergen-checkbox-list label:hover {
+    background: var(--bg-secondary);
+    border-color: var(--border-strong);
+  }
+
+  .allergen-checkbox-list input:checked + label,
+  .allergen-checkbox-list label:has(input:checked) {
+    background: var(--brand-light);
+    border-color: var(--brand);
+    color: var(--brand);
+    font-weight: 600;
+  }
+
+  /* Sticky footer */
+  .pf-sticky-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255,253,247,0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid var(--border);
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+    z-index: 50;
+  }
+
+  [data-theme="dark"] .pf-sticky-footer {
+    background: rgba(10,10,10,0.92);
+  }
+
+  .pf-autosave-note {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-right: auto;
+  }
+
+  /* Draft restored banner */
+  .pf-draft-banner {
+    background: var(--brand-light);
+    border: 1px solid rgba(166,124,82,0.2);
+    border-radius: 10px;
+    padding: 0.65rem 1rem;
+    font-size: 0.85rem;
+    color: var(--brand);
+    font-weight: 600;
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+  }
+
+  .pf-draft-banner button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--brand);
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 0;
+    text-decoration: underline;
+  }
 </style>
+{% endblock %}
+
+{% block content %}
+<div class="pf-page">
+
+  <div class="pf-header">
+    <h1>{{ action }} Product</h1>
+    <p>Fill in your product details below. Changes are saved as a draft automatically.</p>
+  </div>
+
+  <!-- Progress bar (5 sections) -->
+  <div class="pf-progress" id="pf-progress">
+    <div class="pf-progress-step" data-section="0"></div>
+    <div class="pf-progress-step" data-section="1"></div>
+    <div class="pf-progress-step" data-section="2"></div>
+    <div class="pf-progress-step" data-section="3"></div>
+    <div class="pf-progress-step" data-section="4"></div>
+  </div>
+
+  <!-- Draft restored banner -->
+  <div class="pf-draft-banner" id="pf-draft-banner">
+    📝 Draft restored from your last session.
+    <button type="button" onclick="clearDraft()">Clear draft</button>
+  </div>
+
+  <form method="post" enctype="multipart/form-data" id="pf-form" novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+    <div style="background: rgba(196,77,77,0.1); border: 1px solid var(--danger); border-radius: 10px; padding: 0.75rem 1rem; margin-bottom: 1rem; color: var(--danger); font-size: 0.9rem;">
+      {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- ── Section 1: Basic Info ── -->
+    <div class="pf-section open" data-idx="0">
+      <div class="pf-section-header" onclick="toggleSection(this)">
+        <div class="pf-section-title">
+          <span class="pf-section-icon">📋</span> Basic Information
+        </div>
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+          <span class="pf-section-status" id="status-0">Required</span>
+          <svg class="pf-section-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+      <div class="pf-section-body">
+
+        <div class="pf-field">
+          <label class="pf-label">Product Name <span>*</span></label>
+          <input type="text" name="name" value="{{ form.name.value|default:'' }}" class="pf-input {% if form.name.errors %}error{% endif %}" placeholder="e.g. Organic Free Range Eggs" required>
+          {% if form.name.errors %}<div class="pf-error">{{ form.name.errors|join:", " }}</div>{% endif %}
+        </div>
+
+        <div class="pf-field">
+          <label class="pf-label">Category</label>
+          <select name="category" class="pf-select">
+            <option value="">— Select category —</option>
+            {% for val, label in form.fields.category.choices %}
+              {% if val %}<option value="{{ val }}" {% if form.category.value|stringformat:"s" == val|stringformat:"s" %}selected{% endif %}>{{ label }}</option>{% endif %}
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="pf-field">
+          <label class="pf-label">Description</label>
+          <textarea name="description" class="pf-textarea" placeholder="Describe your product — how it's grown, what makes it special...">{{ form.description.value|default:'' }}</textarea>
+        </div>
+
+        <!-- Image upload -->
+        <div class="pf-field">
+          <label class="pf-label">Product Image</label>
+          {% if product.images.first and product.images.first.image %}
+            <img src="{{ product.images.first.image.url }}" alt="Current image" class="pf-current-image">
+            <p class="pf-help" style="margin-bottom:0.5rem;">Upload a new image to replace the current one.</p>
+          {% endif %}
+          <div class="pf-image-drop" id="pf-drop-zone">
+            <div style="font-size:2rem;">📷</div>
+            <p>Drag & drop an image here, or click to browse</p>
+            <img id="pf-preview" class="pf-image-preview" src="#" alt="Preview">
+            <input type="file" name="image" id="image-upload-input" accept="image/*" style="display:none;">
+          </div>
+          {% if form.image.errors %}<div class="pf-error">{{ form.image.errors|join:", " }}</div>{% endif %}
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── Section 2: Pricing & Stock ── -->
+    <div class="pf-section" data-idx="1">
+      <div class="pf-section-header" onclick="toggleSection(this)">
+        <div class="pf-section-title">
+          <span class="pf-section-icon">💷</span> Pricing & Stock
+        </div>
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+          <span class="pf-section-status" id="status-1">Required</span>
+          <svg class="pf-section-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+      <div class="pf-section-body">
+
+        <div class="pf-grid-2">
+          <div class="pf-field">
+            <label class="pf-label">Price <span>*</span></label>
+            <div class="pf-price-wrap">
+              <span class="pf-price-prefix">£</span>
+              <input type="number" name="price_pence_display" id="price-display"
+                     value="{% if form.price_pence.value %}{{ form.price_pence.value|floatformat:2 }}{% endif %}"
+                     class="pf-input {% if form.price_pence.errors %}error{% endif %}"
+                     placeholder="0.00" step="0.01" min="0.01">
+              <input type="hidden" name="price_pence" id="price-pence-hidden" value="{{ form.price_pence.value|default:'' }}">
+            </div>
+            <div class="pf-help">Enter in pounds e.g. 3.50 for £3.50</div>
+            {% if form.price_pence.errors %}<div class="pf-error">{{ form.price_pence.errors|join:", " }}</div>{% endif %}
+          </div>
+
+          <div class="pf-field">
+            <label class="pf-label">Unit</label>
+            <input type="text" name="unit" value="{{ form.unit.value|default:'' }}" class="pf-input" placeholder="e.g. kg, dozen, bunch">
+          </div>
+        </div>
+
+        <div class="pf-grid-2">
+          <div class="pf-field">
+            <label class="pf-label">Stock Quantity</label>
+            <input type="number" name="stock_qty" value="{{ form.stock_qty.value|default:'' }}" class="pf-input {% if form.stock_qty.errors %}error{% endif %}" placeholder="0" min="0">
+            {% if form.stock_qty.errors %}<div class="pf-error">{{ form.stock_qty.errors|join:", " }}</div>{% endif %}
+          </div>
+
+          <div class="pf-field">
+            <label class="pf-label">Low Stock Threshold</label>
+            <input type="number" name="low_stock_threshold" value="{{ form.low_stock_threshold.value|default:'' }}" class="pf-input" placeholder="e.g. 10" min="0">
+            <div class="pf-help">Get notified when stock falls below this</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── Section 3: Availability ── -->
+    <div class="pf-section" data-idx="2">
+      <div class="pf-section-header" onclick="toggleSection(this)">
+        <div class="pf-section-title">
+          <span class="pf-section-icon">📅</span> Availability
+        </div>
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+          <span class="pf-section-status" id="status-2">Optional</span>
+          <svg class="pf-section-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+      <div class="pf-section-body">
+
+        <div class="pf-field">
+          <label class="pf-label">Availability Status</label>
+          <div class="pf-avail-grid">
+            {% with current=form.availability.value %}
+            <div class="pf-avail-option">
+              <input type="radio" name="availability" id="avail-season" value="in_season" {% if current == 'in_season' %}checked{% endif %}>
+              <label class="pf-avail-label" for="avail-season">
+                <span class="pf-avail-dot" style="background:#5A8A5A;"></span> In Season
+              </label>
+            </div>
+            <div class="pf-avail-option">
+              <input type="radio" name="availability" id="avail-year" value="available_year_round" {% if current == 'available_year_round' %}checked{% endif %}>
+              <label class="pf-avail-label" for="avail-year">
+                <span class="pf-avail-dot" style="background:#4A6FA5;"></span> Year Round
+              </label>
+            </div>
+            <div class="pf-avail-option">
+              <input type="radio" name="availability" id="avail-out" value="out_of_season" {% if current == 'out_of_season' %}checked{% endif %}>
+              <label class="pf-avail-label" for="avail-out">
+                <span class="pf-avail-dot" style="background:#7D7770;"></span> Out of Season
+              </label>
+            </div>
+            <div class="pf-avail-option">
+              <input type="radio" name="availability" id="avail-unavail" value="unavailable" {% if current == 'unavailable' %}checked{% endif %}>
+              <label class="pf-avail-label" for="avail-unavail">
+                <span class="pf-avail-dot" style="background:#C44D4D;"></span> Unavailable
+              </label>
+            </div>
+            {% endwith %}
+          </div>
+        </div>
+
+        <div class="pf-grid-2">
+          <div class="pf-field">
+            <label class="pf-label">Season Start</label>
+            <select name="seasonal_start_month" class="pf-month-select">
+              {% with sv=form.seasonal_start_month.value %}
+              <option value="">— Month —</option>
+              <option value="1"  {% if sv == "1"  %}selected{% endif %}>January</option>
+              <option value="2"  {% if sv == "2"  %}selected{% endif %}>February</option>
+              <option value="3"  {% if sv == "3"  %}selected{% endif %}>March</option>
+              <option value="4"  {% if sv == "4"  %}selected{% endif %}>April</option>
+              <option value="5"  {% if sv == "5"  %}selected{% endif %}>May</option>
+              <option value="6"  {% if sv == "6"  %}selected{% endif %}>June</option>
+              <option value="7"  {% if sv == "7"  %}selected{% endif %}>July</option>
+              <option value="8"  {% if sv == "8"  %}selected{% endif %}>August</option>
+              <option value="9"  {% if sv == "9"  %}selected{% endif %}>September</option>
+              <option value="10" {% if sv == "10" %}selected{% endif %}>October</option>
+              <option value="11" {% if sv == "11" %}selected{% endif %}>November</option>
+              <option value="12" {% if sv == "12" %}selected{% endif %}>December</option>
+              {% endwith %}
+            </select>
+          </div>
+
+          <div class="pf-field">
+            <label class="pf-label">Season End</label>
+            <select name="seasonal_end_month" class="pf-month-select">
+              {% with sv=form.seasonal_end_month.value %}
+              <option value="">— Month —</option>
+              <option value="1"  {% if sv == "1"  %}selected{% endif %}>January</option>
+              <option value="2"  {% if sv == "2"  %}selected{% endif %}>February</option>
+              <option value="3"  {% if sv == "3"  %}selected{% endif %}>March</option>
+              <option value="4"  {% if sv == "4"  %}selected{% endif %}>April</option>
+              <option value="5"  {% if sv == "5"  %}selected{% endif %}>May</option>
+              <option value="6"  {% if sv == "6"  %}selected{% endif %}>June</option>
+              <option value="7"  {% if sv == "7"  %}selected{% endif %}>July</option>
+              <option value="8"  {% if sv == "8"  %}selected{% endif %}>August</option>
+              <option value="9"  {% if sv == "9"  %}selected{% endif %}>September</option>
+              <option value="10" {% if sv == "10" %}selected{% endif %}>October</option>
+              <option value="11" {% if sv == "11" %}selected{% endif %}>November</option>
+              <option value="12" {% if sv == "12" %}selected{% endif %}>December</option>
+              {% endwith %}
+            </select>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── Section 4: Dates ── -->
+    <div class="pf-section" data-idx="3">
+      <div class="pf-section-header" onclick="toggleSection(this)">
+        <div class="pf-section-title">
+          <span class="pf-section-icon">🗓️</span> Dates
+        </div>
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+          <span class="pf-section-status" id="status-3">Optional</span>
+          <svg class="pf-section-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+      <div class="pf-section-body">
+
+        <div class="pf-grid-2">
+          <div class="pf-field">
+            <label class="pf-label">Harvest Date</label>
+            <input type="date" name="harvest_date" value="{{ form.harvest_date.value|default:'' }}" class="pf-input {% if form.harvest_date.errors %}error{% endif %}">
+            {% if form.harvest_date.errors %}<div class="pf-error">{{ form.harvest_date.errors|join:", " }}</div>{% endif %}
+          </div>
+
+          <div class="pf-field">
+            <label class="pf-label">Best Before Date</label>
+            <input type="date" name="best_before_date" value="{{ form.best_before_date.value|default:'' }}" class="pf-input {% if form.best_before_date.errors %}error{% endif %}">
+            {% if form.best_before_date.errors %}<div class="pf-error">{{ form.best_before_date.errors|join:", " }}</div>{% endif %}
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── Section 5: Certifications & Allergens ── -->
+    <div class="pf-section" data-idx="4">
+      <div class="pf-section-header" onclick="toggleSection(this)">
+        <div class="pf-section-title">
+          <span class="pf-section-icon">🌿</span> Certifications & Allergens
+        </div>
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+          <span class="pf-section-status" id="status-4">Optional</span>
+          <svg class="pf-section-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+      <div class="pf-section-body">
+
+        <div class="pf-field">
+          <div class="pf-toggle-row">
+            <div class="pf-toggle-info">
+              <strong>Organic Certified</strong>
+              <span>Product meets organic certification standards</span>
+            </div>
+            <label class="pf-toggle">
+              <input type="checkbox" name="organic_certified" {% if form.organic_certified.value %}checked{% endif %}>
+              <span class="pf-toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="pf-field">
+          <label class="pf-label">Allergens</label>
+          <p class="pf-help" style="margin-bottom:0.5rem;">Select all allergens present in this product</p>
+          {{ form.allergens }}
+          {% if form.allergens.errors %}<div class="pf-error">{{ form.allergens.errors|join:", " }}</div>{% endif %}
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Sticky footer -->
+    <div class="pf-sticky-footer">
+      <span class="pf-autosave-note" id="autosave-note">Draft auto-saved</span>
+      <a href="{% url 'marketplace:product_list' %}" class="btn btn--ghost">Cancel</a>
+      <button type="submit" class="btn btn--primary">
+        {% if action == 'Create' %}Create Product{% else %}Save Changes{% endif %}
+      </button>
+    </div>
+
+  </form>
+</div>
 
 <script>
-  const dropZone = document.getElementById('image-drop-zone');
-  const input = document.getElementById('image-upload-input');
-  const preview = document.getElementById('image-preview');
-  const dropText = document.getElementById('drop-zone-text');
+  // ── Section toggle ──
+  function toggleSection(header) {
+    const section = header.closest('.pf-section');
+    section.classList.toggle('open');
+  }
 
-  dropZone.addEventListener('click', () => input.click());
+  // ── Price: convert £ display → pence hidden field ──
+  const priceDisplay = document.getElementById('price-display');
+  const priceHidden  = document.getElementById('price-pence-hidden');
 
-  dropZone.addEventListener('dragover', (e) => {
+  if (priceDisplay) {
+    if (priceHidden.value) {
+      priceDisplay.value = (parseInt(priceHidden.value) / 100).toFixed(2);
+    }
+
+    priceDisplay.addEventListener('input', () => {
+      const pounds = parseFloat(priceDisplay.value);
+      priceHidden.value = isNaN(pounds) ? '' : Math.round(pounds * 100);
+    });
+  }
+
+  // ── Image drag & drop ──
+  const dropZone = document.getElementById('pf-drop-zone');
+  const fileInput = document.getElementById('image-upload-input');
+  const preview   = document.getElementById('pf-preview');
+
+  dropZone.addEventListener('click', () => fileInput.click());
+
+  dropZone.addEventListener('dragover', e => {
     e.preventDefault();
     dropZone.classList.add('drag-over');
   });
 
-  dropZone.addEventListener('dragleave', () => {
-    dropZone.classList.remove('drag-over');
-  });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
 
-  dropZone.addEventListener('drop', (e) => {
+  dropZone.addEventListener('drop', e => {
     e.preventDefault();
     dropZone.classList.remove('drag-over');
     const file = e.dataTransfer.files[0];
     if (file && file.type.startsWith('image/')) {
       const dt = new DataTransfer();
       dt.items.add(file);
-      input.files = dt.files;
+      fileInput.files = dt.files;
       showPreview(file);
     }
   });
 
-  input.addEventListener('change', () => {
-    if (input.files[0]) showPreview(input.files[0]);
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files[0]) showPreview(fileInput.files[0]);
   });
 
   function showPreview(file) {
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = e => {
       preview.src = e.target.result;
       preview.style.display = 'block';
-      dropText.style.display = 'none';
     };
     reader.readAsDataURL(file);
   }
-</script>
 
+  // ── Autosave draft to localStorage ──
+  const DRAFT_KEY = 'brfn_product_draft_{{ action }}';
+  const form = document.getElementById('pf-form');
+  const autosaveNote = document.getElementById('autosave-note');
+  const draftBanner  = document.getElementById('pf-draft-banner');
+
+  const DRAFT_FIELDS = ['name', 'description', 'unit', 'stock_qty', 'low_stock_threshold',
+                        'seasonal_start_month', 'seasonal_end_month', 'harvest_date', 'best_before_date'];
+
+  function saveDraft() {
+    const draft = {};
+    DRAFT_FIELDS.forEach(name => {
+      const el = form.elements[name];
+      if (el) draft[name] = el.value;
+    });
+    if (priceDisplay) draft['price_display'] = priceDisplay.value;
+    const avail = form.querySelector('input[name="availability"]:checked');
+    if (avail) draft['availability'] = avail.value;
+    draft['organic_certified'] = form.elements['organic_certified']?.checked;
+
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+    autosaveNote.textContent = 'Draft saved ' + new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  }
+
+  function restoreDraft() {
+    {% if action == 'Create' %}
+    const raw = localStorage.getItem(DRAFT_KEY);
+    if (!raw) return;
+    const draft = JSON.parse(raw);
+    let restored = false;
+    DRAFT_FIELDS.forEach(name => {
+      if (draft[name] !== undefined && form.elements[name]) {
+        form.elements[name].value = draft[name];
+        restored = true;
+      }
+    });
+    if (draft['price_display'] && priceDisplay) {
+      priceDisplay.value = draft['price_display'];
+      priceHidden.value = Math.round(parseFloat(draft['price_display']) * 100) || '';
+    }
+    if (draft['availability']) {
+      const radio = form.querySelector(`input[name="availability"][value="${draft['availability']}"]`);
+      if (radio) radio.checked = true;
+    }
+    if (draft['organic_certified'] !== undefined && form.elements['organic_certified']) {
+      form.elements['organic_certified'].checked = draft['organic_certified'];
+    }
+    if (restored) draftBanner.style.display = 'flex';
+    {% endif %}
+  }
+
+  function clearDraft() {
+    localStorage.removeItem(DRAFT_KEY);
+    draftBanner.style.display = 'none';
+  }
+
+  form.addEventListener('submit', () => clearDraft());
+
+  let saveTimer;
+  form.addEventListener('input', () => {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(saveDraft, 3000);
+  });
+  form.addEventListener('change', saveDraft);
+
+  // ── Progress bar ──
+  function updateProgress() {
+    const sections = document.querySelectorAll('.pf-section');
+    sections.forEach((section, i) => {
+      const inputs = section.querySelectorAll('input:not([type=hidden]):not([type=radio]):not([type=checkbox]), textarea, select');
+      const filled = [...inputs].some(el => el.value && el.value.trim() !== '');
+      const step = document.querySelector(`.pf-progress-step[data-section="${i}"]`);
+      if (step) step.classList.toggle('filled', filled);
+    });
+  }
+
+  form.addEventListener('input', updateProgress);
+  form.addEventListener('change', updateProgress);
+
+  // ── Init ──
+  restoreDraft();
+  updateProgress();
+</script>
 {% endblock %}
