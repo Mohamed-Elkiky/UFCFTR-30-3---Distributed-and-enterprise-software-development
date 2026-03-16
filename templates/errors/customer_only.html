@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title|default:"Access Restricted" }}{% endblock %}
+
+{% block content %}
+<section class="access-denied-page">
+  <div class="access-card">
+    <div class="access-icon">{{ icon|default:"🔒" }}</div>
+
+    <p class="access-eyebrow">Access restricted</p>
+    <h1>{{ page_title|default:"Access Restricted" }}</h1>
+
+    <p class="access-message">
+      {{ message|default:"You do not have permission to view this page." }}
+    </p>
+
+    <p class="access-submessage">
+      {{ submessage|default:"Please sign in with the correct account to continue." }}
+    </p>
+
+    <div class="access-actions">
+      <a href="{% url 'marketplace:home' %}" class="btn btn--primary">
+        Back to Marketplace
+      </a>
+      <a href="javascript:history.back()" class="btn btn--ghost">
+        Go Back
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %}

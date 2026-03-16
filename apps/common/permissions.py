@@ -2,24 +2,44 @@
 
 from functools import wraps
 
-from django.http import HttpResponseForbidden
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.shortcuts import render
 
 
 def producer_required(view_func):
     """
     Decorator that checks request.user is authenticated and request.user.role == 'producer'.
-    Otherwise returns HttpResponseForbidden.
+    Otherwise renders a styled access-restricted page.
     """
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
         user = request.user
 
         if not user.is_authenticated:
-            return HttpResponseForbidden("Authentication required.")
+            return render(
+                request,
+                "errors/customer_only.html",
+                {
+                    "page_title": "Login Required",
+                    "message": "You need to be logged in to view this page.",
+                    "submessage": "Please sign in with the correct account and try again.",
+                    "icon": "🔐",
+                },
+                status=403,
+            )
 
         if getattr(user, "role", None) != "producer":
-            return HttpResponseForbidden("Producer access required.")
+            return render(
+                request,
+                "errors/customer_only.html",
+                {
+                    "page_title": "Producer Access Required",
+                    "message": "This page is only available to producer accounts.",
+                    "submessage": "Please sign in with a producer account to continue.",
+                    "icon": "🌾",
+                },
+                status=403,
+            )
 
         return view_func(request, *args, **kwargs)
 
@@ -29,20 +49,53 @@ def producer_required(view_func):
 def customer_required(view_func):
     """
     Decorator that checks request.user is authenticated, has role == 'customer',
-    and has a customer_profile. Otherwise returns HttpResponseForbidden.
+    and has a customer_profile. Otherwise renders a styled access-restricted page.
     """
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
         user = request.user
 
         if not user.is_authenticated:
-            return HttpResponseForbidden("Authentication required.")
+            return render(
+                request,
+                "errors/customer_only.html",
+                {
+                    "page_title": "Login Required",
+                    "message": "You need to be logged in to view this page.",
+                    "submessage": "Please sign in with your customer account and try again.",
+                    "icon": "🔐",
+                },
+                status=403,
+            )
 
         if getattr(user, "role", None) != "customer":
-            return HttpResponseForbidden("Customer access required.")
+            return render(
+                request,
+                "errors/customer_only.html",
+                {
+                    "page_title": "Customer Access Required",
+                    "message": "This page is only available to customer accounts.",
+                    "submessage": (
+                        "You are currently signed in as a producer account, "
+                        "so you cannot access the shopping cart or checkout pages."
+                    ),
+                    "icon": "🛒",
+                },
+                status=403,
+            )
 
         if not hasattr(user, "customer_profile"):
-            return HttpResponseForbidden("Customer profile not found. Please complete registration.")
+            return render(
+                request,
+                "errors/customer_only.html",
+                {
+                    "page_title": "Customer Profile Required",
+                    "message": "Your customer profile could not be found.",
+                    "submessage": "Please complete your registration before continuing.",
+                    "icon": "👤",
+                },
+                status=403,
+            )
 
         return view_func(request, *args, **kwargs)
 
@@ -68,17 +121,37 @@ class CustomerRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
 def admin_required(view_func):
     """
     Decorator that checks request.user is authenticated and request.user.role == 'admin'.
-    Otherwise returns HttpResponseForbidden.
+    Otherwise renders a styled access-restricted page.
     """
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
         user = request.user
 
         if not user.is_authenticated:
-            return HttpResponseForbidden("Authentication required.")
+            return render(
+                request,
+                "errors/customer_only.html",
+                {
+                    "page_title": "Login Required",
+                    "message": "You need to be logged in to view this page.",
+                    "submessage": "Please sign in with an admin account and try again.",
+                    "icon": "🔐",
+                },
+                status=403,
+            )
 
         if getattr(user, "role", None) != "admin":
-            return HttpResponseForbidden("Admin access required.")
+            return render(
+                request,
+                "errors/customer_only.html",
+                {
+                    "page_title": "Admin Access Required",
+                    "message": "This page is only available to admin accounts.",
+                    "submessage": "Please sign in with the correct account to continue.",
+                    "icon": "🛠️",
+                },
+                status=403,
+            )
 
         return view_func(request, *args, **kwargs)
 

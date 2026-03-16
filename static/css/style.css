@@ -1718,3 +1718,108 @@ img {
   border-color: rgba(255, 255, 255, 0.25);
   color: #ffffff;
 }
+
+.access-denied-page {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem 3rem;
+}
+
+.access-card {
+  width: 100%;
+  max-width: 720px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 24px;
+  box-shadow: var(--shadow-hover);
+  padding: 3rem 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.access-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 6px;
+  background: linear-gradient(135deg, var(--brand) 0%, var(--brand-2) 100%);
+}
+
+.access-icon {
+  width: 84px;
+  height: 84px;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 2.25rem;
+  background: var(--brand-light);
+  border: 1px solid var(--border);
+}
+
+.access-eyebrow {
+  margin: 0 0 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+
+.access-card h1 {
+  margin: 0 0 0.9rem;
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  line-height: 1.15;
+  color: var(--text);
+}
+
+.access-message {
+  margin: 0 0 0.75rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.access-submessage {
+  margin: 0 auto 2rem;
+  max-width: 560px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.access-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.875rem;
+  flex-wrap: wrap;
+}
+
+.access-actions .btn {
+  min-width: 180px;
+}
+
+@media (max-width: 640px) {
+  .access-card {
+    padding: 2.25rem 1.25rem;
+    border-radius: 18px;
+  }
+
+  .access-icon {
+    width: 72px;
+    height: 72px;
+    font-size: 2rem;
+  }
+
+  .access-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .access-actions .btn {
+    width: 100%;
+    min-width: 0;
+  }
+}
