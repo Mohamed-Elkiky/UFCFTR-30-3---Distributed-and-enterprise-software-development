@@ -8,7 +8,6 @@
   <form method="post">
     {% csrf_token %}
 
-    <!-- ORDER SUMMARY BY PRODUCER -->
     <h2 style="font-size: 1.1rem; margin-bottom: 1rem;">Order summary</h2>
 
     {% for producer, data in grouped.items %}
@@ -18,16 +17,15 @@
         {% for item in data.items %}
           <div style="display: flex; justify-content: space-between; padding: 0.4rem 0; font-size: 0.95rem;">
             <span>{{ item.product.name }} × {{ item.quantity }}</span>
-            <span>£{% widthratio item.product.price_pence 100 item.quantity %}</span>
+            <span>£{{ item.line_total_pence|default:item.product.price_pence }}</span>
           </div>
         {% endfor %}
 
         <div style="display: flex; justify-content: space-between; font-weight: 600; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--border);">
           <span>Subtotal</span>
-          <span>£{% widthratio data.subtotal_pence 100 1 %}</span>
+          <span>£{{ data.subtotal_display }}</span>
         </div>
 
-        <!-- DELIVERY DATE PICKER -->
         <div class="form-row" style="margin-top: 1rem;">
           <label for="delivery_date_{{ producer.pk }}">Delivery date</label>
           <input
@@ -43,7 +41,6 @@
       </div>
     {% endfor %}
 
-    <!-- DELIVERY ADDRESS -->
     <h2 style="font-size: 1.1rem; margin: 1.5rem 0 0.75rem;">Delivery address</h2>
     <div class="form-row">
       <label for="street">Street</label>
@@ -73,7 +70,6 @@
       </div>
     </div>
 
-    <!-- SPECIAL INSTRUCTIONS -->
     <div class="form-row" style="margin-top: 1rem;">
       <label for="special_instructions">Special delivery instructions <span style="font-weight: 400; color: var(--text-muted);">(optional)</span></label>
       <textarea
@@ -85,28 +81,25 @@
       ></textarea>
     </div>
 
-    <!-- ORDER TOTAL WITH COMMISSION -->
     <div style="margin: 1.5rem 0; padding: 1rem; background: var(--surface-alt, #f9f6f1); border-radius: 12px;">
       <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;">
         <span>Subtotal</span>
-        <span>£{% widthratio total_pence 100 1 %}</span>
+        <span>£{{ total_display }}</span>
       </div>
       <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem; color: var(--text-muted); font-size: 0.9rem;">
         <span>Network commission (5%)</span>
-        <span>£{% widthratio commission_pence 100 1 %}</span>
+        <span>£{{ commission_display }}</span>
       </div>
       <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 1.1rem; padding-top: 0.5rem; border-top: 1px solid var(--border);">
         <span>Total</span>
-        <span>£{% widthratio grand_total_pence 100 1 %}</span>
+        <span>£{{ grand_total_display }}</span>
       </div>
     </div>
 
-    <!-- PAYMENT CARD DETAILS -->
     <h2 style="font-size: 1.1rem; margin-bottom: 0.75rem;">Payment details</h2>
     <div style="padding: 1.25rem; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 1.5rem;">
 
       <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; font-size: 0.85rem; color: var(--text-muted);">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
         🔒 Test environment — no real payment taken
       </div>
 
@@ -166,7 +159,7 @@
     </div>
 
     <button class="btn btn--primary btn--full" type="submit" style="font-size: 1rem; padding: 1rem;">
-      Place order &nbsp;·&nbsp; £{% widthratio grand_total_pence 100 1 %}
+      Place order &nbsp;·&nbsp; £{{ grand_total_display }}
     </button>
   </form>
 </section>

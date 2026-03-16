@@ -2,12 +2,15 @@
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, JsonResponse
 from django.utils import timezone
-from django.db.models import Q
+from django.db.models import Q, Avg
 
 from apps.common.permissions import producer_required
 from apps.notifications.services.low_stock import check_and_notify_low_stock
+from apps.orders.models import CustomerOrder
+from apps.reviews.forms import ReviewForm
+from apps.reviews.models import ProductReview
 
 from .models import Product, ProductCategory, ProductAllergen
 from .forms import ProductForm
@@ -164,6 +167,7 @@ def product_list_by_category(request, category_id):
         'organic': organic,
     })
 
+
 @producer_required
 def update_stock(request, product_id):
     """POST only — update stock_qty and availability for a product (TC-011)."""
@@ -196,6 +200,7 @@ def update_stock(request, product_id):
     messages.success(request, f'Stock updated for "{product.name}".')
     return redirect('marketplace:product_list')
 
+
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
 
@@ -215,12 +220,44 @@ def product_detail(request, product_id):
         except Exception:
             pass
 
+    reviews = ProductReview.objects.filter(product=product).select_related("customer").order_by("-created_at")
+    average_stars = reviews.aggregate(avg=Avg("stars"))["avg"]
+    review_count = reviews.count()
+
+    review_form = ReviewForm()
+    can_review = False
+    has_review = False
+
+    if request.user.is_authenticated and getattr(request.user, "is_customer", False):
+        try:
+            customer_profile = request.user.customer_profile
+
+            can_review = CustomerOrder.objects.filter(
+                customer=customer_profile,
+                status=CustomerOrder.Status.DELIVERED,
+                items__product=product,
+            ).exists()
+
+            has_review = ProductReview.objects.filter(
+                product=product,
+                customer=customer_profile,
+            ).exists()
+        except Exception:
+            pass
+
     return render(request, 'marketplace/product_detail.html', {
         'product': product,
         'allergens': allergens,
         'images': images,
         'food_miles': food_miles,
+        'reviews': reviews,
+        'average_stars': average_stars,
+        'review_count': review_count,
+        'review_form': review_form,
+        'can_review': can_review,
+        'has_review': has_review,
     })
+
 
 def product_search(request):
     q = request.GET.get('q', '').strip()
@@ -248,7 +285,6 @@ def product_search(request):
         'organic': organic,
     })
 
-from django.http import JsonResponse
 
 def product_search_json(request):
     q = request.GET.get('q', '').strip()

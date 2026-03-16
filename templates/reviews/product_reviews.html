@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Product Reviews{% endblock %}
+
+{% block content %}
+<section class="reviews-page">
+  <h1>Reviews for {{ product.name }}</h1>
+
+  <div class="reviews-summary">
+    <p>
+      <strong>Average rating:</strong>
+      {% if average_stars %}
+        {{ average_stars|floatformat:1 }} / 5
+      {% else %}
+        No ratings yet
+      {% endif %}
+    </p>
+    <p><strong>Total reviews:</strong> {{ review_count }}</p>
+  </div>
+
+  <hr>
+
+  {% if reviews %}
+    <div class="reviews-list">
+      {% for review in reviews %}
+        <article class="review-card">
+          <h3>{{ review.title }}</h3>
+          <p><strong>{{ review.stars }}/5</strong> by {{ review.customer.full_name }}</p>
+          <p>{{ review.body }}</p>
+          <p><small>{{ review.created_at|date:"M d, Y H:i" }}</small></p>
+        </article>
+        <hr>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>No reviews for this product yet.</p>
+  {% endif %}
+</section>
+{% endblock %}

@@ -16,7 +16,7 @@
 
     <div class="product-detail-info">
       <p><strong>Price:</strong> {{ product.price_display }}</p>
-      
+
       {% if product.description %}
         <p class="product-description">{{ product.description }}</p>
       {% endif %}
@@ -30,7 +30,7 @@
       {% endif %}
 
       <p><strong>Unit:</strong> {{ product.unit }}</p>
-      
+
       <p><strong>Availability:</strong> {{ product.get_availability_display }}</p>
 
       {% if product.organic_certified %}
@@ -55,7 +55,6 @@
         <p class="out-of-stock"><strong>Out of Stock</strong></p>
       {% endif %}
 
-      <!-- Allergen Warning Section (TC-015) -->
       {% if allergens %}
         <div class="allergen-section allergen-section--warning">
           <span class="allergen-icon">⚠️</span>
@@ -74,7 +73,6 @@
       {% endif %}
     </div>
 
-    <!-- Add to Basket -->
     {% if product.stock_qty > 0 %}
       {% if user.is_authenticated and user.is_customer %}
         <form method="post" action="{% url 'cart:cart_add' product.pk %}" class="add-to-basket-form">
@@ -91,6 +89,69 @@
         <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn--primary btn--lg">Login to add to basket</a>
       {% endif %}
     {% endif %}
+
+    <section class="reviews-section">
+      <h2>Customer Reviews</h2>
+
+      <div class="reviews-summary">
+        <p>
+          <strong>Average rating:</strong>
+          {% if average_stars %}
+            {{ average_stars|floatformat:1 }} / 5
+          {% else %}
+            No ratings yet
+          {% endif %}
+        </p>
+        <p><strong>Total reviews:</strong> {{ review_count }}</p>
+      </div>
+
+      {% if reviews %}
+        <div class="reviews-list">
+          {% for review in reviews %}
+            <article class="review-card">
+              <h3>{{ review.title }}</h3>
+              <p><strong>{{ review.stars }}/5</strong> by {{ review.customer.full_name }}</p>
+              <p>{{ review.body }}</p>
+              <p><small>{{ review.created_at|date:"M d, Y H:i" }}</small></p>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p>No reviews for this product yet.</p>
+      {% endif %}
+
+      {% if user.is_authenticated and user.is_customer %}
+        {% if has_review %}
+          <p class="muted">You have already reviewed this product.</p>
+        {% elif can_review %}
+          <div class="review-form-wrap">
+            <h3>Leave a Review</h3>
+            <form method="post" action="{% url 'reviews:review_submit' product.id %}">
+              {% csrf_token %}
+              <div class="form-row">
+                <label for="{{ review_form.stars.id_for_label }}">Rating</label>
+                {{ review_form.stars }}
+              </div>
+              <div class="form-row">
+                <label for="{{ review_form.title.id_for_label }}">Title</label>
+                {{ review_form.title }}
+              </div>
+              <div class="form-row">
+                <label for="{{ review_form.body.id_for_label }}">Review</label>
+                {{ review_form.body }}
+              </div>
+              <button type="submit" class="btn btn--primary">Submit Review</button>
+            </form>
+          </div>
+        {% else %}
+          <p class="muted">You can review this product after receiving it in a delivered order.</p>
+        {% endif %}
+      {% elif not user.is_authenticated %}
+        <p class="muted">
+          <a href="{% url 'accounts:login' %}?next={{ request.path }}">Log in</a> to leave a review.
+        </p>
+      {% endif %}
+    </section>
 
     <p class="back-link">
       <a href="{% url 'marketplace:home' %}">← Back to marketplace</a>
@@ -135,5 +196,52 @@
   .qty-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
   .qty-input { width: 70px; padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px; font: inherit; }
   .btn--lg { padding: .7rem 1.6rem; font-size: 1rem; }
+
+  .reviews-section {
+    margin-top: 36px;
+    padding-top: 24px;
+    border-top: 1px solid #ddd;
+  }
+  .reviews-summary {
+    margin-bottom: 18px;
+  }
+  .reviews-list {
+    display: grid;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .review-card {
+    padding: 16px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background: #fff;
+  }
+  .review-card h3 {
+    margin-top: 0;
+    margin-bottom: 8px;
+  }
+  .review-form-wrap {
+    margin-top: 20px;
+    padding: 18px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background: #fafafa;
+  }
+  .review-form-wrap .form-row {
+    margin-bottom: 14px;
+  }
+  .review-form-wrap label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .review-form-wrap .form-control {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font: inherit;
+    box-sizing: border-box;
+  }
 </style>
 {% endblock %}

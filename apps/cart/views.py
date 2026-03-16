@@ -38,12 +38,13 @@ def cart_detail(request):
     if request.user.is_authenticated:
         try:
             from apps.logistics.services.distance import get_food_miles
+
             customer_profile = request.user.customer_profile
             if customer_profile.latitude and customer_profile.longitude:
                 seen_producers = set()
                 total = 0.0
                 any_valid = False
-                for item in cart.items.select_related('product__producer'):
+                for item in cart.items.select_related("product__producer"):
                     producer = item.product.producer
                     if producer.id in seen_producers:
                         continue
@@ -67,6 +68,7 @@ def cart_detail(request):
             "total_food_miles": total_food_miles,
         },
     )
+
 
 @customer_required
 @require_POST
@@ -211,11 +213,14 @@ def checkout(request):
         best_befores = [
             i.product.best_before_date for i in items if i.product.best_before_date
         ]
+        subtotal_pence = sum(i.product.price_pence * i.quantity for i in items)
+
         grouped_with_dates[producer] = {
             "items": items,
             "earliest_delivery": earliest_delivery.isoformat(),
             "latest_delivery": min(best_befores).isoformat() if best_befores else "",
-            "subtotal_pence": sum(i.product.price_pence * i.quantity for i in items),
+            "subtotal_pence": subtotal_pence,
+            "subtotal_display": f"{subtotal_pence / 100:.2f}",
         }
 
     total_pence = get_cart_total_pence(cart)
@@ -230,6 +235,9 @@ def checkout(request):
             "total_pence": total_pence,
             "commission_pence": commission_pence,
             "grand_total_pence": grand_total_pence,
+            "total_display": f"{total_pence / 100:.2f}",
+            "commission_display": f"{commission_pence / 100:.2f}",
+            "grand_total_display": f"{grand_total_pence / 100:.2f}",
             "earliest_delivery": earliest_delivery.isoformat(),
             "customer_profile": request.user.customer_profile,
         },
