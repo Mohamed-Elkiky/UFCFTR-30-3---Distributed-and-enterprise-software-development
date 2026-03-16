@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{% block title %}BRFN Marketplace{% endblock %}</title>
 
-  <!-- Theme initialization (prevents flash) -->
   <script>
     (function() {
       const theme = localStorage.getItem('theme') || 'light';
@@ -16,7 +15,6 @@
     })();
   </script>
 
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -24,9 +22,7 @@
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   {% block extra_head %}{% endblock %}
 
-  <!-- Small safe defaults + phone "+" inside input -->
   <style>
-    /* If your style.css already defines these, it will still work */
     .form-control {
       padding: .5rem .75rem;
       border: 1px solid #ccc;
@@ -36,12 +32,10 @@
       font: inherit;
     }
 
-    /* Space for the + prefix shown inside the phone input */
     input[name="phone"].form-control {
       padding-left: 2rem;
     }
 
-    /* .btn base intentionally left to style.css — do not add background here */
     .btn { cursor: pointer; font: inherit; text-decoration: none; }
 
     .auth-card {
@@ -53,7 +47,6 @@
     .form-help { display:block; font-size: .9rem; opacity: .8; margin-top: .25rem; }
     .form-error { color: #b02a37; font-size: .9rem; margin-top: .25rem; }
 
-    /* Wrapper to place + inside the phone input */
     .phone-wrap { position: relative; max-width: 520px; }
     .phone-prefix {
       position: absolute;
@@ -69,12 +62,8 @@
 
 <body class="{% block body_class %}{% endblock %}">
 
-  <!-- =============================================================== -->
-  <!-- HEADER / NAV                                                    -->
-  <!-- =============================================================== -->
   <header class="site-header">
     <nav class="site-nav" aria-label="Primary navigation">
-      <!-- Brand -->
       <a class="brand" href="{% url 'marketplace:home' %}">
         <span class="brand-text">BRFN</span>
         <span class="brand-dot"></span>
@@ -82,35 +71,31 @@
 
       {% block nav_links %}{% endblock %}
 
-      <span class="nav-spacer" aria-hidden="true"></span>        
+      <span class="nav-spacer" aria-hidden="true"></span>
 
-      <!-- Cart -->
       <a class="nav-cart" href="{% url 'cart:cart_detail' %}" aria-label="Shopping cart">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
         <span class="cart-badge" aria-label="Items in cart">{{ cart_count|default:"0" }}</span>
       </a>
 
-      <!-- Theme Toggle -->
       <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark/light mode">
-        <!-- Sun icon (light mode indicator) -->
         <span class="theme-toggle-option icon-sun-wrap">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
         </span>
-        <!-- Moon icon (dark mode indicator) -->
         <span class="theme-toggle-option icon-moon-wrap">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         </span>
       </button>
 
-      <!-- Divider -->
       <span class="nav-divider"></span>
 
-{% if user.is_authenticated %}
+      {% if user.is_authenticated %}
         <div class="nav-user">
           <span class="nav-greeting">{{ user.email }}</span>
           <div class="nav-links">
             {% if user.role == 'producer' %}
               <a class="nav-link" href="{% url 'marketplace:product_list' %}">My Products</a>
+              <a class="nav-link" href="{% url 'orders:producer_orders' %}">Orders</a>
               <a class="nav-link" href="{% url 'payments:producer_settlements' %}">Settlements</a>
             {% endif %}
             <a class="nav-link nav-link--logout" href="{% url 'accounts:logout' %}">Logout</a>
@@ -127,9 +112,6 @@
     </nav>
   </header>
 
-  <!-- =============================================================== -->
-  <!-- MAIN                                                            -->
-  <!-- =============================================================== -->
   <main id="content" class="site-main">
 
     {% if messages %}
@@ -144,9 +126,6 @@
 
     {% block content %}
 
-      <!-- =========================================================== -->
-      <!-- HERO + PRIMARY SEARCH                                       -->
-      <!-- =========================================================== -->
       <section class="home-hero" aria-label="Marketplace introduction">
         <div class="home-hero__inner">
           <h1 class="home-hero__title">Local food, direct from producers.</h1>
@@ -176,9 +155,6 @@
         </div>
       </section>
 
-      <!-- =========================================================== -->
-      <!-- CATEGORY TILES (Critical)                                   -->
-      <!-- =========================================================== -->
       <section id="categories" class="home-categories" aria-label="Browse by category">
         <h2>Shop by category</h2>
 
@@ -202,9 +178,6 @@
         {% endif %}
       </section>
 
-      <!-- =========================================================== -->
-      <!-- QUICK FILTERS (Organic / Allergens)                         -->
-      <!-- =========================================================== -->
       <section class="home-filters" aria-label="Quick filters">
         <div class="filter-bar">
 
@@ -235,11 +208,6 @@
         </div>
       </section>
 
-      <!-- =========================================================== -->
-      <!-- PRODUCT GRID HELPERS (inline, no extra files)               -->
-      <!-- =========================================================== -->
-
-      {# Note: `product` objects may not have all fields; template guards avoid crashing. #}
       {% if q %}
         <section class="home-search-results" aria-label="Search results">
           <h2>Results for “{{ q }}”</h2>
@@ -253,7 +221,6 @@
                   </a>
 
                   <div class="product-meta">
-                    {# Price (supports discount) #}
                     {% if product.discount_price %}
                       <div class="product-price">
                         <strong>&pound;{{ product.discount_price }}</strong>
@@ -267,7 +234,6 @@
                       <div class="product-price muted">Price unavailable</div>
                     {% endif %}
 
-                    {# Producer + origin #}
                     {% if product.producer_name %}
                       <div><strong>Producer:</strong> {{ product.producer_name }}</div>
                     {% elif product.producer %}
@@ -278,7 +244,6 @@
                       <div><strong>Origin:</strong> {{ product.origin }}</div>
                     {% endif %}
 
-                    {# Availability / season badge #}
                     <span
                       class="badge {% if product.is_in_season %}badge--good{% elif product.is_in_season == False %}badge--muted{% endif %}"
                       {% if product.season_start and product.season_end %}
@@ -308,9 +273,6 @@
         </section>
       {% endif %}
 
-      <!-- =========================================================== -->
-      <!-- FEATURED PRODUCTS (shown regardless of search; ok if empty) -->
-      <!-- =========================================================== -->
       <section class="home-featured" aria-label="Featured products">
         <h2>Featured</h2>
 
@@ -371,9 +333,6 @@
         {% endif %}
       </section>
 
-      <!-- =========================================================== -->
-      <!-- SURPLUS / LAST-MINUTE DEALS                                 -->
-      <!-- =========================================================== -->
       <section id="surplus" class="home-surplus" aria-label="Surplus deals">
         <h2>Surplus / Last-minute deals</h2>
         <p class="muted">Discounted items to help reduce waste.</p>
@@ -439,9 +398,6 @@
         {% endif %}
       </section>
 
-      <!-- =========================================================== -->
-      <!-- FOOD MILES HOOK (UI only)                                   -->
-      <!-- =========================================================== -->
       <section id="food-miles" class="home-food-miles" aria-label="Food miles">
         <h2>Food miles</h2>
 
@@ -454,9 +410,6 @@
         {% endif %}
       </section>
 
-      <!-- =========================================================== -->
-      <!-- COMMUNITY LINKS                                             -->
-      <!-- =========================================================== -->
       <section class="home-community" aria-label="Community and education">
         <h2>Community</h2>
         <div class="community-grid">
@@ -472,7 +425,6 @@
         </div>
       </section>
 
-      <!-- Safe anchor targets -->
       <div id="cart" aria-hidden="true"></div>
       <div id="recipes" aria-hidden="true"></div>
       <div id="farm-stories" aria-hidden="true"></div>
@@ -481,16 +433,12 @@
     {% endblock %}
   </main>
 
-  <!-- =============================================================== -->
-  <!-- FOOTER                                                          -->
-  <!-- =============================================================== -->
   <footer class="site-footer">
     <small>&copy; {% now "Y" %} BRFN Marketplace</small>
   </footer>
 
   {% block extra_js %}{% endblock %}
 
-  <!-- Add-to-basket AJAX: submit without page reload -->
   <script>
     (function () {
       document.addEventListener('submit', function (e) {
@@ -514,7 +462,6 @@
     })();
   </script>
 
-  <!-- Theme Toggle Script -->
   <script>
     (function() {
       const toggle = document.getElementById('theme-toggle');
@@ -524,13 +471,13 @@
         const html = document.documentElement;
         const currentTheme = html.getAttribute('data-theme');
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        
+
         if (newTheme === 'dark') {
           html.setAttribute('data-theme', 'dark');
         } else {
           html.removeAttribute('data-theme');
         }
-        
+
         localStorage.setItem('theme', newTheme);
       });
     })();

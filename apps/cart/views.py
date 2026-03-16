@@ -123,10 +123,33 @@ def checkout(request):
 
     earliest_delivery = get_earliest_delivery_date()
 
+    # Block checkout early if any producer group has no valid delivery window
+    impossible_groups = []
+    for producer, items in grouped.items():
+        best_befores = [
+            i.product.best_before_date
+            for i in items
+            if i.product.best_before_date
+        ]
+        if best_befores:
+            latest_allowed = min(best_befores)
+            if latest_allowed < earliest_delivery:
+                producer_name = producer.business_name if producer else "Unknown producer"
+                impossible_groups.append(
+                    f"{producer_name}: best-before date ({latest_allowed}) is earlier than the earliest delivery date ({earliest_delivery})."
+                )
+
+    if impossible_groups:
+        for msg in impossible_groups:
+            messages.error(
+                request,
+                f"Some items cannot be checked out because there is no valid delivery date. {msg}"
+            )
+        return redirect("cart:cart_detail")
+
     if request.method == "POST":
         special_instructions = request.POST.get("special_instructions", "")
 
-        # Collect and validate per-producer delivery dates
         delivery_dates_by_producer = {}
         errors = []
 
@@ -157,7 +180,6 @@ def checkout(request):
                 )
                 continue
 
-            # Delivery must not be after the earliest best-before date in this group
             if producer:
                 items_for_producer = grouped[producer]
                 best_befores = [
@@ -196,7 +218,6 @@ def checkout(request):
                     special_instructions=special_instructions,
                 )
 
-                # Process payment via mock gateway
                 gw = MockGateway()
                 result = gw.initiate(customer_order.total_pence, customer_order.pk)
                 gw.capture(result["ref"])
@@ -259,7 +280,6 @@ def order_confirmed(request, order_id):
     producer_orders = order.producer_orders.select_related("producer").all()
     items = order.items.select_related("product").all()
 
-    # Fetch payment info if available
     payment = getattr(order, "payment", None)
 
     return render(

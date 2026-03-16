@@ -22,6 +22,52 @@ VALID_TRANSITIONS: dict[str, list[str]] = {
 }
 
 
+def _sync_customer_order_status(customer_order: CustomerOrder) -> CustomerOrder:
+    """
+    Update the parent CustomerOrder status based on its ProducerOrders.
+
+    Rules:
+    - If all producer orders are delivered -> customer order delivered
+    - If all producer orders are cancelled -> customer order cancelled
+    - If all producer orders are ready or delivered -> customer order ready
+    - If all producer orders are confirmed/ready/delivered -> customer order confirmed
+    - Otherwise -> customer order pending
+    """
+    statuses = list(
+        customer_order.producer_orders.values_list("status", flat=True)
+    )
+
+    if not statuses:
+        return customer_order
+
+    if all(status == ProducerOrder.Status.DELIVERED for status in statuses):
+        new_status = CustomerOrder.Status.DELIVERED
+    elif all(status == ProducerOrder.Status.CANCELLED for status in statuses):
+        new_status = CustomerOrder.Status.CANCELLED
+    elif all(
+        status in [ProducerOrder.Status.READY, ProducerOrder.Status.DELIVERED]
+        for status in statuses
+    ):
+        new_status = CustomerOrder.Status.READY
+    elif all(
+        status in [
+            ProducerOrder.Status.CONFIRMED,
+            ProducerOrder.Status.READY,
+            ProducerOrder.Status.DELIVERED,
+        ]
+        for status in statuses
+    ):
+        new_status = CustomerOrder.Status.CONFIRMED
+    else:
+        new_status = CustomerOrder.Status.PENDING
+
+    if customer_order.status != new_status:
+        customer_order.status = new_status
+        customer_order.save(update_fields=["status", "updated_at"])
+
+    return customer_order
+
+
 def transition_producer_order(
     producer_order: ProducerOrder,
     new_status: str,
@@ -32,8 +78,9 @@ def transition_producer_order(
 
     - Checks new_status is allowed based on VALID_TRANSITIONS[current_status]
     - Raises ValueError if invalid
-    - Sets status and saves (updated_at auto-updates)
+    - Sets status and saves
     - Creates an OrderStatusHistory audit record
+    - Syncs the parent CustomerOrder status
     """
     old_status = producer_order.status
     allowed = VALID_TRANSITIONS.get(old_status, [])
@@ -42,7 +89,6 @@ def transition_producer_order(
         raise ValueError(f"Invalid transition: {old_status} -> {new_status}")
 
     producer_order.status = new_status
-    # updated_at is auto_now=True in your model, so save updates timestamp
     producer_order.save(update_fields=["status", "updated_at"])
 
     OrderStatusHistory.objects.create(
@@ -53,6 +99,8 @@ def transition_producer_order(
         changed_by=actor_user,
         changed_at=timezone.now(),
     )
+
+    _sync_customer_order_status(producer_order.customer_order)
 
     return producer_order
 
@@ -88,12 +136,9 @@ def create_orders_from_cart(
 
     customer_profile = cart.customer
 
-    # CustomerOrder has one delivery_date; ProducerOrder supports per-producer delivery_date
     chosen_dates = [d for d in delivery_dates_by_producer.values() if d]
     overall_delivery_date = min(chosen_dates) if chosen_dates else timezone.now().date()
 
-    # Build delivery address string from CustomerProfile fields
-    # street, city, state, country, postcode
     address_parts = [
         customer_profile.street,
         customer_profile.city,
@@ -115,7 +160,6 @@ def create_orders_from_cart(
         status=CustomerOrder.Status.PENDING,
     )
 
-    # Group items by producer
     items_by_producer: dict[Any, list[Any]] = defaultdict(list)
     for ci in cart_items:
         producer = ci.product.producer
@@ -123,7 +167,6 @@ def create_orders_from_cart(
             raise ValueError("Cart item product has no producer")
         items_by_producer[producer].append(ci)
 
-    # Create one ProducerOrder per producer
     producer_orders: dict[Any, ProducerOrder] = {}
     for producer in items_by_producer.keys():
         producer_orders[producer] = ProducerOrder.objects.create(
@@ -137,7 +180,6 @@ def create_orders_from_cart(
             delivery_date=delivery_dates_by_producer.get(producer),
         )
 
-    # Create OrderItems, compute producer totals, decrement stock
     for producer, producer_items in items_by_producer.items():
         producer_subtotal = 0
 
@@ -153,13 +195,12 @@ def create_orders_from_cart(
                 price_pence=int(product.price_pence),
                 quantity=qty,
             )
-            # OrderItem.save() computes line_total_pence = price_pence * quantity
             producer_subtotal += order_item.line_total_pence
 
-            # Decrement stock (Product.stock_qty exists in your model)
-            type(product).objects.filter(pk=product.pk).update(stock_qty=F("stock_qty") - qty)
+            type(product).objects.filter(pk=product.pk).update(
+                stock_qty=F("stock_qty") - qty
+            )
 
-        # 5% commission on producer subtotal
         commission_pence = int(round(producer_subtotal * 0.05))
         payout_pence = producer_subtotal - commission_pence
 
@@ -167,19 +208,25 @@ def create_orders_from_cart(
         po.subtotal_pence = producer_subtotal
         po.commission_pence = commission_pence
         po.producer_payment_pence = payout_pence
-        po.save(update_fields=["subtotal_pence", "commission_pence", "producer_payment_pence", "updated_at"])
+        po.save(
+            update_fields=[
+                "subtotal_pence",
+                "commission_pence",
+                "producer_payment_pence",
+                "updated_at",
+            ]
+        )
 
-    # Customer totals
     customer_subtotal = sum(po.subtotal_pence for po in producer_orders.values())
     customer_commission = int(round(customer_subtotal * 0.05))
 
     customer_order.subtotal_pence = customer_subtotal
     customer_order.commission_pence = customer_commission
-    # Your CustomerOrder.calculate_totals sets total_pence = subtotal_pence; keep same behaviour
     customer_order.total_pence = customer_subtotal
-    customer_order.save(update_fields=["subtotal_pence", "commission_pence", "total_pence", "updated_at"])
+    customer_order.save(
+        update_fields=["subtotal_pence", "commission_pence", "total_pence", "updated_at"]
+    )
 
-    # Empty the cart
     cart.items.all().delete()
 
     return customer_order
