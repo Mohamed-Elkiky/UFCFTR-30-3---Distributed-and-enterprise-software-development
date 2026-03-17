@@ -28,3 +28,7 @@ class CartItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity}x {self.product.name}"
+
+    @property
+    def line_total_display(self):
+        return f"{(self.product.price_pence * self.quantity) / 100:.2f}"

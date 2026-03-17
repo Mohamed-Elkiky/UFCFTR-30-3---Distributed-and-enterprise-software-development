@@ -30,7 +30,6 @@ def home(request):
     if q:
         products = products.filter(
             Q(name__icontains=q) |
-            Q(description__icontains=q) |
             Q(producer__business_name__icontains=q)
         )
 
@@ -290,7 +289,6 @@ def product_search(request):
     if q:
         products = products.filter(
             Q(name__icontains=q) |
-            Q(description__icontains=q) |
             Q(producer__business_name__icontains=q)
         )
 
@@ -383,7 +381,6 @@ def product_search_json(request):
     if q:
         products = products.filter(
             Q(name__icontains=q) |
-            Q(description__icontains=q) |
             Q(producer__business_name__icontains=q)
         )
 

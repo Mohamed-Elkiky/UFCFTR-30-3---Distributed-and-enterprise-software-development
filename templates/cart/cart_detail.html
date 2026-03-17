@@ -47,10 +47,10 @@
                   </form>
                 </td>
                 <td style="padding: 0.75rem 0; text-align: right;">
-                  £{% widthratio item.product.price_pence 100 1 %}
+                  {{ item.product.price_display }}
                 </td>
                 <td style="padding: 0.75rem 0; text-align: right; font-weight: 600;">
-                  £{% widthratio item.product.price_pence 100 item.quantity %}
+                  £{{ item.line_total_display }}
                 </td>
                 <td style="padding: 0.75rem 0; text-align: right;">
                   <form method="post" action="{% url 'cart:cart_remove' item.product.id %}">
@@ -70,7 +70,7 @@
     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
       <div>
         <div style="font-size: 0.9rem; color: var(--text-muted);">Subtotal</div>
-        <div style="font-size: 1.4rem; font-weight: 700;">£{% widthratio total_pence 100 1 %}</div>
+        <div style="font-size: 1.4rem; font-weight: 700;">£{{ total_display }}</div>
         <div style="font-size: 0.8rem; color: var(--text-muted);">+ 5% commission at checkout</div>
         {% if total_food_miles is not None %}
           <div style="font-size: 0.85rem; color: #2e7d32; margin-top: 0.5rem;">🌱 {{ total_food_miles }} total food miles</div>

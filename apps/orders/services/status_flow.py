@@ -81,6 +81,7 @@ def transition_producer_order(
     - Sets status and saves
     - Creates an OrderStatusHistory audit record
     - Syncs the parent CustomerOrder status
+    - Triggers weekly settlement if status is delivered
     """
     old_status = producer_order.status
     allowed = VALID_TRANSITIONS.get(old_status, [])
@@ -101,6 +102,13 @@ def transition_producer_order(
     )
 
     _sync_customer_order_status(producer_order.customer_order)
+
+    if new_status == "delivered":
+        import datetime
+        from apps.payments.services.settlement import run_weekly_settlement
+        today = datetime.date.today()
+        week_start = today - datetime.timedelta(days=today.weekday())
+        run_weekly_settlement(week_start)
 
     return producer_order
 

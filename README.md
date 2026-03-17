@@ -49,7 +49,8 @@ password = Admin123
 # if changes was made to db run
 git pull
 docker compose down -v
-docker compose up
+docker compose up --build
+docker exec -it ufcftr-30-3---distributed-and-enterprise-software-development-web-1 python manage.py loaddata fixtures/seed.json
 
 # command to make the order show up as delievered (swap out the fake order id with the real one that shows up when the order is delivered)
 docker compose exec web python manage.py deliver_order --order-id a1b2c3d4-0001-0001-0001-000000000001
