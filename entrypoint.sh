@@ -32,8 +32,7 @@ print(get_user_model().objects.count())
 if [ "$USER_COUNT" = "0" ]; then
   echo "==> Empty database detected – loading seed data..."
   if [ -f fixtures/seed.json ]; then
-    python manage.py loaddata fixtures/seed.json
-    echo "==> Seed data loaded."
+    python manage.py loaddata fixtures/seed.json || echo "==> Fixture load failed – continuing anyway."
   else
     echo "==> No fixtures/seed.json found – skipping seed."
   fi
