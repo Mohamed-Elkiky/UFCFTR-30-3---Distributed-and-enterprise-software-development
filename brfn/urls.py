@@ -12,6 +12,7 @@ urlpatterns = [
     path('', include('apps.marketplace.urls', namespace='marketplace')),
     path('reviews/', include('apps.reviews.urls', namespace='reviews')),
     path('content/', include('apps.content.urls', namespace='content')),
+    path('notifications/', include('apps.notifications.urls', namespace='notifications')),
 ]
 
 from django.conf import settings

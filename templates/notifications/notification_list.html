@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications{% endblock %}
+
+{% block content %}
+<div style="max-width:720px; margin:2rem auto; padding:0 1rem;">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+    <h1 style="margin:0;">Notifications</h1>
+    {% if unread_count > 0 %}
+      <form method="post" action="{% url 'notifications:mark_all_read' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn" style="font-size:0.9rem; padding:0.4rem 1rem; background:#4a7c59; color:#fff; border:none; border-radius:6px; cursor:pointer;">
+          Mark all as read ({{ unread_count }})
+        </button>
+      </form>
+    {% endif %}
+  </div>
+
+  {% if notifications %}
+    {% for n in notifications %}
+      <div style="padding:1rem; margin-bottom:0.75rem; border-radius:8px; border:1px solid {% if n.is_read %}#ddd{% else %}#4a7c59{% endif %}; background:{% if n.is_read %}transparent{% else %}rgba(74,124,89,0.06){% endif %};">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <div>
+            <strong style="font-size:1rem;">
+              {% if n.type == 'low_stock' %}⚠️{% elif n.type == 'order_status' %}📦{% else %}🔔{% endif %}
+              {{ n.title }}
+            </strong>
+            {% if not n.is_read %}
+              <span style="display:inline-block; width:8px; height:8px; background:#4a7c59; border-radius:50%; margin-left:6px; vertical-align:middle;"></span>
+            {% endif %}
+            <p style="margin:0.4rem 0 0; opacity:0.85;">{{ n.body }}</p>
+          </div>
+          <span style="font-size:0.8rem; opacity:0.6; white-space:nowrap; margin-left:1rem;">
+            {{ n.created_at|timesince }} ago
+          </span>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p style="text-align:center; opacity:0.6; padding:3rem 0;">No notifications yet.</p>
+  {% endif %}
+</div>
+{% endblock %}
