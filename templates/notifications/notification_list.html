@@ -22,7 +22,6 @@
         <div style="display:flex; justify-content:space-between; align-items:flex-start;">
           <div>
             <strong style="font-size:1rem;">
-              {% if n.type == 'low_stock' %}⚠️{% elif n.type == 'order_status' %}📦{% else %}🔔{% endif %}
               {{ n.title }}
             </strong>
             {% if not n.is_read %}
