@@ -1,5 +1,229 @@
 [
 {
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "admin",
+    "model": "logentry"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "auth",
+    "model": "permission"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "auth",
+    "model": "group"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "contenttypes",
+    "model": "contenttype"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "sessions",
+    "model": "session"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "accounts",
+    "model": "user"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "accounts",
+    "model": "restaurantprofile"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "accounts",
+    "model": "producerprofile"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "accounts",
+    "model": "customerprofile"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "accounts",
+    "model": "communitygroupprofile"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "marketplace",
+    "model": "allergen"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "marketplace",
+    "model": "product"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "marketplace",
+    "model": "productcategory"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "marketplace",
+    "model": "productimage"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "marketplace",
+    "model": "productallergen"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "marketplace",
+    "model": "surplusdeal"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "cart",
+    "model": "cart"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "cart",
+    "model": "cartitem"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "orders",
+    "model": "customerorder"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "orders",
+    "model": "producerorder"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "orders",
+    "model": "orderstatushistory"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "orders",
+    "model": "orderitem"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "payments",
+    "model": "commissionpolicy"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "payments",
+    "model": "settlementweek"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "payments",
+    "model": "paymenttransaction"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "payments",
+    "model": "ordercommission"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "payments",
+    "model": "producersettlement"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "payments",
+    "model": "producerordersettlementlink"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "notifications",
+    "model": "notification"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "reviews",
+    "model": "productreview"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "content",
+    "model": "contentpost"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "content",
+    "model": "contentproductlink"
+  }
+},
+{
   "model": "sessions.session",
   "pk": "nm9r7fc9t143ffrl509jv6hm74wg4t37",
   "fields": {
@@ -8,354 +232,11 @@
   }
 },
 {
-  "model": "accounts.user",
+  "model": "sessions.session",
+  "pk": "yvr1f2l6dr0brvsq1r0gqcy0fb9ga9z8",
   "fields": {
-    "password": "pbkdf2_sha256$600000$TbszxTN1AehYYdk6OZfRhh$P9dNmA+oAkc8enWHmKcPUTlj0EkvrtrHaZFevF2qkKA=",
-    "last_login": null,
-    "is_superuser": true,
-    "first_name": "Admin",
-    "last_name": "User",
-    "is_staff": true,
-    "is_active": true,
-    "date_joined": "2026-01-01T09:00:00Z",
-    "email": "admin@brfn.com",
-    "role": "admin",
-    "phone": "",
-    "groups": [],
-    "user_permissions": []
-  }
-},
-{
-  "model": "accounts.user",
-  "fields": {
-    "password": "pbkdf2_sha256$600000$NVzf3dJGGfm7WPzmWHAE6i$4yT0IzczL+mverdVKC86NYj3zxmYux88o/VpFBrKKNw=",
-    "last_login": null,
-    "is_superuser": false,
-    "first_name": "Jane",
-    "last_name": "Smith",
-    "is_staff": false,
-    "is_active": true,
-    "date_joined": "2026-01-01T09:00:00Z",
-    "email": "jane.smith@bristolvalleyfarm.com",
-    "role": "producer",
-    "phone": "01179 123456",
-    "groups": [],
-    "user_permissions": []
-  }
-},
-{
-  "model": "accounts.user",
-  "fields": {
-    "password": "pbkdf2_sha256$600000$qSAE5eaXzdyLAfnBul8Dgj$YVNLJeerrscId1jaqvEEjNLunwY98Hbne8/LSq6Rm5w=",
-    "last_login": null,
-    "is_superuser": false,
-    "first_name": "Tom",
-    "last_name": "Hartley",
-    "is_staff": false,
-    "is_active": true,
-    "date_joined": "2026-01-01T09:00:00Z",
-    "email": "tom.hartley@hillsidedairy.co.uk",
-    "role": "producer",
-    "phone": "01179 654321",
-    "groups": [],
-    "user_permissions": []
-  }
-},
-{
-  "model": "accounts.user",
-  "fields": {
-    "password": "pbkdf2_sha256$600000$oanCOoQxwWysV8z92OI6bb$S2pF5z3XAbPK2d6850r74wFt4pBcNg1DD5RBqhKgiEE=",
-    "last_login": null,
-    "is_superuser": false,
-    "first_name": "David",
-    "last_name": "Marsh",
-    "is_staff": false,
-    "is_active": true,
-    "date_joined": "2026-01-01T09:00:00Z",
-    "email": "david.marsh@greenacresfarm.co.uk",
-    "role": "producer",
-    "phone": "01179 789012",
-    "groups": [],
-    "user_permissions": []
-  }
-},
-{
-  "model": "accounts.user",
-  "fields": {
-    "password": "pbkdf2_sha256$600000$RJyUBonhMDsRXbS85n5Aip$lGClRvuoP7W4DDutFb2cxe4o+UKj/jVgxVbXFNtFdvA=",
-    "last_login": null,
-    "is_superuser": false,
-    "first_name": "Helen",
-    "last_name": "Price",
-    "is_staff": false,
-    "is_active": true,
-    "date_joined": "2026-01-01T09:00:00Z",
-    "email": "helen.price@orchardviewfarm.co.uk",
-    "role": "producer",
-    "phone": "01179 321098",
-    "groups": [],
-    "user_permissions": []
-  }
-},
-{
-  "model": "accounts.user",
-  "fields": {
-    "password": "pbkdf2_sha256$600000$Hr4p1KcaGgdgz2tkcEOud0$bjH4jgJ1JZZIrWvc17jqWLwYgmjBsKrxhfTi4HzU5HU=",
-    "last_login": null,
-    "is_superuser": false,
-    "first_name": "Paul",
-    "last_name": "Baker",
-    "is_staff": false,
-    "is_active": true,
-    "date_joined": "2026-01-01T09:00:00Z",
-    "email": "paul.baker@severnvalleybakers.co.uk",
-    "role": "producer",
-    "phone": "01179 456789",
-    "groups": [],
-    "user_permissions": []
-  }
-},
-{
-  "model": "accounts.user",
-  "fields": {
-    "password": "pbkdf2_sha256$600000$YEKoN952ythiVV2mkyPDE8$Q5okB7348FQjn2o0vD/3dhPFG5q3kef74GnLwLtLZC0=",
-    "last_login": null,
-    "is_superuser": false,
-    "first_name": "Sarah",
-    "last_name": "Bee",
-    "is_staff": false,
-    "is_active": true,
-    "date_joined": "2026-01-01T09:00:00Z",
-    "email": "sarah.bee@hartcliffehoney.co.uk",
-    "role": "producer",
-    "phone": "01179 567890",
-    "groups": [],
-    "user_permissions": []
-  }
-},
-{
-  "model": "accounts.user",
-  "fields": {
-    "password": "pbkdf2_sha256$600000$Ww26TsRzqr0HOgrvsYhids$tXMrXo6HXFUiBSgcfRukY6jTrGH2GhxoWeFtOCr/YEM=",
-    "last_login": null,
-    "is_superuser": false,
-    "first_name": "Neil",
-    "last_name": "Foster",
-    "is_staff": false,
-    "is_active": true,
-    "date_joined": "2026-01-01T09:00:00Z",
-    "email": "neil.foster@redlandfreerange.co.uk",
-    "role": "producer",
-    "phone": "01179 678901",
-    "groups": [],
-    "user_permissions": []
-  }
-},
-{
-  "model": "accounts.user",
-  "fields": {
-    "password": "pbkdf2_sha256$600000$44m1cc5lvPHBgMl7gsyZlt$3a5c7jkpCd9MWPDOUtNn0UUe2aspYdyBgAO7thPns+g=",
-    "last_login": null,
-    "is_superuser": false,
-    "first_name": "Margaret",
-    "last_name": "Cook",
-    "is_staff": false,
-    "is_active": true,
-    "date_joined": "2026-01-01T09:00:00Z",
-    "email": "margaret.cook@cliftonpreserves.co.uk",
-    "role": "producer",
-    "phone": "01179 890123",
-    "groups": [],
-    "user_permissions": []
-  }
-},
-{
-  "model": "accounts.user",
-  "fields": {
-    "password": "pbkdf2_sha256$600000$rVIzlfS4pbIxcnozhtqIjs$M3PBVlgY0sab+FqXIsrI7dUo0fdjAOlJ461QnbWytGU=",
-    "last_login": "2026-03-10T18:32:43.172Z",
-    "is_superuser": false,
-    "first_name": "",
-    "last_name": "",
-    "is_staff": false,
-    "is_active": true,
-    "date_joined": "2026-03-10T18:32:43.070Z",
-    "email": "test@producer.com",
-    "role": "producer",
-    "phone": "+44123456789",
-    "groups": [],
-    "user_permissions": []
-  }
-},
-{
-  "model": "accounts.user",
-  "fields": {
-    "password": "pbkdf2_sha256$600000$0WiA6wdL4vy3Z0lrt5ZWtm$YnbLsQaADAmG3dVUQPphEmAafSCOO9kIwoQlOE6IW/A=",
-    "last_login": null,
-    "is_superuser": false,
-    "first_name": "",
-    "last_name": "",
-    "is_staff": false,
-    "is_active": true,
-    "date_joined": "2026-03-10T19:18:21.988Z",
-    "email": "test@test.com",
-    "role": "customer",
-    "phone": "",
-    "groups": [],
-    "user_permissions": []
-  }
-},
-{
-  "model": "accounts.producerprofile",
-  "pk": 1,
-  "fields": {
-    "user": [
-      "jane.smith@bristolvalleyfarm.com"
-    ],
-    "business_name": "Bristol Valley Farm",
-    "contact_name": "Jane Smith",
-    "business_address": "Stoke Park Road, Bristol",
-    "postcode": "BS16 1GW",
-    "latitude": "51.490200",
-    "longitude": "-2.531400",
-    "created_at": "2026-01-01T09:00:00Z",
-    "updated_at": "2026-01-01T09:00:00Z"
-  }
-},
-{
-  "model": "accounts.producerprofile",
-  "pk": 2,
-  "fields": {
-    "user": [
-      "tom.hartley@hillsidedairy.co.uk"
-    ],
-    "business_name": "Hillside Dairy",
-    "contact_name": "Tom Hartley",
-    "business_address": "Clifton Down Road, Bristol",
-    "postcode": "BS8 1TH",
-    "latitude": "51.461200",
-    "longitude": "-2.614300",
-    "created_at": "2026-01-01T09:00:00Z",
-    "updated_at": "2026-01-01T09:00:00Z"
-  }
-},
-{
-  "model": "accounts.producerprofile",
-  "pk": 3,
-  "fields": {
-    "user": [
-      "david.marsh@greenacresfarm.co.uk"
-    ],
-    "business_name": "Green Acres Farm",
-    "contact_name": "David Marsh",
-    "business_address": "Westbury Lane, Bristol",
-    "postcode": "BS9 1JG",
-    "latitude": "51.487500",
-    "longitude": "-2.635200",
-    "created_at": "2026-01-01T09:00:00Z",
-    "updated_at": "2026-01-01T09:00:00Z"
-  }
-},
-{
-  "model": "accounts.producerprofile",
-  "pk": 4,
-  "fields": {
-    "user": [
-      "helen.price@orchardviewfarm.co.uk"
-    ],
-    "business_name": "Orchard View Farm",
-    "contact_name": "Helen Price",
-    "business_address": "Long Ashton Road, Bristol",
-    "postcode": "BS41 9LB",
-    "latitude": "51.430100",
-    "longitude": "-2.659800",
-    "created_at": "2026-01-01T09:00:00Z",
-    "updated_at": "2026-01-01T09:00:00Z"
-  }
-},
-{
-  "model": "accounts.producerprofile",
-  "pk": 5,
-  "fields": {
-    "user": [
-      "paul.baker@severnvalleybakers.co.uk"
-    ],
-    "business_name": "Severn Valley Bakers",
-    "contact_name": "Paul Baker",
-    "business_address": "Bedminster Down Road, Bristol",
-    "postcode": "BS13 7AB",
-    "latitude": "51.426500",
-    "longitude": "-2.601700",
-    "created_at": "2026-01-01T09:00:00Z",
-    "updated_at": "2026-01-01T09:00:00Z"
-  }
-},
-{
-  "model": "accounts.producerprofile",
-  "pk": 6,
-  "fields": {
-    "user": [
-      "sarah.bee@hartcliffehoney.co.uk"
-    ],
-    "business_name": "Hartcliffe Honey",
-    "contact_name": "Sarah Bee",
-    "business_address": "Hartcliffe Way, Bristol",
-    "postcode": "BS13 0JA",
-    "latitude": "51.408900",
-    "longitude": "-2.594600",
-    "created_at": "2026-01-01T09:00:00Z",
-    "updated_at": "2026-01-01T09:00:00Z"
-  }
-},
-{
-  "model": "accounts.producerprofile",
-  "pk": 7,
-  "fields": {
-    "user": [
-      "neil.foster@redlandfreerange.co.uk"
-    ],
-    "business_name": "Redland Free Range",
-    "contact_name": "Neil Foster",
-    "business_address": "Redland Road, Bristol",
-    "postcode": "BS6 6YB",
-    "latitude": "51.468300",
-    "longitude": "-2.601200",
-    "created_at": "2026-01-01T09:00:00Z",
-    "updated_at": "2026-01-01T09:00:00Z"
-  }
-},
-{
-  "model": "accounts.producerprofile",
-  "pk": 8,
-  "fields": {
-    "user": [
-      "margaret.cook@cliftonpreserves.co.uk"
-    ],
-    "business_name": "Clifton Preserves",
-    "contact_name": "Margaret Cook",
-    "business_address": "Whiteladies Road, Bristol",
-    "postcode": "BS8 2NT",
-    "latitude": "51.463700",
-    "longitude": "-2.608900",
-    "created_at": "2026-01-01T09:00:00Z",
-    "updated_at": "2026-01-01T09:00:00Z"
-  }
-},
-{
-  "model": "accounts.producerprofile",
-  "pk": 9,
-  "fields": {
-    "user": [
-      "test@producer.com"
-    ],
-    "business_name": "brisotl",
-    "contact_name": "test test",
-    "business_address": "bristol.com",
-    "postcode": "123456",
-    "latitude": null,
-    "longitude": null,
-    "created_at": "2026-03-10T18:32:43.170Z",
-    "updated_at": "2026-03-10T18:32:43.170Z"
+    "session_data": ".eJxVjDsOwjAQBe_iGllZe_1ZSnrOYK0_wQHkSHFSIe4OkVJA-2bmvUTgba1h62UJUxZnASBOv2Pk9ChtJ_nO7TbLNLd1maLcFXnQLq9zLs_L4f4dVO71WztwQOiUMgm04zigURE0WJ9HPbBBwqJcJguYKI8RLHH0JXmrAQuSeH8Ayj426Q:1w2cAo:Ca7hJHf6rN-d4rq3vYych0CqQ7bI-mEd2rzcWfAmuMA",
+    "expire_date": "2026-03-31T21:41:58.818Z"
   }
 },
 {
@@ -416,6 +297,28 @@
 },
 {
   "model": "marketplace.product",
+  "pk": "26884068-629f-4089-af31-7e3394bc8d01",
+  "fields": {
+    "producer": 4,
+    "category": 2,
+    "name": "strawberry",
+    "description": "Freshly picked strawberries, sweet and juicy from our local farm. Perfect for desserts, smoothies, or simply enjoyed on their own.",
+    "price_pence": 350,
+    "unit": "kg",
+    "availability": "available_year_round",
+    "seasonal_start_month": 1,
+    "seasonal_end_month": 12,
+    "stock_qty": 95,
+    "low_stock_threshold": 10,
+    "organic_certified": false,
+    "harvest_date": "2026-03-17",
+    "best_before_date": "2026-06-30",
+    "created_at": "2026-03-17T20:47:08.631Z",
+    "updated_at": "2026-03-17T20:47:08.631Z"
+  }
+},
+{
+  "model": "marketplace.product",
   "pk": "a1b2c3d4-0001-0001-0001-000000000001",
   "fields": {
     "producer": 1,
@@ -447,15 +350,15 @@
     "price_pence": 300,
     "unit": "kg",
     "availability": "in_season",
-    "seasonal_start_month": 6,
-    "seasonal_end_month": 10,
+    "seasonal_start_month": null,
+    "seasonal_end_month": null,
     "stock_qty": 60,
     "low_stock_threshold": 10,
     "organic_certified": true,
-    "harvest_date": "2026-02-22",
-    "best_before_date": "2026-03-01",
+    "harvest_date": null,
+    "best_before_date": null,
     "created_at": "2026-01-01T09:00:00Z",
-    "updated_at": "2026-01-01T09:00:00Z"
+    "updated_at": "2026-03-17T20:31:07.410Z"
   }
 },
 {
@@ -469,15 +372,15 @@
     "price_pence": 180,
     "unit": "each",
     "availability": "in_season",
-    "seasonal_start_month": 6,
-    "seasonal_end_month": 9,
+    "seasonal_start_month": null,
+    "seasonal_end_month": null,
     "stock_qty": 45,
     "low_stock_threshold": 8,
     "organic_certified": true,
-    "harvest_date": "2026-02-23",
-    "best_before_date": "2026-03-02",
+    "harvest_date": null,
+    "best_before_date": null,
     "created_at": "2026-01-01T09:00:00Z",
-    "updated_at": "2026-01-01T09:00:00Z"
+    "updated_at": "2026-03-17T20:30:04.502Z"
   }
 },
 {
@@ -496,10 +399,10 @@
     "stock_qty": 120,
     "low_stock_threshold": 15,
     "organic_certified": false,
-    "harvest_date": "2026-02-15",
-    "best_before_date": "2026-03-15",
+    "harvest_date": null,
+    "best_before_date": null,
     "created_at": "2026-01-01T09:00:00Z",
-    "updated_at": "2026-01-01T09:00:00Z"
+    "updated_at": "2026-03-17T20:39:44.569Z"
   }
 },
 {
@@ -672,10 +575,10 @@
     "stock_qty": 60,
     "low_stock_threshold": 10,
     "organic_certified": false,
-    "harvest_date": "2025-10-10",
-    "best_before_date": "2026-03-01",
+    "harvest_date": null,
+    "best_before_date": null,
     "created_at": "2026-01-01T09:00:00Z",
-    "updated_at": "2026-01-01T09:00:00Z"
+    "updated_at": "2026-03-17T20:37:11.232Z"
   }
 },
 {
@@ -761,9 +664,9 @@
     "low_stock_threshold": 8,
     "organic_certified": false,
     "harvest_date": null,
-    "best_before_date": "2026-03-10",
+    "best_before_date": null,
     "created_at": "2026-01-01T09:00:00Z",
-    "updated_at": "2026-01-01T09:00:00Z"
+    "updated_at": "2026-03-17T20:32:03.531Z"
   }
 },
 {
@@ -783,9 +686,9 @@
     "low_stock_threshold": 6,
     "organic_certified": false,
     "harvest_date": null,
-    "best_before_date": "2026-03-08",
+    "best_before_date": null,
     "created_at": "2026-01-01T09:00:00Z",
-    "updated_at": "2026-01-01T09:00:00Z"
+    "updated_at": "2026-03-17T20:38:40.206Z"
   }
 },
 {
@@ -827,9 +730,9 @@
     "low_stock_threshold": 3,
     "organic_certified": false,
     "harvest_date": null,
-    "best_before_date": "2026-02-28",
+    "best_before_date": null,
     "created_at": "2026-01-01T09:00:00Z",
-    "updated_at": "2026-01-01T09:00:00Z"
+    "updated_at": "2026-03-17T20:42:50.849Z"
   }
 },
 {
@@ -849,9 +752,9 @@
     "low_stock_threshold": 3,
     "organic_certified": false,
     "harvest_date": null,
-    "best_before_date": "2026-02-28",
+    "best_before_date": null,
     "created_at": "2026-01-01T09:00:00Z",
-    "updated_at": "2026-01-01T09:00:00Z"
+    "updated_at": "2026-03-17T20:33:03.859Z"
   }
 },
 {
@@ -871,9 +774,9 @@
     "low_stock_threshold": 3,
     "organic_certified": false,
     "harvest_date": null,
-    "best_before_date": "2026-02-28",
+    "best_before_date": null,
     "created_at": "2026-01-01T09:00:00Z",
-    "updated_at": "2026-01-01T09:00:00Z"
+    "updated_at": "2026-03-17T20:43:19.642Z"
   }
 },
 {
@@ -915,9 +818,9 @@
     "low_stock_threshold": 5,
     "organic_certified": false,
     "harvest_date": null,
-    "best_before_date": "2027-06-01",
+    "best_before_date": null,
     "created_at": "2026-01-01T09:00:00Z",
-    "updated_at": "2026-01-01T09:00:00Z"
+    "updated_at": "2026-03-17T20:44:25.600Z"
   }
 },
 {
@@ -937,9 +840,9 @@
     "low_stock_threshold": 5,
     "organic_certified": false,
     "harvest_date": null,
-    "best_before_date": "2027-09-01",
+    "best_before_date": null,
     "created_at": "2026-01-01T09:00:00Z",
-    "updated_at": "2026-01-01T09:00:00Z"
+    "updated_at": "2026-03-17T20:44:38.965Z"
   }
 },
 {
@@ -981,9 +884,9 @@
     "low_stock_threshold": 5,
     "organic_certified": false,
     "harvest_date": null,
-    "best_before_date": "2026-03-04",
+    "best_before_date": null,
     "created_at": "2026-01-01T09:00:00Z",
-    "updated_at": "2026-01-01T09:00:00Z"
+    "updated_at": "2026-03-17T20:41:18.095Z"
   }
 },
 {
@@ -1176,66 +1079,10 @@
 },
 {
   "model": "marketplace.productallergen",
-  "pk": 4,
-  "fields": {
-    "product": "a1b2c3d4-0001-0001-0001-000000000016",
-    "allergen": 7
-  }
-},
-{
-  "model": "marketplace.productallergen",
-  "pk": 5,
-  "fields": {
-    "product": "a1b2c3d4-0001-0001-0001-000000000017",
-    "allergen": 7
-  }
-},
-{
-  "model": "marketplace.productallergen",
   "pk": 6,
   "fields": {
     "product": "a1b2c3d4-0001-0001-0001-000000000018",
     "allergen": 7
-  }
-},
-{
-  "model": "marketplace.productallergen",
-  "pk": 7,
-  "fields": {
-    "product": "a1b2c3d4-0001-0001-0001-000000000019",
-    "allergen": 2
-  }
-},
-{
-  "model": "marketplace.productallergen",
-  "pk": 8,
-  "fields": {
-    "product": "a1b2c3d4-0001-0001-0001-000000000019",
-    "allergen": 10
-  }
-},
-{
-  "model": "marketplace.productallergen",
-  "pk": 9,
-  "fields": {
-    "product": "a1b2c3d4-0001-0001-0001-000000000020",
-    "allergen": 2
-  }
-},
-{
-  "model": "marketplace.productallergen",
-  "pk": 10,
-  "fields": {
-    "product": "a1b2c3d4-0001-0001-0001-000000000021",
-    "allergen": 2
-  }
-},
-{
-  "model": "marketplace.productallergen",
-  "pk": 11,
-  "fields": {
-    "product": "a1b2c3d4-0001-0001-0001-000000000021",
-    "allergen": 12
   }
 },
 {
@@ -1264,7 +1111,31 @@
 },
 {
   "model": "marketplace.productallergen",
-  "pk": 15,
+  "pk": 19,
+  "fields": {
+    "product": "a1b2c3d4-0001-0001-0001-000000000016",
+    "allergen": 7
+  }
+},
+{
+  "model": "marketplace.productallergen",
+  "pk": 20,
+  "fields": {
+    "product": "a1b2c3d4-0001-0001-0001-000000000020",
+    "allergen": 2
+  }
+},
+{
+  "model": "marketplace.productallergen",
+  "pk": 21,
+  "fields": {
+    "product": "a1b2c3d4-0001-0001-0001-000000000017",
+    "allergen": 7
+  }
+},
+{
+  "model": "marketplace.productallergen",
+  "pk": 22,
   "fields": {
     "product": "a1b2c3d4-0001-0001-0001-000000000026",
     "allergen": 2
@@ -1272,7 +1143,7 @@
 },
 {
   "model": "marketplace.productallergen",
-  "pk": 16,
+  "pk": 23,
   "fields": {
     "product": "a1b2c3d4-0001-0001-0001-000000000026",
     "allergen": 14
@@ -1280,18 +1151,140 @@
 },
 {
   "model": "marketplace.productallergen",
-  "pk": 17,
+  "pk": 24,
+  "fields": {
+    "product": "a1b2c3d4-0001-0001-0001-000000000019",
+    "allergen": 2
+  }
+},
+{
+  "model": "marketplace.productallergen",
+  "pk": 25,
+  "fields": {
+    "product": "a1b2c3d4-0001-0001-0001-000000000019",
+    "allergen": 10
+  }
+},
+{
+  "model": "marketplace.productallergen",
+  "pk": 26,
+  "fields": {
+    "product": "a1b2c3d4-0001-0001-0001-000000000021",
+    "allergen": 12
+  }
+},
+{
+  "model": "marketplace.productallergen",
+  "pk": 27,
+  "fields": {
+    "product": "a1b2c3d4-0001-0001-0001-000000000021",
+    "allergen": 2
+  }
+},
+{
+  "model": "marketplace.productallergen",
+  "pk": 28,
+  "fields": {
+    "product": "a1b2c3d4-0001-0001-0001-000000000023",
+    "allergen": 14
+  }
+},
+{
+  "model": "marketplace.productallergen",
+  "pk": 29,
   "fields": {
     "product": "a1b2c3d4-0001-0001-0001-000000000024",
     "allergen": 14
   }
 },
 {
-  "model": "marketplace.productallergen",
-  "pk": 18,
+  "model": "marketplace.productimage",
+  "pk": "3fcb75dc-c0b4-4500-9194-8ad71b5c7dea",
   "fields": {
-    "product": "a1b2c3d4-0001-0001-0001-000000000023",
-    "allergen": 14
+    "product": "a1b2c3d4-0001-0001-0001-000000000017",
+    "url": null,
+    "image": "products/Double_cream.jpg",
+    "created_at": null
+  }
+},
+{
+  "model": "marketplace.productimage",
+  "pk": "54afeaeb-2e0e-416c-b499-218e97bc903b",
+  "fields": {
+    "product": "a1b2c3d4-0001-0001-0001-000000000003",
+    "url": null,
+    "image": "products/Courgettes.webp",
+    "created_at": null
+  }
+},
+{
+  "model": "marketplace.productimage",
+  "pk": "5d1cc22b-3142-49cc-b9ae-2601cab3c9bc",
+  "fields": {
+    "product": "a1b2c3d4-0001-0001-0001-000000000016",
+    "url": null,
+    "image": "products/Natural_yoghurt.jpg",
+    "created_at": null
+  }
+},
+{
+  "model": "marketplace.productimage",
+  "pk": "68b7d9db-bff6-4775-82a3-9f9d3de1d8a9",
+  "fields": {
+    "product": "a1b2c3d4-0001-0001-0001-000000000012",
+    "url": null,
+    "image": "products/conference-pear-variet.jpg",
+    "created_at": null
+  }
+},
+{
+  "model": "marketplace.productimage",
+  "pk": "7239b197-e30d-43e1-b828-682343022d73",
+  "fields": {
+    "product": "26884068-629f-4089-af31-7e3394bc8d01",
+    "url": null,
+    "image": "products/Strawberry.jpeg",
+    "created_at": null
+  }
+},
+{
+  "model": "marketplace.productimage",
+  "pk": "73a53281-3961-4f26-a1c3-2b507f5032c0",
+  "fields": {
+    "product": "a1b2c3d4-0001-0001-0001-000000000004",
+    "url": null,
+    "image": "products/Salad_potatoes.jpg",
+    "created_at": null
+  }
+},
+{
+  "model": "marketplace.productimage",
+  "pk": "8b42f706-763c-45a3-a0b3-0c572b85a08c",
+  "fields": {
+    "product": "a1b2c3d4-0001-0001-0001-000000000021",
+    "url": null,
+    "image": "products/Seeded_batch_loaf.jpg",
+    "created_at": null
+  }
+},
+{
+  "model": "marketplace.productimage",
+  "pk": "923cd440-cf93-4fa1-9829-cde3d2b04120",
+  "fields": {
+    "product": "a1b2c3d4-0001-0001-0001-000000000026",
+    "url": null,
+    "image": "products/pork_sausage.jpg",
+    "created_at": null
+  }
+},
+{
+  "model": "marketplace.productimage",
+  "pk": "9ed13fc2-60db-4438-bde9-2862413eb89d",
+  "fields": {
+    "product": "a1b2c3d4-0001-0001-0001-000000000002",
+    "url": null,
+    "image": "products/Organic_tomatoes.jpeg",
+    "created_at": null
   }
 },
 {
@@ -1300,36 +1293,6 @@
   "fields": {
     "product": "a1b2c3d4-0001-0001-0001-000000000001",
     "url": "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=600&q=80",
-    "image": "",
-    "created_at": "2026-01-01T09:00:00Z"
-  }
-},
-{
-  "model": "marketplace.productimage",
-  "pk": "b2c3d4e5-0002-0002-0002-000000000002",
-  "fields": {
-    "product": "a1b2c3d4-0001-0001-0001-000000000002",
-    "url": "https://images.unsplash.com/photo-1546470427-e26264be0b0d?w=600&q=80",
-    "image": "",
-    "created_at": "2026-01-01T09:00:00Z"
-  }
-},
-{
-  "model": "marketplace.productimage",
-  "pk": "b2c3d4e5-0002-0002-0002-000000000003",
-  "fields": {
-    "product": "a1b2c3d4-0001-0001-0001-000000000003",
-    "url": "https://images.unsplash.com/photo-1583687185408-8e91e7e3a4e5?w=600&q=80",
-    "image": "",
-    "created_at": "2026-01-01T09:00:00Z"
-  }
-},
-{
-  "model": "marketplace.productimage",
-  "pk": "b2c3d4e5-0002-0002-0002-000000000004",
-  "fields": {
-    "product": "a1b2c3d4-0001-0001-0001-000000000004",
-    "url": "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=600&q=80",
     "image": "",
     "created_at": "2026-01-01T09:00:00Z"
   }
@@ -1406,16 +1369,6 @@
 },
 {
   "model": "marketplace.productimage",
-  "pk": "b2c3d4e5-0002-0002-0002-000000000012",
-  "fields": {
-    "product": "a1b2c3d4-0001-0001-0001-000000000012",
-    "url": "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=600&q=80",
-    "image": "",
-    "created_at": "2026-01-01T09:00:00Z"
-  }
-},
-{
-  "model": "marketplace.productimage",
   "pk": "b2c3d4e5-0002-0002-0002-000000000013",
   "fields": {
     "product": "a1b2c3d4-0001-0001-0001-000000000013",
@@ -1446,60 +1399,10 @@
 },
 {
   "model": "marketplace.productimage",
-  "pk": "b2c3d4e5-0002-0002-0002-000000000016",
-  "fields": {
-    "product": "a1b2c3d4-0001-0001-0001-000000000016",
-    "url": "https://images.unsplash.com/photo-1571212515416-fca988083c23?w=600&q=80",
-    "image": "",
-    "created_at": "2026-01-01T09:00:00Z"
-  }
-},
-{
-  "model": "marketplace.productimage",
-  "pk": "b2c3d4e5-0002-0002-0002-000000000017",
-  "fields": {
-    "product": "a1b2c3d4-0001-0001-0001-000000000017",
-    "url": "https://images.unsplash.com/photo-1563636619-e9143da7973b?w=600&q=80",
-    "image": "",
-    "created_at": "2026-01-01T09:00:00Z"
-  }
-},
-{
-  "model": "marketplace.productimage",
   "pk": "b2c3d4e5-0002-0002-0002-000000000018",
   "fields": {
     "product": "a1b2c3d4-0001-0001-0001-000000000018",
     "url": "https://images.unsplash.com/photo-1559561853-08451507cbe7?w=600&q=80",
-    "image": "",
-    "created_at": "2026-01-01T09:00:00Z"
-  }
-},
-{
-  "model": "marketplace.productimage",
-  "pk": "b2c3d4e5-0002-0002-0002-000000000019",
-  "fields": {
-    "product": "a1b2c3d4-0001-0001-0001-000000000019",
-    "url": "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&q=80",
-    "image": "",
-    "created_at": "2026-01-01T09:00:00Z"
-  }
-},
-{
-  "model": "marketplace.productimage",
-  "pk": "b2c3d4e5-0002-0002-0002-000000000020",
-  "fields": {
-    "product": "a1b2c3d4-0001-0001-0001-000000000020",
-    "url": "https://images.unsplash.com/photo-1585478259715-876acc5be8eb?w=600&q=80",
-    "image": "",
-    "created_at": "2026-01-01T09:00:00Z"
-  }
-},
-{
-  "model": "marketplace.productimage",
-  "pk": "b2c3d4e5-0002-0002-0002-000000000021",
-  "fields": {
-    "product": "a1b2c3d4-0001-0001-0001-000000000021",
-    "url": "https://images.unsplash.com/photo-1598373182133-52452f7691ef?w=600&q=80",
     "image": "",
     "created_at": "2026-01-01T09:00:00Z"
   }
@@ -1516,40 +1419,10 @@
 },
 {
   "model": "marketplace.productimage",
-  "pk": "b2c3d4e5-0002-0002-0002-000000000023",
-  "fields": {
-    "product": "a1b2c3d4-0001-0001-0001-000000000023",
-    "url": "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=600&q=80",
-    "image": "",
-    "created_at": "2026-01-01T09:00:00Z"
-  }
-},
-{
-  "model": "marketplace.productimage",
-  "pk": "b2c3d4e5-0002-0002-0002-000000000024",
-  "fields": {
-    "product": "a1b2c3d4-0001-0001-0001-000000000024",
-    "url": "https://images.unsplash.com/photo-1601924287811-e34de5d17476?w=600&q=80",
-    "image": "",
-    "created_at": "2026-01-01T09:00:00Z"
-  }
-},
-{
-  "model": "marketplace.productimage",
   "pk": "b2c3d4e5-0002-0002-0002-000000000025",
   "fields": {
     "product": "a1b2c3d4-0001-0001-0001-000000000025",
     "url": "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=600&q=80",
-    "image": "",
-    "created_at": "2026-01-01T09:00:00Z"
-  }
-},
-{
-  "model": "marketplace.productimage",
-  "pk": "b2c3d4e5-0002-0002-0002-000000000026",
-  "fields": {
-    "product": "a1b2c3d4-0001-0001-0001-000000000026",
-    "url": "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=600&q=80",
     "image": "",
     "created_at": "2026-01-01T09:00:00Z"
   }
@@ -1582,6 +1455,2247 @@
     "url": "https://images.unsplash.com/photo-1570586437263-ab629fccc818?w=600&q=80",
     "image": "",
     "created_at": "2026-01-01T09:00:00Z"
+  }
+},
+{
+  "model": "marketplace.productimage",
+  "pk": "b9bce44a-95e3-4ac9-a4ea-39dc90a3b2cf",
+  "fields": {
+    "product": "a1b2c3d4-0001-0001-0001-000000000024",
+    "url": null,
+    "image": "products/Apple_chutney.jpg",
+    "created_at": null
+  }
+},
+{
+  "model": "marketplace.productimage",
+  "pk": "c013f00a-ad23-4647-b598-4418a33effde",
+  "fields": {
+    "product": "a1b2c3d4-0001-0001-0001-000000000020",
+    "url": null,
+    "image": "products/Sourdough_loaf.jpg",
+    "created_at": null
+  }
+},
+{
+  "model": "marketplace.productimage",
+  "pk": "e4d22f5e-26fe-434c-bfcb-06d2c4715cb5",
+  "fields": {
+    "product": "a1b2c3d4-0001-0001-0001-000000000023",
+    "url": null,
+    "image": "products/Strawberry_jam.jpg",
+    "created_at": null
+  }
+},
+{
+  "model": "marketplace.productimage",
+  "pk": "ea3f106b-e423-44bd-b288-84aade555d30",
+  "fields": {
+    "product": "a1b2c3d4-0001-0001-0001-000000000019",
+    "url": null,
+    "image": "products/Walnut_bread.jpg",
+    "created_at": null
+  }
+},
+{
+  "model": "cart.cart",
+  "pk": "229a3535-0ddd-4e50-bb22-6025bb12cbb9",
+  "fields": {
+    "customer": 1,
+    "created_at": "2026-03-17T21:10:01.813Z",
+    "updated_at": "2026-03-17T21:10:01.813Z"
+  }
+},
+{
+  "model": "cart.cartitem",
+  "pk": 4,
+  "fields": {
+    "cart": "229a3535-0ddd-4e50-bb22-6025bb12cbb9",
+    "product": "26884068-629f-4089-af31-7e3394bc8d01",
+    "quantity": 1,
+    "added_at": "2026-03-17T21:42:06.884Z"
+  }
+},
+{
+  "model": "orders.customerorder",
+  "pk": "090931e5-86e5-4b66-9b3f-8673e99e92c8",
+  "fields": {
+    "customer": 1,
+    "delivery_address": ", ",
+    "delivery_postcode": "",
+    "delivery_date": "2026-03-20",
+    "special_instructions": "",
+    "subtotal_pence": 350,
+    "commission_pence": 17,
+    "total_pence": 350,
+    "status": "delivered",
+    "created_at": "2026-03-17T21:40:58.365Z",
+    "updated_at": "2026-03-17T21:41:33.963Z"
+  }
+},
+{
+  "model": "orders.customerorder",
+  "pk": "db03ffd9-7273-4e14-9db0-2e545b06fd23",
+  "fields": {
+    "customer": 1,
+    "delivery_address": ", ",
+    "delivery_postcode": "",
+    "delivery_date": "2026-03-19",
+    "special_instructions": "",
+    "subtotal_pence": 700,
+    "commission_pence": 35,
+    "total_pence": 700,
+    "status": "delivered",
+    "created_at": "2026-03-17T21:10:29.949Z",
+    "updated_at": "2026-03-17T21:12:07.474Z"
+  }
+},
+{
+  "model": "orders.customerorder",
+  "pk": "e218c739-371c-4466-97a5-23896f9966cc",
+  "fields": {
+    "customer": 1,
+    "delivery_address": ", ",
+    "delivery_postcode": "",
+    "delivery_date": "2026-03-20",
+    "special_instructions": "12",
+    "subtotal_pence": 700,
+    "commission_pence": 35,
+    "total_pence": 700,
+    "status": "delivered",
+    "created_at": "2026-03-17T21:26:24.257Z",
+    "updated_at": "2026-03-17T21:27:01.071Z"
+  }
+},
+{
+  "model": "orders.producerorder",
+  "pk": "10191eaa-49d2-4515-a9af-f3a522a509a1",
+  "fields": {
+    "customer_order": "090931e5-86e5-4b66-9b3f-8673e99e92c8",
+    "producer": 4,
+    "subtotal_pence": 350,
+    "commission_pence": 17,
+    "producer_payment_pence": 333,
+    "status": "delivered",
+    "status_notes": "",
+    "delivery_date": "2026-03-20",
+    "created_at": "2026-03-17T21:40:58.367Z",
+    "updated_at": "2026-03-17T21:41:33.961Z"
+  }
+},
+{
+  "model": "orders.producerorder",
+  "pk": "2f8fca95-31e9-45ba-80df-a331b60b2078",
+  "fields": {
+    "customer_order": "e218c739-371c-4466-97a5-23896f9966cc",
+    "producer": 4,
+    "subtotal_pence": 700,
+    "commission_pence": 35,
+    "producer_payment_pence": 665,
+    "status": "delivered",
+    "status_notes": "",
+    "delivery_date": "2026-03-20",
+    "created_at": "2026-03-17T21:26:24.260Z",
+    "updated_at": "2026-03-17T21:27:01.067Z"
+  }
+},
+{
+  "model": "orders.producerorder",
+  "pk": "673d18da-4864-4a2d-8ac9-aae1aea4eec2",
+  "fields": {
+    "customer_order": "db03ffd9-7273-4e14-9db0-2e545b06fd23",
+    "producer": 4,
+    "subtotal_pence": 700,
+    "commission_pence": 35,
+    "producer_payment_pence": 665,
+    "status": "delivered",
+    "status_notes": "",
+    "delivery_date": "2026-03-19",
+    "created_at": "2026-03-17T21:10:29.953Z",
+    "updated_at": "2026-03-17T21:12:07.471Z"
+  }
+},
+{
+  "model": "orders.orderitem",
+  "pk": "7c47b76b-dc72-4c41-a560-08290f668dbd",
+  "fields": {
+    "order": "e218c739-371c-4466-97a5-23896f9966cc",
+    "product": "26884068-629f-4089-af31-7e3394bc8d01",
+    "product_name": "strawberry",
+    "product_unit": "kg",
+    "price_pence": 350,
+    "quantity": 2,
+    "line_total_pence": 700,
+    "created_at": "2026-03-17T21:26:24.258Z"
+  }
+},
+{
+  "model": "orders.orderitem",
+  "pk": "ab31b6fb-5a3e-4efc-aec5-336595303d2f",
+  "fields": {
+    "order": "db03ffd9-7273-4e14-9db0-2e545b06fd23",
+    "product": "26884068-629f-4089-af31-7e3394bc8d01",
+    "product_name": "strawberry",
+    "product_unit": "kg",
+    "price_pence": 350,
+    "quantity": 2,
+    "line_total_pence": 700,
+    "created_at": "2026-03-17T21:10:29.950Z"
+  }
+},
+{
+  "model": "orders.orderitem",
+  "pk": "ae2b98f6-4d67-4f70-b781-48736f23a5c4",
+  "fields": {
+    "order": "090931e5-86e5-4b66-9b3f-8673e99e92c8",
+    "product": "26884068-629f-4089-af31-7e3394bc8d01",
+    "product_name": "strawberry",
+    "product_unit": "kg",
+    "price_pence": 350,
+    "quantity": 1,
+    "line_total_pence": 350,
+    "created_at": "2026-03-17T21:40:58.366Z"
+  }
+},
+{
+  "model": "payments.paymenttransaction",
+  "pk": "4755cb23-e60b-4aa0-9312-56603bf3ff13",
+  "fields": {
+    "customer_order": "090931e5-86e5-4b66-9b3f-8673e99e92c8",
+    "provider": "mock",
+    "provider_ref": "MOCK-0a6ceb41-8835-4ced-a6d3-3604bf36dfc7",
+    "status": "captured",
+    "amount_pence": 350,
+    "created_at": "2026-03-17T21:40:58.374Z",
+    "updated_at": "2026-03-17T21:40:58.374Z"
+  }
+},
+{
+  "model": "payments.paymenttransaction",
+  "pk": "49cf7ee8-85f9-4400-83ac-9a8591680d5d",
+  "fields": {
+    "customer_order": "e218c739-371c-4466-97a5-23896f9966cc",
+    "provider": "mock",
+    "provider_ref": "MOCK-49e27c7b-68b9-4e73-ac44-5a86269ad16d",
+    "status": "captured",
+    "amount_pence": 700,
+    "created_at": "2026-03-17T21:26:24.265Z",
+    "updated_at": "2026-03-17T21:26:24.265Z"
+  }
+},
+{
+  "model": "payments.paymenttransaction",
+  "pk": "a66d7fe5-f51a-425c-8b38-0e90f34903aa",
+  "fields": {
+    "customer_order": "db03ffd9-7273-4e14-9db0-2e545b06fd23",
+    "provider": "mock",
+    "provider_ref": "MOCK-c348ac97-949f-496e-a41d-c5cbb8cfcdaf",
+    "status": "captured",
+    "amount_pence": 700,
+    "created_at": "2026-03-17T21:10:29.957Z",
+    "updated_at": "2026-03-17T21:10:29.957Z"
+  }
+},
+{
+  "model": "payments.commissionpolicy",
+  "pk": 1,
+  "fields": {
+    "rate_bp": 500,
+    "valid_from": "2020-01-01",
+    "valid_to": null,
+    "created_at": "2026-03-17T16:53:54.735Z"
+  }
+},
+{
+  "model": "payments.ordercommission",
+  "pk": "07414381-bd18-43fa-8350-2cc7ce7eda2a",
+  "fields": {
+    "customer_order": "e218c739-371c-4466-97a5-23896f9966cc",
+    "commission_policy": 1,
+    "gross_pence": 700,
+    "commission_pence": 35,
+    "net_pence": 665,
+    "created_at": "2026-03-17T21:26:24.269Z"
+  }
+},
+{
+  "model": "payments.ordercommission",
+  "pk": "11c1c589-313b-4c46-98ce-a15c5453c019",
+  "fields": {
+    "customer_order": "db03ffd9-7273-4e14-9db0-2e545b06fd23",
+    "commission_policy": 1,
+    "gross_pence": 700,
+    "commission_pence": 35,
+    "net_pence": 665,
+    "created_at": "2026-03-17T21:10:29.962Z"
+  }
+},
+{
+  "model": "payments.ordercommission",
+  "pk": "868e955a-2b89-42ef-8c11-fcbb374a7c83",
+  "fields": {
+    "customer_order": "090931e5-86e5-4b66-9b3f-8673e99e92c8",
+    "commission_policy": 1,
+    "gross_pence": 350,
+    "commission_pence": 18,
+    "net_pence": 332,
+    "created_at": "2026-03-17T21:40:58.378Z"
+  }
+},
+{
+  "model": "payments.settlementweek",
+  "pk": "6983a0ab-820f-4ccd-86d2-d4982fbdf239",
+  "fields": {
+    "week_start": "2026-03-16",
+    "week_end": "2026-03-22",
+    "created_at": "2026-03-17T21:24:00.313Z"
+  }
+},
+{
+  "model": "payments.settlementweek",
+  "pk": "73423920-eab9-47f5-95f0-4b8b1679cedf",
+  "fields": {
+    "week_start": "2026-03-09",
+    "week_end": "2026-03-15",
+    "created_at": "2026-03-17T21:22:45.985Z"
+  }
+},
+{
+  "model": "payments.producersettlement",
+  "pk": "e91115ce-b9ec-4922-bbca-9d64c3216036",
+  "fields": {
+    "settlement_week": "6983a0ab-820f-4ccd-86d2-d4982fbdf239",
+    "producer": 4,
+    "commission_pence": 88,
+    "payout_pence": 1662,
+    "status": "pending",
+    "processed_ref": "",
+    "created_at": "2026-03-17T21:24:00.316Z"
+  }
+},
+{
+  "model": "payments.producerordersettlementlink",
+  "pk": "10191eaa-49d2-4515-a9af-f3a522a509a1",
+  "fields": {
+    "producer_settlement": "e91115ce-b9ec-4922-bbca-9d64c3216036"
+  }
+},
+{
+  "model": "payments.producerordersettlementlink",
+  "pk": "2f8fca95-31e9-45ba-80df-a331b60b2078",
+  "fields": {
+    "producer_settlement": "e91115ce-b9ec-4922-bbca-9d64c3216036"
+  }
+},
+{
+  "model": "payments.producerordersettlementlink",
+  "pk": "673d18da-4864-4a2d-8ac9-aae1aea4eec2",
+  "fields": {
+    "producer_settlement": "e91115ce-b9ec-4922-bbca-9d64c3216036"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add log entry",
+    "content_type": [
+      "admin",
+      "logentry"
+    ],
+    "codename": "add_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change log entry",
+    "content_type": [
+      "admin",
+      "logentry"
+    ],
+    "codename": "change_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete log entry",
+    "content_type": [
+      "admin",
+      "logentry"
+    ],
+    "codename": "delete_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view log entry",
+    "content_type": [
+      "admin",
+      "logentry"
+    ],
+    "codename": "view_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add permission",
+    "content_type": [
+      "auth",
+      "permission"
+    ],
+    "codename": "add_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change permission",
+    "content_type": [
+      "auth",
+      "permission"
+    ],
+    "codename": "change_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete permission",
+    "content_type": [
+      "auth",
+      "permission"
+    ],
+    "codename": "delete_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view permission",
+    "content_type": [
+      "auth",
+      "permission"
+    ],
+    "codename": "view_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add group",
+    "content_type": [
+      "auth",
+      "group"
+    ],
+    "codename": "add_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change group",
+    "content_type": [
+      "auth",
+      "group"
+    ],
+    "codename": "change_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete group",
+    "content_type": [
+      "auth",
+      "group"
+    ],
+    "codename": "delete_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view group",
+    "content_type": [
+      "auth",
+      "group"
+    ],
+    "codename": "view_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add content type",
+    "content_type": [
+      "contenttypes",
+      "contenttype"
+    ],
+    "codename": "add_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change content type",
+    "content_type": [
+      "contenttypes",
+      "contenttype"
+    ],
+    "codename": "change_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete content type",
+    "content_type": [
+      "contenttypes",
+      "contenttype"
+    ],
+    "codename": "delete_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view content type",
+    "content_type": [
+      "contenttypes",
+      "contenttype"
+    ],
+    "codename": "view_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add session",
+    "content_type": [
+      "sessions",
+      "session"
+    ],
+    "codename": "add_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change session",
+    "content_type": [
+      "sessions",
+      "session"
+    ],
+    "codename": "change_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete session",
+    "content_type": [
+      "sessions",
+      "session"
+    ],
+    "codename": "delete_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view session",
+    "content_type": [
+      "sessions",
+      "session"
+    ],
+    "codename": "view_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add user",
+    "content_type": [
+      "accounts",
+      "user"
+    ],
+    "codename": "add_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change user",
+    "content_type": [
+      "accounts",
+      "user"
+    ],
+    "codename": "change_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete user",
+    "content_type": [
+      "accounts",
+      "user"
+    ],
+    "codename": "delete_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view user",
+    "content_type": [
+      "accounts",
+      "user"
+    ],
+    "codename": "view_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add restaurant profile",
+    "content_type": [
+      "accounts",
+      "restaurantprofile"
+    ],
+    "codename": "add_restaurantprofile"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change restaurant profile",
+    "content_type": [
+      "accounts",
+      "restaurantprofile"
+    ],
+    "codename": "change_restaurantprofile"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete restaurant profile",
+    "content_type": [
+      "accounts",
+      "restaurantprofile"
+    ],
+    "codename": "delete_restaurantprofile"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view restaurant profile",
+    "content_type": [
+      "accounts",
+      "restaurantprofile"
+    ],
+    "codename": "view_restaurantprofile"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add producer profile",
+    "content_type": [
+      "accounts",
+      "producerprofile"
+    ],
+    "codename": "add_producerprofile"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change producer profile",
+    "content_type": [
+      "accounts",
+      "producerprofile"
+    ],
+    "codename": "change_producerprofile"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete producer profile",
+    "content_type": [
+      "accounts",
+      "producerprofile"
+    ],
+    "codename": "delete_producerprofile"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view producer profile",
+    "content_type": [
+      "accounts",
+      "producerprofile"
+    ],
+    "codename": "view_producerprofile"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add customer profile",
+    "content_type": [
+      "accounts",
+      "customerprofile"
+    ],
+    "codename": "add_customerprofile"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change customer profile",
+    "content_type": [
+      "accounts",
+      "customerprofile"
+    ],
+    "codename": "change_customerprofile"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete customer profile",
+    "content_type": [
+      "accounts",
+      "customerprofile"
+    ],
+    "codename": "delete_customerprofile"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view customer profile",
+    "content_type": [
+      "accounts",
+      "customerprofile"
+    ],
+    "codename": "view_customerprofile"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add community group profile",
+    "content_type": [
+      "accounts",
+      "communitygroupprofile"
+    ],
+    "codename": "add_communitygroupprofile"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change community group profile",
+    "content_type": [
+      "accounts",
+      "communitygroupprofile"
+    ],
+    "codename": "change_communitygroupprofile"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete community group profile",
+    "content_type": [
+      "accounts",
+      "communitygroupprofile"
+    ],
+    "codename": "delete_communitygroupprofile"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view community group profile",
+    "content_type": [
+      "accounts",
+      "communitygroupprofile"
+    ],
+    "codename": "view_communitygroupprofile"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add allergen",
+    "content_type": [
+      "marketplace",
+      "allergen"
+    ],
+    "codename": "add_allergen"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change allergen",
+    "content_type": [
+      "marketplace",
+      "allergen"
+    ],
+    "codename": "change_allergen"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete allergen",
+    "content_type": [
+      "marketplace",
+      "allergen"
+    ],
+    "codename": "delete_allergen"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view allergen",
+    "content_type": [
+      "marketplace",
+      "allergen"
+    ],
+    "codename": "view_allergen"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add product",
+    "content_type": [
+      "marketplace",
+      "product"
+    ],
+    "codename": "add_product"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change product",
+    "content_type": [
+      "marketplace",
+      "product"
+    ],
+    "codename": "change_product"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete product",
+    "content_type": [
+      "marketplace",
+      "product"
+    ],
+    "codename": "delete_product"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view product",
+    "content_type": [
+      "marketplace",
+      "product"
+    ],
+    "codename": "view_product"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add product category",
+    "content_type": [
+      "marketplace",
+      "productcategory"
+    ],
+    "codename": "add_productcategory"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change product category",
+    "content_type": [
+      "marketplace",
+      "productcategory"
+    ],
+    "codename": "change_productcategory"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete product category",
+    "content_type": [
+      "marketplace",
+      "productcategory"
+    ],
+    "codename": "delete_productcategory"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view product category",
+    "content_type": [
+      "marketplace",
+      "productcategory"
+    ],
+    "codename": "view_productcategory"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add product image",
+    "content_type": [
+      "marketplace",
+      "productimage"
+    ],
+    "codename": "add_productimage"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change product image",
+    "content_type": [
+      "marketplace",
+      "productimage"
+    ],
+    "codename": "change_productimage"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete product image",
+    "content_type": [
+      "marketplace",
+      "productimage"
+    ],
+    "codename": "delete_productimage"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view product image",
+    "content_type": [
+      "marketplace",
+      "productimage"
+    ],
+    "codename": "view_productimage"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add product allergen",
+    "content_type": [
+      "marketplace",
+      "productallergen"
+    ],
+    "codename": "add_productallergen"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change product allergen",
+    "content_type": [
+      "marketplace",
+      "productallergen"
+    ],
+    "codename": "change_productallergen"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete product allergen",
+    "content_type": [
+      "marketplace",
+      "productallergen"
+    ],
+    "codename": "delete_productallergen"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view product allergen",
+    "content_type": [
+      "marketplace",
+      "productallergen"
+    ],
+    "codename": "view_productallergen"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add surplus deal",
+    "content_type": [
+      "marketplace",
+      "surplusdeal"
+    ],
+    "codename": "add_surplusdeal"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change surplus deal",
+    "content_type": [
+      "marketplace",
+      "surplusdeal"
+    ],
+    "codename": "change_surplusdeal"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete surplus deal",
+    "content_type": [
+      "marketplace",
+      "surplusdeal"
+    ],
+    "codename": "delete_surplusdeal"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view surplus deal",
+    "content_type": [
+      "marketplace",
+      "surplusdeal"
+    ],
+    "codename": "view_surplusdeal"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add cart",
+    "content_type": [
+      "cart",
+      "cart"
+    ],
+    "codename": "add_cart"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change cart",
+    "content_type": [
+      "cart",
+      "cart"
+    ],
+    "codename": "change_cart"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete cart",
+    "content_type": [
+      "cart",
+      "cart"
+    ],
+    "codename": "delete_cart"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view cart",
+    "content_type": [
+      "cart",
+      "cart"
+    ],
+    "codename": "view_cart"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add cart item",
+    "content_type": [
+      "cart",
+      "cartitem"
+    ],
+    "codename": "add_cartitem"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change cart item",
+    "content_type": [
+      "cart",
+      "cartitem"
+    ],
+    "codename": "change_cartitem"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete cart item",
+    "content_type": [
+      "cart",
+      "cartitem"
+    ],
+    "codename": "delete_cartitem"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view cart item",
+    "content_type": [
+      "cart",
+      "cartitem"
+    ],
+    "codename": "view_cartitem"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add customer order",
+    "content_type": [
+      "orders",
+      "customerorder"
+    ],
+    "codename": "add_customerorder"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change customer order",
+    "content_type": [
+      "orders",
+      "customerorder"
+    ],
+    "codename": "change_customerorder"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete customer order",
+    "content_type": [
+      "orders",
+      "customerorder"
+    ],
+    "codename": "delete_customerorder"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view customer order",
+    "content_type": [
+      "orders",
+      "customerorder"
+    ],
+    "codename": "view_customerorder"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add producer order",
+    "content_type": [
+      "orders",
+      "producerorder"
+    ],
+    "codename": "add_producerorder"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change producer order",
+    "content_type": [
+      "orders",
+      "producerorder"
+    ],
+    "codename": "change_producerorder"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete producer order",
+    "content_type": [
+      "orders",
+      "producerorder"
+    ],
+    "codename": "delete_producerorder"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view producer order",
+    "content_type": [
+      "orders",
+      "producerorder"
+    ],
+    "codename": "view_producerorder"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add order status history",
+    "content_type": [
+      "orders",
+      "orderstatushistory"
+    ],
+    "codename": "add_orderstatushistory"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change order status history",
+    "content_type": [
+      "orders",
+      "orderstatushistory"
+    ],
+    "codename": "change_orderstatushistory"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete order status history",
+    "content_type": [
+      "orders",
+      "orderstatushistory"
+    ],
+    "codename": "delete_orderstatushistory"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view order status history",
+    "content_type": [
+      "orders",
+      "orderstatushistory"
+    ],
+    "codename": "view_orderstatushistory"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add order item",
+    "content_type": [
+      "orders",
+      "orderitem"
+    ],
+    "codename": "add_orderitem"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change order item",
+    "content_type": [
+      "orders",
+      "orderitem"
+    ],
+    "codename": "change_orderitem"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete order item",
+    "content_type": [
+      "orders",
+      "orderitem"
+    ],
+    "codename": "delete_orderitem"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view order item",
+    "content_type": [
+      "orders",
+      "orderitem"
+    ],
+    "codename": "view_orderitem"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add commission policy",
+    "content_type": [
+      "payments",
+      "commissionpolicy"
+    ],
+    "codename": "add_commissionpolicy"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change commission policy",
+    "content_type": [
+      "payments",
+      "commissionpolicy"
+    ],
+    "codename": "change_commissionpolicy"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete commission policy",
+    "content_type": [
+      "payments",
+      "commissionpolicy"
+    ],
+    "codename": "delete_commissionpolicy"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view commission policy",
+    "content_type": [
+      "payments",
+      "commissionpolicy"
+    ],
+    "codename": "view_commissionpolicy"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add settlement week",
+    "content_type": [
+      "payments",
+      "settlementweek"
+    ],
+    "codename": "add_settlementweek"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change settlement week",
+    "content_type": [
+      "payments",
+      "settlementweek"
+    ],
+    "codename": "change_settlementweek"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete settlement week",
+    "content_type": [
+      "payments",
+      "settlementweek"
+    ],
+    "codename": "delete_settlementweek"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view settlement week",
+    "content_type": [
+      "payments",
+      "settlementweek"
+    ],
+    "codename": "view_settlementweek"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add payment transaction",
+    "content_type": [
+      "payments",
+      "paymenttransaction"
+    ],
+    "codename": "add_paymenttransaction"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change payment transaction",
+    "content_type": [
+      "payments",
+      "paymenttransaction"
+    ],
+    "codename": "change_paymenttransaction"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete payment transaction",
+    "content_type": [
+      "payments",
+      "paymenttransaction"
+    ],
+    "codename": "delete_paymenttransaction"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view payment transaction",
+    "content_type": [
+      "payments",
+      "paymenttransaction"
+    ],
+    "codename": "view_paymenttransaction"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add order commission",
+    "content_type": [
+      "payments",
+      "ordercommission"
+    ],
+    "codename": "add_ordercommission"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change order commission",
+    "content_type": [
+      "payments",
+      "ordercommission"
+    ],
+    "codename": "change_ordercommission"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete order commission",
+    "content_type": [
+      "payments",
+      "ordercommission"
+    ],
+    "codename": "delete_ordercommission"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view order commission",
+    "content_type": [
+      "payments",
+      "ordercommission"
+    ],
+    "codename": "view_ordercommission"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add producer settlement",
+    "content_type": [
+      "payments",
+      "producersettlement"
+    ],
+    "codename": "add_producersettlement"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change producer settlement",
+    "content_type": [
+      "payments",
+      "producersettlement"
+    ],
+    "codename": "change_producersettlement"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete producer settlement",
+    "content_type": [
+      "payments",
+      "producersettlement"
+    ],
+    "codename": "delete_producersettlement"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view producer settlement",
+    "content_type": [
+      "payments",
+      "producersettlement"
+    ],
+    "codename": "view_producersettlement"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add producer order settlement link",
+    "content_type": [
+      "payments",
+      "producerordersettlementlink"
+    ],
+    "codename": "add_producerordersettlementlink"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change producer order settlement link",
+    "content_type": [
+      "payments",
+      "producerordersettlementlink"
+    ],
+    "codename": "change_producerordersettlementlink"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete producer order settlement link",
+    "content_type": [
+      "payments",
+      "producerordersettlementlink"
+    ],
+    "codename": "delete_producerordersettlementlink"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view producer order settlement link",
+    "content_type": [
+      "payments",
+      "producerordersettlementlink"
+    ],
+    "codename": "view_producerordersettlementlink"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add notification",
+    "content_type": [
+      "notifications",
+      "notification"
+    ],
+    "codename": "add_notification"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change notification",
+    "content_type": [
+      "notifications",
+      "notification"
+    ],
+    "codename": "change_notification"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete notification",
+    "content_type": [
+      "notifications",
+      "notification"
+    ],
+    "codename": "delete_notification"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view notification",
+    "content_type": [
+      "notifications",
+      "notification"
+    ],
+    "codename": "view_notification"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add product review",
+    "content_type": [
+      "reviews",
+      "productreview"
+    ],
+    "codename": "add_productreview"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change product review",
+    "content_type": [
+      "reviews",
+      "productreview"
+    ],
+    "codename": "change_productreview"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete product review",
+    "content_type": [
+      "reviews",
+      "productreview"
+    ],
+    "codename": "delete_productreview"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view product review",
+    "content_type": [
+      "reviews",
+      "productreview"
+    ],
+    "codename": "view_productreview"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add content post",
+    "content_type": [
+      "content",
+      "contentpost"
+    ],
+    "codename": "add_contentpost"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change content post",
+    "content_type": [
+      "content",
+      "contentpost"
+    ],
+    "codename": "change_contentpost"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete content post",
+    "content_type": [
+      "content",
+      "contentpost"
+    ],
+    "codename": "delete_contentpost"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view content post",
+    "content_type": [
+      "content",
+      "contentpost"
+    ],
+    "codename": "view_contentpost"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add content product link",
+    "content_type": [
+      "content",
+      "contentproductlink"
+    ],
+    "codename": "add_contentproductlink"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change content product link",
+    "content_type": [
+      "content",
+      "contentproductlink"
+    ],
+    "codename": "change_contentproductlink"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete content product link",
+    "content_type": [
+      "content",
+      "contentproductlink"
+    ],
+    "codename": "delete_contentproductlink"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view content product link",
+    "content_type": [
+      "content",
+      "contentproductlink"
+    ],
+    "codename": "view_contentproductlink"
+  }
+},
+{
+  "model": "accounts.user",
+  "fields": {
+    "password": "pbkdf2_sha256$600000$TbszxTN1AehYYdk6OZfRhh$P9dNmA+oAkc8enWHmKcPUTlj0EkvrtrHaZFevF2qkKA=",
+    "last_login": null,
+    "is_superuser": true,
+    "first_name": "Admin",
+    "last_name": "User",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-01-01T09:00:00Z",
+    "email": "admin@brfn.com",
+    "role": "admin",
+    "phone": "",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.user",
+  "fields": {
+    "password": "pbkdf2_sha256$600000$NVzf3dJGGfm7WPzmWHAE6i$4yT0IzczL+mverdVKC86NYj3zxmYux88o/VpFBrKKNw=",
+    "last_login": "2026-03-17T20:30:33.266Z",
+    "is_superuser": false,
+    "first_name": "Jane",
+    "last_name": "Smith",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-01-01T09:00:00Z",
+    "email": "jane.smith@bristolvalleyfarm.com",
+    "role": "producer",
+    "phone": "01179 123456",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.user",
+  "fields": {
+    "password": "pbkdf2_sha256$600000$qSAE5eaXzdyLAfnBul8Dgj$YVNLJeerrscId1jaqvEEjNLunwY98Hbne8/LSq6Rm5w=",
+    "last_login": "2026-03-17T20:38:24.374Z",
+    "is_superuser": false,
+    "first_name": "Tom",
+    "last_name": "Hartley",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-01-01T09:00:00Z",
+    "email": "tom.hartley@hillsidedairy.co.uk",
+    "role": "producer",
+    "phone": "01179 654321",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.user",
+  "fields": {
+    "password": "pbkdf2_sha256$600000$oanCOoQxwWysV8z92OI6bb$S2pF5z3XAbPK2d6850r74wFt4pBcNg1DD5RBqhKgiEE=",
+    "last_login": "2026-03-17T20:40:56.408Z",
+    "is_superuser": false,
+    "first_name": "David",
+    "last_name": "Marsh",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-01-01T09:00:00Z",
+    "email": "david.marsh@greenacresfarm.co.uk",
+    "role": "producer",
+    "phone": "01179 789012",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.user",
+  "fields": {
+    "password": "pbkdf2_sha256$600000$RJyUBonhMDsRXbS85n5Aip$lGClRvuoP7W4DDutFb2cxe4o+UKj/jVgxVbXFNtFdvA=",
+    "last_login": "2026-03-17T21:41:18.533Z",
+    "is_superuser": false,
+    "first_name": "Helen",
+    "last_name": "Price",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-01-01T09:00:00Z",
+    "email": "helen.price@orchardviewfarm.co.uk",
+    "role": "producer",
+    "phone": "01179 321098",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.user",
+  "fields": {
+    "password": "pbkdf2_sha256$600000$Hr4p1KcaGgdgz2tkcEOud0$bjH4jgJ1JZZIrWvc17jqWLwYgmjBsKrxhfTi4HzU5HU=",
+    "last_login": "2026-03-17T20:42:29.131Z",
+    "is_superuser": false,
+    "first_name": "Paul",
+    "last_name": "Baker",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-01-01T09:00:00Z",
+    "email": "paul.baker@severnvalleybakers.co.uk",
+    "role": "producer",
+    "phone": "01179 456789",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.user",
+  "fields": {
+    "password": "pbkdf2_sha256$600000$YEKoN952ythiVV2mkyPDE8$Q5okB7348FQjn2o0vD/3dhPFG5q3kef74GnLwLtLZC0=",
+    "last_login": null,
+    "is_superuser": false,
+    "first_name": "Sarah",
+    "last_name": "Bee",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-01-01T09:00:00Z",
+    "email": "sarah.bee@hartcliffehoney.co.uk",
+    "role": "producer",
+    "phone": "01179 567890",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.user",
+  "fields": {
+    "password": "pbkdf2_sha256$600000$Ww26TsRzqr0HOgrvsYhids$tXMrXo6HXFUiBSgcfRukY6jTrGH2GhxoWeFtOCr/YEM=",
+    "last_login": null,
+    "is_superuser": false,
+    "first_name": "Neil",
+    "last_name": "Foster",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-01-01T09:00:00Z",
+    "email": "neil.foster@redlandfreerange.co.uk",
+    "role": "producer",
+    "phone": "01179 678901",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.user",
+  "fields": {
+    "password": "pbkdf2_sha256$600000$44m1cc5lvPHBgMl7gsyZlt$3a5c7jkpCd9MWPDOUtNn0UUe2aspYdyBgAO7thPns+g=",
+    "last_login": "2026-03-17T20:44:04.744Z",
+    "is_superuser": false,
+    "first_name": "Margaret",
+    "last_name": "Cook",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-01-01T09:00:00Z",
+    "email": "margaret.cook@cliftonpreserves.co.uk",
+    "role": "producer",
+    "phone": "01179 890123",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.user",
+  "fields": {
+    "password": "pbkdf2_sha256$600000$rVIzlfS4pbIxcnozhtqIjs$M3PBVlgY0sab+FqXIsrI7dUo0fdjAOlJ461QnbWytGU=",
+    "last_login": "2026-03-10T18:32:43.172Z",
+    "is_superuser": false,
+    "first_name": "",
+    "last_name": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-10T18:32:43.070Z",
+    "email": "test@producer.com",
+    "role": "producer",
+    "phone": "+44123456789",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.user",
+  "fields": {
+    "password": "pbkdf2_sha256$600000$0WiA6wdL4vy3Z0lrt5ZWtm$YnbLsQaADAmG3dVUQPphEmAafSCOO9kIwoQlOE6IW/A=",
+    "last_login": "2026-03-17T21:41:58.817Z",
+    "is_superuser": false,
+    "first_name": "",
+    "last_name": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-10T19:18:21.988Z",
+    "email": "test@test.com",
+    "role": "customer",
+    "phone": "",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.producerprofile",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "jane.smith@bristolvalleyfarm.com"
+    ],
+    "business_name": "Bristol Valley Farm",
+    "contact_name": "Jane Smith",
+    "business_address": "Stoke Park Road, Bristol",
+    "postcode": "BS16 1GW",
+    "latitude": "51.490200",
+    "longitude": "-2.531400",
+    "created_at": "2026-01-01T09:00:00Z",
+    "updated_at": "2026-01-01T09:00:00Z"
+  }
+},
+{
+  "model": "accounts.producerprofile",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "tom.hartley@hillsidedairy.co.uk"
+    ],
+    "business_name": "Hillside Dairy",
+    "contact_name": "Tom Hartley",
+    "business_address": "Clifton Down Road, Bristol",
+    "postcode": "BS8 1TH",
+    "latitude": "51.461200",
+    "longitude": "-2.614300",
+    "created_at": "2026-01-01T09:00:00Z",
+    "updated_at": "2026-01-01T09:00:00Z"
+  }
+},
+{
+  "model": "accounts.producerprofile",
+  "pk": 3,
+  "fields": {
+    "user": [
+      "david.marsh@greenacresfarm.co.uk"
+    ],
+    "business_name": "Green Acres Farm",
+    "contact_name": "David Marsh",
+    "business_address": "Westbury Lane, Bristol",
+    "postcode": "BS9 1JG",
+    "latitude": "51.487500",
+    "longitude": "-2.635200",
+    "created_at": "2026-01-01T09:00:00Z",
+    "updated_at": "2026-01-01T09:00:00Z"
+  }
+},
+{
+  "model": "accounts.producerprofile",
+  "pk": 4,
+  "fields": {
+    "user": [
+      "helen.price@orchardviewfarm.co.uk"
+    ],
+    "business_name": "Orchard View Farm",
+    "contact_name": "Helen Price",
+    "business_address": "Long Ashton Road, Bristol",
+    "postcode": "BS41 9LB",
+    "latitude": "51.430100",
+    "longitude": "-2.659800",
+    "created_at": "2026-01-01T09:00:00Z",
+    "updated_at": "2026-01-01T09:00:00Z"
+  }
+},
+{
+  "model": "accounts.producerprofile",
+  "pk": 5,
+  "fields": {
+    "user": [
+      "paul.baker@severnvalleybakers.co.uk"
+    ],
+    "business_name": "Severn Valley Bakers",
+    "contact_name": "Paul Baker",
+    "business_address": "Bedminster Down Road, Bristol",
+    "postcode": "BS13 7AB",
+    "latitude": "51.426500",
+    "longitude": "-2.601700",
+    "created_at": "2026-01-01T09:00:00Z",
+    "updated_at": "2026-01-01T09:00:00Z"
+  }
+},
+{
+  "model": "accounts.producerprofile",
+  "pk": 6,
+  "fields": {
+    "user": [
+      "sarah.bee@hartcliffehoney.co.uk"
+    ],
+    "business_name": "Hartcliffe Honey",
+    "contact_name": "Sarah Bee",
+    "business_address": "Hartcliffe Way, Bristol",
+    "postcode": "BS13 0JA",
+    "latitude": "51.408900",
+    "longitude": "-2.594600",
+    "created_at": "2026-01-01T09:00:00Z",
+    "updated_at": "2026-01-01T09:00:00Z"
+  }
+},
+{
+  "model": "accounts.producerprofile",
+  "pk": 7,
+  "fields": {
+    "user": [
+      "neil.foster@redlandfreerange.co.uk"
+    ],
+    "business_name": "Redland Free Range",
+    "contact_name": "Neil Foster",
+    "business_address": "Redland Road, Bristol",
+    "postcode": "BS6 6YB",
+    "latitude": "51.468300",
+    "longitude": "-2.601200",
+    "created_at": "2026-01-01T09:00:00Z",
+    "updated_at": "2026-01-01T09:00:00Z"
+  }
+},
+{
+  "model": "accounts.producerprofile",
+  "pk": 8,
+  "fields": {
+    "user": [
+      "margaret.cook@cliftonpreserves.co.uk"
+    ],
+    "business_name": "Clifton Preserves",
+    "contact_name": "Margaret Cook",
+    "business_address": "Whiteladies Road, Bristol",
+    "postcode": "BS8 2NT",
+    "latitude": "51.463700",
+    "longitude": "-2.608900",
+    "created_at": "2026-01-01T09:00:00Z",
+    "updated_at": "2026-01-01T09:00:00Z"
+  }
+},
+{
+  "model": "accounts.producerprofile",
+  "pk": 9,
+  "fields": {
+    "user": [
+      "test@producer.com"
+    ],
+    "business_name": "brisotl",
+    "contact_name": "test test",
+    "business_address": "bristol.com",
+    "postcode": "123456",
+    "latitude": null,
+    "longitude": null,
+    "created_at": "2026-03-10T18:32:43.170Z",
+    "updated_at": "2026-03-10T18:32:43.170Z"
+  }
+},
+{
+  "model": "accounts.customerprofile",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "test@test.com"
+    ],
+    "full_name": "Test",
+    "street": "",
+    "city": "",
+    "state": "",
+    "postcode": "",
+    "country": "",
+    "latitude": null,
+    "longitude": null,
+    "created_at": "2026-03-17T16:53:55.082Z",
+    "updated_at": "2026-03-17T16:53:55.082Z"
+  }
+},
+{
+  "model": "orders.orderstatushistory",
+  "pk": "2b0b067d-1fc9-40af-9a89-1b9a56e7f06a",
+  "fields": {
+    "producer_order": "2f8fca95-31e9-45ba-80df-a331b60b2078",
+    "old_status": "pending",
+    "new_status": "confirmed",
+    "notes": "",
+    "changed_by": [
+      "helen.price@orchardviewfarm.co.uk"
+    ],
+    "changed_at": "2026-03-17T21:26:56.654Z"
+  }
+},
+{
+  "model": "orders.orderstatushistory",
+  "pk": "3d0e00bf-130b-4c60-9bf9-c95c31592979",
+  "fields": {
+    "producer_order": "10191eaa-49d2-4515-a9af-f3a522a509a1",
+    "old_status": "confirmed",
+    "new_status": "ready",
+    "notes": "",
+    "changed_by": [
+      "helen.price@orchardviewfarm.co.uk"
+    ],
+    "changed_at": "2026-03-17T21:41:31.321Z"
+  }
+},
+{
+  "model": "orders.orderstatushistory",
+  "pk": "4551cca3-4d0f-41f4-9293-df6ee007bb0b",
+  "fields": {
+    "producer_order": "10191eaa-49d2-4515-a9af-f3a522a509a1",
+    "old_status": "ready",
+    "new_status": "delivered",
+    "notes": "",
+    "changed_by": [
+      "helen.price@orchardviewfarm.co.uk"
+    ],
+    "changed_at": "2026-03-17T21:41:33.961Z"
+  }
+},
+{
+  "model": "orders.orderstatushistory",
+  "pk": "5698fa97-381d-4fbb-9188-a57eebe1dcbd",
+  "fields": {
+    "producer_order": "2f8fca95-31e9-45ba-80df-a331b60b2078",
+    "old_status": "confirmed",
+    "new_status": "ready",
+    "notes": "",
+    "changed_by": [
+      "helen.price@orchardviewfarm.co.uk"
+    ],
+    "changed_at": "2026-03-17T21:26:58.893Z"
+  }
+},
+{
+  "model": "orders.orderstatushistory",
+  "pk": "6cd2fd6e-053f-4b61-8512-3b9d8ed1d56b",
+  "fields": {
+    "producer_order": "10191eaa-49d2-4515-a9af-f3a522a509a1",
+    "old_status": "pending",
+    "new_status": "confirmed",
+    "notes": "",
+    "changed_by": [
+      "helen.price@orchardviewfarm.co.uk"
+    ],
+    "changed_at": "2026-03-17T21:41:28.746Z"
+  }
+},
+{
+  "model": "orders.orderstatushistory",
+  "pk": "6fa9187f-3f8d-4f71-beb8-d7740f5d2d45",
+  "fields": {
+    "producer_order": "673d18da-4864-4a2d-8ac9-aae1aea4eec2",
+    "old_status": "pending",
+    "new_status": "confirmed",
+    "notes": "",
+    "changed_by": [
+      "helen.price@orchardviewfarm.co.uk"
+    ],
+    "changed_at": "2026-03-17T21:11:59.717Z"
+  }
+},
+{
+  "model": "orders.orderstatushistory",
+  "pk": "cb09fa29-1b13-49d2-afbe-262eebc250a9",
+  "fields": {
+    "producer_order": "673d18da-4864-4a2d-8ac9-aae1aea4eec2",
+    "old_status": "confirmed",
+    "new_status": "ready",
+    "notes": "",
+    "changed_by": [
+      "helen.price@orchardviewfarm.co.uk"
+    ],
+    "changed_at": "2026-03-17T21:12:02.489Z"
+  }
+},
+{
+  "model": "orders.orderstatushistory",
+  "pk": "d7f0806e-f2a8-4382-9753-063ecef2c0bc",
+  "fields": {
+    "producer_order": "673d18da-4864-4a2d-8ac9-aae1aea4eec2",
+    "old_status": "ready",
+    "new_status": "delivered",
+    "notes": "",
+    "changed_by": [
+      "helen.price@orchardviewfarm.co.uk"
+    ],
+    "changed_at": "2026-03-17T21:12:07.472Z"
+  }
+},
+{
+  "model": "orders.orderstatushistory",
+  "pk": "e5c001ee-a534-4e76-bd5a-e1421ab8eb9a",
+  "fields": {
+    "producer_order": "2f8fca95-31e9-45ba-80df-a331b60b2078",
+    "old_status": "ready",
+    "new_status": "delivered",
+    "notes": "",
+    "changed_by": [
+      "helen.price@orchardviewfarm.co.uk"
+    ],
+    "changed_at": "2026-03-17T21:27:01.068Z"
   }
 }
 ]
