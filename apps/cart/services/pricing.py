@@ -1,6 +1,7 @@
 from collections import defaultdict
 
 from apps.cart.models import Cart, CartItem
+from apps.marketplace.services.surplus import apply_surplus_discount
 
 
 def get_or_create_cart(user):
@@ -22,10 +23,14 @@ def group_cart_by_producer(cart):
 
 
 def get_cart_total_pence(cart):
-    """Return the total price of all items in the cart (in pence)."""
+    """Return the total price of all items in the cart (in pence).
+
+    Uses the surplus-discounted price for any product with an active deal.
+    """
     total = 0
     for item in cart.items.select_related("product").all():
-        total += (item.product.price_pence or 0) * item.quantity
+        unit_price = apply_surplus_discount(item.product)
+        total += unit_price * item.quantity
     return total
 
 

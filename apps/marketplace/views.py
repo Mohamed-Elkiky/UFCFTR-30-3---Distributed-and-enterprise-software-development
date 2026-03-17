@@ -14,6 +14,7 @@ from apps.reviews.models import ProductReview
 
 from .models import Product, ProductCategory, ProductAllergen
 from .forms import ProductForm
+from .services.surplus import create_surplus_deal, get_active_surplus_deals, apply_surplus_discount
 
 
 def home(request):
@@ -46,7 +47,12 @@ def home(request):
     if request.GET.get('in_season'):
         products = products.filter(availability='in_season')
 
-    products = products.order_by('-created_at')[:24]
+    products = list(products.prefetch_related('surplus_deal').order_by('-created_at')[:24])
+
+    # Attach discounted_display to each product so the template can use it directly
+    for p in products:
+        discounted = apply_surplus_discount(p)
+        p.discounted_display = f'£{discounted / 100:.2f}' if discounted < p.price_pence else None
 
     context = {
         'categories': categories,
@@ -67,9 +73,12 @@ def home(request):
 def product_list(request):
     products = Product.objects.filter(
         producer=request.user.producer_profile
-    ).order_by('-created_at')
+    ).prefetch_related('surplus_deal').order_by('-created_at')
 
-    return render(request, 'producer/product_list.html', {'products': products})
+    return render(request, 'producer/product_list.html', {
+        'products': products,
+        'now': timezone.now(),
+    })
 
 
 @producer_required
@@ -245,6 +254,15 @@ def product_detail(request, product_id):
         except Exception:
             pass
 
+    # Surplus pricing
+    discounted_pence = apply_surplus_discount(product)
+    has_surplus = discounted_pence < product.price_pence
+    discounted_display = f'£{discounted_pence / 100:.2f}' if has_surplus else None
+    try:
+        surplus_deal = product.surplus_deal if has_surplus else None
+    except Exception:
+        surplus_deal = None
+
     return render(request, 'marketplace/product_detail.html', {
         'product': product,
         'allergens': allergens,
@@ -256,6 +274,8 @@ def product_detail(request, product_id):
         'review_form': review_form,
         'can_review': can_review,
         'has_review': has_review,
+        'discounted_display': discounted_display,
+        'surplus_deal': surplus_deal,
     })
 
 
@@ -284,6 +304,74 @@ def product_search(request):
         'query': q,
         'organic': organic,
     })
+
+
+# =============================================================================
+# SURPLUS DEALS VIEWS (TC-019)
+# =============================================================================
+
+def surplus_deals(request):
+    qs = get_active_surplus_deals().select_related('product__producer', 'product__category')
+    enriched = []
+    for deal in qs:
+        discounted_pence = apply_surplus_discount(deal.product)
+        enriched.append({
+            'deal': deal,
+            'product': deal.product,
+            'original_pence': deal.product.price_pence,
+            'discounted_pence': discounted_pence,
+            'original_display': f'£{deal.product.price_pence / 100:.2f}',
+            'discounted_display': f'£{discounted_pence / 100:.2f}',
+            'discount_pct': deal.discount_bp // 100,
+        })
+    return render(request, 'marketplace/surplus_deals.html', {'enriched_deals': enriched})
+
+
+@producer_required
+def mark_as_surplus(request, product_id):
+    if request.method != 'POST':
+        return HttpResponseForbidden('POST only.')
+
+    product = get_object_or_404(Product, id=product_id)
+
+    if product.producer != request.user.producer_profile:
+        return HttpResponseForbidden('You do not own this product.')
+
+    try:
+        discount_percent = int(request.POST.get('discount_percent', 0))
+        hours_valid = int(request.POST.get('hours_valid', 0))
+    except (ValueError, TypeError):
+        messages.error(request, 'Invalid discount or duration.')
+        return redirect('marketplace:product_list')
+
+    note = request.POST.get('note', '')
+
+    try:
+        create_surplus_deal(product, discount_percent, hours_valid, note=note)
+        messages.success(request, f'Surplus deal created for "{product.name}".')
+    except Exception as e:
+        messages.error(request, str(e))
+
+    return redirect('marketplace:product_list')
+
+
+@producer_required
+def cancel_surplus_deal(request, product_id):
+    if request.method != 'POST':
+        return HttpResponseForbidden('POST only.')
+
+    product = get_object_or_404(Product, id=product_id)
+
+    if product.producer != request.user.producer_profile:
+        return HttpResponseForbidden('You do not own this product.')
+
+    try:
+        product.surplus_deal.delete()
+        messages.success(request, f'Surplus deal for "{product.name}" cancelled.')
+    except Product.surplus_deal.RelatedObjectDoesNotExist:
+        messages.warning(request, 'No active surplus deal found for this product.')
+
+    return redirect('marketplace:product_list')
 
 
 def product_search_json(request):

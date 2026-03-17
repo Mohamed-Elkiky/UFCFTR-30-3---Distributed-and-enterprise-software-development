@@ -126,6 +126,26 @@ class ProductAllergen(models.Model):
         return f"{self.product_id} - {self.allergen_id}"
 
 
+class SurplusDeal(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    product = models.OneToOneField(
+        Product,
+        on_delete=models.CASCADE,
+        db_column="product_id",
+        related_name="surplus_deal",
+    )
+    discount_bp = models.PositiveIntegerField(help_text="Discount in basis points (e.g. 2000 = 20%)")
+    expires_at = models.DateTimeField()
+    note = models.TextField(blank=True, default="")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "surplus_deal"
+
+    def __str__(self) -> str:
+        return f"SurplusDeal({self.product_id}, {self.discount_bp}bp)"
+
+
 class ProductImage(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     product = models.ForeignKey(

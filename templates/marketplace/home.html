@@ -155,7 +155,15 @@
               {% endif %}
             {% endwith %}
             <div class="product-footer">
-              <span class="product-price">{{ product.price_display }} <span class="product-unit">/ {{ product.unit }}</span></span>
+              {% if product.discounted_display %}
+                <span class="product-price">
+                  <span style="text-decoration:line-through; opacity:0.45; font-size:0.85em;">{{ product.price_display }}</span>
+                  <span style="color:#16a34a; font-weight:800;">{{ product.discounted_display }}</span>
+                  <span class="product-unit">/ {{ product.unit }}</span>
+                </span>
+              {% else %}
+                <span class="product-price">{{ product.price_display }} <span class="product-unit">/ {{ product.unit }}</span></span>
+              {% endif %}
               <span class="product-availability
                 {% if product.availability == 'in_season' %}availability-in-season
                 {% elif product.availability == 'available_year_round' %}availability-available

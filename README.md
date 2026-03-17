@@ -70,6 +70,8 @@ for producer in ProducerProfile.objects.filter(latitude__isnull=False):
     miles = haversine_miles(producer.latitude, producer.longitude, customer_lat, customer_lng)
     print(f'{producer.business_name} ({producer.postcode}) -> {miles} miles from BS1 5JG')
 "
+
+# seasonal products
 pytest apps/marketplace/tests/test_seasonal.py -v
 Key things being tested:
 
@@ -80,3 +82,57 @@ Year-round product	Non-seasonal products always return False
 auto_update brings in season	DB round-trip, OUT_OF_SEASON → IN_SEASON
 auto_update takes out of season	DB round-trip, IN_SEASON → OUT_OF_SEASON
 Ignores year-round	AVAILABLE_YEAR_ROUND products untouched
+
+
+
+# test surpluss deals
+docker compose exec web python manage.py shell
+
+from tests.factories import ProductFactory, ProducerProfileFactory, UserFactory
+from apps.marketplace.services.surplus import create_surplus_deal, get_active_surplus_deals, apply_surplus_discount
+
+# Create a producer + product
+producer = ProducerProfileFactory()
+product = ProductFactory(producer=producer, price_pence=1000, name="Test Apples")
+
+# Create a 20% deal valid 24h
+deal = create_surplus_deal(product, discount_percent=20, hours_valid=24, note="Selling fast!")
+
+print("Active deals:", get_active_surplus_deals().count())  # 1
+print("Original price:", product.price_pence)               # 1000
+print("Discounted price:", apply_surplus_discount(product)) # 800
+
+http://localhost:8000/surplus/
+
+from tests.factories import ProductFactory, CustomerProfileFactory, CartFactory, CartItemFactory
+from apps.marketplace.services.surplus import create_surplus_deal
+from apps.cart.services.pricing import get_cart_total_pence
+
+product = ProductFactory(price_pence=1000)
+cart = CartFactory()
+CartItemFactory(cart=cart, product=product, quantity=2)
+
+print(get_cart_total_pence(cart))  # 2000 — no deal yet
+
+create_surplus_deal(product, discount_percent=25, hours_valid=24)
+print(get_cart_total_pence(cart))  # 1500 — 25% off × 2 items
+
+from django.core.exceptions import ValidationError
+try:
+    create_surplus_deal(product, discount_percent=5, hours_valid=24)  # below 10%
+except ValidationError as e:
+    print(e)  # "discount_percent must be between 10 and 50"
+
+from datetime import timedelta
+from django.utils.timezone import now
+from apps.marketplace.models import SurplusDeal
+from apps.marketplace.services.surplus import expire_old_deals
+
+# Manually expire the deal
+SurplusDeal.objects.all().update(expires_at=now() - timedelta(hours=1))
+
+print(get_active_surplus_deals().count())  # 0 — expired, not shown
+expire_old_deals()                          # deletes it from DB
+print(SurplusDeal.objects.count())          # 0
+
+docker compose exec web pytest apps/marketplace/tests/ -v

@@ -15,7 +15,16 @@
     {% endwith %}
 
     <div class="product-detail-info">
-      <p><strong>Price:</strong> {{ product.price_display }}</p>
+      {% if discounted_display %}
+        <p>
+          <strong>Price:</strong>
+          <span style="text-decoration:line-through; opacity:0.5;">{{ product.price_display }}</span>
+          <span style="color:#16a34a; font-weight:800; font-size:1.1em;">{{ discounted_display }}</span>
+          <span style="background:#fef3c7; color:#92400e; border-radius:99px; padding:0.1rem 0.5rem; font-size:0.8rem; font-weight:700; margin-left:4px;">{% widthratio surplus_deal.discount_bp 100 1 %}% off</span>
+        </p>
+      {% else %}
+        <p><strong>Price:</strong> {{ product.price_display }}</p>
+      {% endif %}
 
       {% if product.description %}
         <p class="product-description">{{ product.description }}</p>

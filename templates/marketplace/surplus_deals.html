@@ -1,24 +1,61 @@
 {% extends "base.html" %}
+{% block title %}Surplus Deals — BRFN{% endblock %}
+
 {% block content %}
-<h1>Surplus Deals</h1>
-<p>Discounted items nearing best-before dates.</p>
+<style>
+  .surplus-page  { max-width: 1000px; margin: 2.5rem auto; padding: 0 1.5rem; }
+  .surplus-header { margin-bottom: 2rem; }
+  .surplus-header h1 { font-size: 1.75rem; font-weight: 800; margin: 0 0 0.4rem; }
+  .surplus-header p  { opacity: 0.6; margin: 0; }
+  .surplus-grid  { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem; }
+  .deal-card     { border: 1px solid var(--border, #e5e7eb); border-radius: 10px; padding: 1.25rem; background: var(--surface, #fff); }
+  .deal-name     { font-weight: 700; font-size: 1rem; margin-bottom: 0.2rem; }
+  .deal-producer { font-size: 0.8rem; opacity: 0.55; margin-bottom: 0.75rem; }
+  .deal-badge    { display: inline-block; background: #fef3c7; color: #92400e; border-radius: 99px; padding: 0.15rem 0.6rem; font-size: 0.75rem; font-weight: 700; margin-bottom: 0.6rem; }
+  .deal-price    { display: flex; align-items: baseline; gap: 0.6rem; margin-bottom: 0.5rem; }
+  .deal-was      { text-decoration: line-through; opacity: 0.45; font-size: 0.9rem; }
+  .deal-now      { font-size: 1.2rem; font-weight: 800; color: #16a34a; }
+  .deal-meta     { font-size: 0.78rem; opacity: 0.5; }
+  .deal-note     { font-size: 0.82rem; opacity: 0.65; margin-top: 0.4rem; font-style: italic; }
+  .empty-state   { text-align: center; padding: 5rem 2rem; opacity: 0.5; }
+</style>
 
-{% if deals %}
-  <ul>
-    {% for d in deals %}
-      <li style="margin-bottom: 0.75rem;">
-        <strong>{{ d.name|default:"Deal item" }}</strong>
-        {% if d.original_price and d.discount_price %}
-          <br />Was £{{ d.original_price }} — Now £{{ d.discount_price }}
-        {% endif %}
-        {% if d.best_before %}
-          <br /><small>Best before: {{ d.best_before }}</small>
-        {% endif %}
-      </li>
-    {% endfor %}
-  </ul>
-{% else %}
-  <p>No surplus deals available right now.</p>
-{% endif %}
+<div class="surplus-page">
+  <div class="surplus-header">
+    <h1>Surplus Deals</h1>
+    <p>Discounted items available for a limited time.</p>
+  </div>
 
+  {% if enriched_deals %}
+    <div class="surplus-grid">
+      {% for item in enriched_deals %}
+      <div class="deal-card">
+        <div class="deal-name">{{ item.product.name }}</div>
+        <div class="deal-producer">by {{ item.product.producer.business_name|default:"Unknown producer" }}</div>
+
+        <span class="deal-badge">{{ item.discount_pct }}% off</span>
+
+        <div class="deal-price">
+          <span class="deal-was">{{ item.original_display }}</span>
+          <span class="deal-now">{{ item.discounted_display }}</span>
+          <span style="opacity:0.45; font-size:0.8rem;">/ {{ item.product.unit }}</span>
+        </div>
+
+        {% if item.product.best_before_date %}
+          <div class="deal-meta">Best before: {{ item.product.best_before_date }}</div>
+        {% endif %}
+        <div class="deal-meta">Deal expires: {{ item.deal.expires_at|date:"d M Y, H:i" }}</div>
+
+        {% if item.deal.note %}
+          <div class="deal-note">"{{ item.deal.note }}"</div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <p>No surplus deals available right now.</p>
+    </div>
+  {% endif %}
+</div>
 {% endblock %}

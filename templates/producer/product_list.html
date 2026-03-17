@@ -118,6 +118,34 @@
               <button type="submit" class="btn btn--ghost btn-sm btn-danger">Delete</button>
             </form>
           </div>
+
+          {% with deal=product.surplus_deal %}
+          {% if deal and deal.expires_at > now %}
+            <div style="margin-top:0.6rem;">
+              <span class="badge-pill badge-yellow" style="font-size:0.72rem;">
+                🏷 {% widthratio deal.discount_bp 100 1 %}% off — expires {{ deal.expires_at|date:"d M, H:i" }}
+              </span>
+              <form action="{% url 'marketplace:cancel_surplus_deal' product.id %}" method="post" style="margin:0.3rem 0 0;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn--ghost btn-sm btn-danger" style="font-size:0.72rem; padding:0.2rem 0.55rem;">
+                  Cancel deal
+                </button>
+              </form>
+            </div>
+          {% else %}
+            <details style="margin-top:0.6rem;">
+              <summary style="cursor:pointer; font-size:0.8rem; opacity:0.65; user-select:none;">+ Mark as surplus</summary>
+              <form action="{% url 'marketplace:mark_as_surplus' product.id %}" method="post"
+                    style="margin-top:0.5rem; display:flex; flex-direction:column; gap:0.35rem;">
+                {% csrf_token %}
+                <input type="number" name="discount_percent" placeholder="Discount % (10–50)" min="10" max="50" required class="inv-input" style="width:100%;">
+                <input type="number" name="hours_valid" placeholder="Hours valid (e.g. 24)" min="1" required class="inv-input" style="width:100%;">
+                <input type="text" name="note" placeholder="Note (optional)" class="inv-input" style="width:100%;">
+                <button type="submit" class="btn btn--primary btn-sm">Create deal</button>
+              </form>
+            </details>
+          {% endif %}
+          {% endwith %}
         </td>
 
       </tr>
