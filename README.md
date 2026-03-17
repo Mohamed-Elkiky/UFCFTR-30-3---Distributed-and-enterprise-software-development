@@ -70,3 +70,13 @@ for producer in ProducerProfile.objects.filter(latitude__isnull=False):
     miles = haversine_miles(producer.latitude, producer.longitude, customer_lat, customer_lng)
     print(f'{producer.business_name} ({producer.postcode}) -> {miles} miles from BS1 5JG')
 "
+pytest apps/marketplace/tests/test_seasonal.py -v
+Key things being tested:
+
+Test	What it covers
+Parametrised is_in_season	Normal range, wrap-around, boundary months
+Missing months	Guards against None values
+Year-round product	Non-seasonal products always return False
+auto_update brings in season	DB round-trip, OUT_OF_SEASON → IN_SEASON
+auto_update takes out of season	DB round-trip, IN_SEASON → OUT_OF_SEASON
+Ignores year-round	AVAILABLE_YEAR_ROUND products untouched
