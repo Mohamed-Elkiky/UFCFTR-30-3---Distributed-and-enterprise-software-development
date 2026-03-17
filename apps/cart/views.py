@@ -43,13 +43,9 @@ def _is_buyer(user):
 
 
 def _get_buyer_profile(user):
-    """Return the CustomerProfile for the user, creating one on-the-fly for
-    community group users who don't have one yet."""
     if hasattr(user, 'customer_profile'):
         return user.customer_profile
 
-    # Community group: get or create a minimal CustomerProfile so that
-    # CustomerOrder.customer FK can be satisfied.
     from apps.accounts.models import CustomerProfile
     cg = user.community_group_profile
     profile, _ = CustomerProfile.objects.get_or_create(
@@ -107,6 +103,7 @@ def cart_detail(request):
         {
             "grouped": grouped,
             "total_pence": total_pence,
+            "total_display": f"{total_pence / 100:.2f}",
             "total_food_miles": total_food_miles,
             "is_guest": is_guest,
         },
@@ -161,11 +158,6 @@ def update_cart_view(request, product_id):
 
 @customer_required
 def checkout(request):
-    """
-    GET: Show checkout page with cart grouped by producer and min delivery dates.
-    POST: Validate delivery dates, create orders, process payment, redirect to confirmation.
-    TC-007 (single vendor), TC-008 (multi-vendor).
-    """
     cart = get_or_create_cart(request.user)
     grouped = group_cart_by_producer(cart)
 
@@ -175,7 +167,6 @@ def checkout(request):
 
     earliest_delivery = get_earliest_delivery_date()
 
-    # Block checkout early if any producer group has no valid delivery window
     impossible_groups = []
     for producer, items in grouped.items():
         best_befores = [
@@ -201,7 +192,6 @@ def checkout(request):
 
     if request.method == "POST":
         special_instructions = request.POST.get("special_instructions", "")
-
         delivery_dates_by_producer = {}
         errors = []
 
@@ -212,7 +202,6 @@ def checkout(request):
                 else "delivery_date_default"
             )
             raw_date = request.POST.get(field_name) or request.POST.get("delivery_date")
-
             producer_name = producer.business_name if producer else "your order"
 
             if not raw_date:
@@ -287,7 +276,6 @@ def checkout(request):
             i.product.best_before_date for i in items if i.product.best_before_date
         ]
         subtotal_pence = sum(i.product.price_pence * i.quantity for i in items)
-
         grouped_with_dates[producer] = {
             "items": items,
             "earliest_delivery": earliest_delivery.isoformat(),
@@ -318,11 +306,6 @@ def checkout(request):
 
 
 def guest_checkout(request):
-    """
-    Guest checkout — no login required.
-    GET:  Show cart summary + address/contact form + delivery date pickers.
-    POST: Validate, create order with customer=None, clear session cart.
-    """
     grouped = group_guest_cart_by_producer(request.session)
 
     if not grouped:
@@ -449,20 +432,13 @@ def guest_checkout(request):
 
 
 def order_confirmed(request, order_id):
-    """
-    GET: Show order confirmation page.
-    Supports both logged-in buyer orders and guest orders (verified via session).
-    TC-007, TC-008.
-    """
     order = get_object_or_404(CustomerOrder, id=order_id)
 
     if order.customer is None:
-        # Guest order — verify via session key written at checkout time
         if str(order_id) != request.session.get("last_guest_order_id"):
             messages.error(request, "You do not have permission to view this order.")
             return redirect("marketplace:home")
     else:
-        # Logged-in buyer's order
         if not request.user.is_authenticated:
             messages.error(request, "You do not have permission to view this order.")
             return redirect("marketplace:home")
