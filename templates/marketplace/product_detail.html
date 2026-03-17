@@ -83,7 +83,9 @@
     </div>
 
     {% if product.stock_qty > 0 %}
-      {% if user.is_authenticated and user.is_customer %}
+      {% if user.is_authenticated and user.is_producer %}
+        <p class="muted">Producer accounts cannot add items to a basket.</p>
+      {% else %}
         <form method="post" action="{% url 'cart:cart_add' product.pk %}" class="add-to-basket-form">
           {% csrf_token %}
           <div class="qty-row">
@@ -92,10 +94,6 @@
           </div>
           <button type="submit" class="btn btn--primary btn--lg">Add to Basket</button>
         </form>
-      {% elif user.is_authenticated %}
-        <p class="muted">Only customer accounts can add items to a basket.</p>
-      {% else %}
-        <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn--primary btn--lg">Login to add to basket</a>
       {% endif %}
     {% endif %}
 

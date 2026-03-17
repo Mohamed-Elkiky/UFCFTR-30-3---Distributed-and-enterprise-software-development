@@ -176,15 +176,13 @@
           </div>
         </a>
         <div class="product-card-actions">
-          {% if user.is_authenticated and user.is_customer %}
+          {% if user.is_authenticated and user.is_producer %}
+          {% else %}
             <form method="post" action="{% url 'cart:cart_add' product.pk %}">
               {% csrf_token %}
               <input type="hidden" name="quantity" value="1">
               <button type="submit" class="btn btn--primary btn--full">Add to Basket</button>
             </form>
-          {% elif user.is_authenticated %}
-          {% else %}
-            <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn--ghost btn--full">Login to add</a>
           {% endif %}
         </div>
       </article>
@@ -242,10 +240,10 @@
       const availLabel = p.availability === 'in_season' ? 'In Season'
         : p.availability === 'available_year_round' ? 'Available' : p.availability;
 
-      const actionHTML = isCustomer
-        ? `<form method="post" action="/cart/add/${p.id}/"><input type="hidden" name="csrfmiddlewaretoken" value="${getCookie('csrftoken')}"><input type="hidden" name="quantity" value="1"><button type="submit" class="btn btn--primary btn--full">Add to Basket</button></form>`
-        : isAuthenticated ? ''
-        : `<a href="/accounts/login/" class="btn btn--ghost btn--full">Login to add</a>`;
+      const isProducer = {{ user.is_producer|yesno:"true,false" }};
+      const actionHTML = isProducer
+        ? ''
+        : `<form method="post" action="/cart/add/${p.id}/"><input type="hidden" name="csrfmiddlewaretoken" value="${getCookie('csrftoken')}"><input type="hidden" name="quantity" value="1"><button type="submit" class="btn btn--primary btn--full">Add to Basket</button></form>`;
 
       return `
         <article class="product-card">
