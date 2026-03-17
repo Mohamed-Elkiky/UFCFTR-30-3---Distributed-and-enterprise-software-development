@@ -78,7 +78,12 @@
       </div>
       <div style="display: flex; gap: 0.75rem;">
         <a href="{% url 'marketplace:home' %}" class="btn btn--ghost">Continue shopping</a>
-        <a href="{% url 'cart:checkout' %}" class="btn btn--primary">Proceed to checkout</a>
+        {% if is_guest %}
+          <a href="{% url 'cart:guest_checkout' %}" class="btn btn--primary">Checkout as guest</a>
+          <a href="{% url 'accounts:login' %}" class="btn btn--ghost">Sign in to checkout</a>
+        {% else %}
+          <a href="{% url 'cart:checkout' %}" class="btn btn--primary">Proceed to checkout</a>
+        {% endif %}
       </div>
     </div>
   {% endif %}

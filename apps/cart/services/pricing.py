@@ -5,8 +5,29 @@ from apps.marketplace.services.surplus import apply_surplus_discount
 
 
 def get_or_create_cart(user):
-    """Return the Cart for *user*, creating one if it doesn't exist."""
-    cart, _ = Cart.objects.get_or_create(customer=user.customer_profile)
+    """Return the Cart for *user*, creating one if it doesn't exist.
+
+    Community group users may not have a CustomerProfile yet; one is created
+    on demand so the Cart FK can be satisfied.
+    """
+    if hasattr(user, 'customer_profile'):
+        profile = user.customer_profile
+    else:
+        # Community group user — create a minimal CustomerProfile on demand
+        from apps.accounts.models import CustomerProfile
+        cg = user.community_group_profile
+        profile, _ = CustomerProfile.objects.get_or_create(
+            user=user,
+            defaults={
+                'full_name': cg.organisation_name,
+                'street': cg.delivery_address,
+                'city': '',
+                'state': '',
+                'postcode': cg.postcode,
+                'country': 'UK',
+            },
+        )
+    cart, _ = Cart.objects.get_or_create(customer=profile)
     return cart
 
 

@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+{% block title %}Guest Checkout | BRFN{% endblock %}
+
+{% block content %}
+<section class="auth-card">
+  <h1>Guest Checkout</h1>
+  <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+    No account needed. <a href="{% url 'accounts:login' %}">Sign in</a> or <a href="{% url 'accounts:register' %}">create an account</a> to save your details for next time.
+  </p>
+
+  <form method="post">
+    {% csrf_token %}
+
+    <!-- ORDER SUMMARY -->
+    <h2 style="font-size: 1.1rem; margin-bottom: 1rem;">Order summary</h2>
+
+    {% for producer, data in grouped.items %}
+      <div style="margin-bottom: 1.5rem; padding: 1rem; border: 1px solid var(--border); border-radius: 12px;">
+        <h3 style="font-size: 1rem; margin-bottom: 0.75rem;">{{ producer.business_name }}</h3>
+
+        {% for item in data.items %}
+          <div style="display: flex; justify-content: space-between; padding: 0.4rem 0; font-size: 0.95rem;">
+            <span>{{ item.product.name }} &times; {{ item.quantity }}</span>
+            <span>£{% widthratio item.product.price_pence 100 item.quantity %}</span>
+          </div>
+        {% endfor %}
+
+        <div style="display: flex; justify-content: space-between; font-weight: 600; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--border);">
+          <span>Subtotal</span>
+          <span>£{{ data.subtotal_display }}</span>
+        </div>
+
+        <div class="form-row" style="margin-top: 1rem;">
+          <label for="delivery_date_{{ producer.pk }}">Delivery date</label>
+          <input
+            type="date"
+            id="delivery_date_{{ producer.pk }}"
+            name="delivery_date_{{ producer.pk }}"
+            class="form-control"
+            min="{{ data.earliest_delivery }}"
+            {% if data.latest_delivery %}max="{{ data.latest_delivery }}"{% endif %}
+            required
+          />
+        </div>
+      </div>
+    {% endfor %}
+
+    <!-- CONTACT DETAILS -->
+    <h2 style="font-size: 1.1rem; margin: 1.5rem 0 0.75rem;">Your details</h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+      <div class="form-row">
+        <label for="guest_name">Full name</label>
+        <input type="text" id="guest_name" name="guest_name" class="form-control"
+          placeholder="Jane Smith" required />
+      </div>
+      <div class="form-row">
+        <label for="guest_email">Email address</label>
+        <input type="email" id="guest_email" name="guest_email" class="form-control"
+          placeholder="jane@example.com" required />
+      </div>
+    </div>
+
+    <!-- DELIVERY ADDRESS -->
+    <h2 style="font-size: 1.1rem; margin: 1.5rem 0 0.75rem;">Delivery address</h2>
+    <div class="form-row">
+      <label for="street">Street</label>
+      <input type="text" id="street" name="street" class="form-control"
+        placeholder="45 Park Street" required />
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+      <div class="form-row">
+        <label for="city">City</label>
+        <input type="text" id="city" name="city" class="form-control"
+          placeholder="Bristol" />
+      </div>
+      <div class="form-row">
+        <label for="state">State / County</label>
+        <input type="text" id="state" name="state" class="form-control"
+          placeholder="England" />
+      </div>
+      <div class="form-row">
+        <label for="postcode">Postcode</label>
+        <input type="text" id="postcode" name="postcode" class="form-control"
+          placeholder="BS1 5JG" required />
+      </div>
+      <div class="form-row">
+        <label for="country">Country</label>
+        <input type="text" id="country" name="country" class="form-control"
+          placeholder="United Kingdom" />
+      </div>
+    </div>
+
+    <div class="form-row" style="margin-top: 1rem;">
+      <label for="special_instructions">Special delivery instructions <span style="font-weight: 400; color: var(--text-muted);">(optional)</span></label>
+      <textarea
+        id="special_instructions"
+        name="special_instructions"
+        class="form-control"
+        rows="3"
+        placeholder="Any special delivery instructions..."
+      ></textarea>
+    </div>
+
+    <!-- ORDER TOTAL -->
+    <div style="margin: 1.5rem 0; padding: 1rem; background: var(--surface-alt, #f9f6f1); border-radius: 12px;">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;">
+        <span>Subtotal</span>
+        <span>£{{ total_display }}</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem; color: var(--text-muted); font-size: 0.9rem;">
+        <span>Network commission (5%)</span>
+        <span>£{{ commission_display }}</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 1.1rem; padding-top: 0.5rem; border-top: 1px solid var(--border);">
+        <span>Total</span>
+        <span>£{{ grand_total_display }}</span>
+      </div>
+    </div>
+
+    <!-- PAYMENT -->
+    <h2 style="font-size: 1.1rem; margin-bottom: 0.75rem;">Payment details</h2>
+    <div style="padding: 1.25rem; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 1.5rem;">
+      <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; font-size: 0.85rem; color: var(--text-muted);">
+        🔒 Test environment — no real payment taken
+      </div>
+
+      <div class="form-row">
+        <label for="card_number">Card number</label>
+        <input
+          type="text"
+          id="card_number"
+          name="card_number"
+          class="form-control"
+          placeholder="4242 4242 4242 4242"
+          maxlength="19"
+          autocomplete="cc-number"
+          style="font-family: monospace; letter-spacing: 0.05em;"
+        />
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+        <div class="form-row" style="grid-column: span 2;">
+          <label for="card_expiry">Expiry date</label>
+          <input
+            type="text"
+            id="card_expiry"
+            name="card_expiry"
+            class="form-control"
+            placeholder="MM / YY"
+            maxlength="7"
+            autocomplete="cc-exp"
+          />
+        </div>
+        <div class="form-row">
+          <label for="card_cvc">CVC</label>
+          <input
+            type="text"
+            id="card_cvc"
+            name="card_cvc"
+            class="form-control"
+            placeholder="123"
+            maxlength="4"
+            autocomplete="cc-csc"
+            style="font-family: monospace;"
+          />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label for="card_name">Name on card</label>
+        <input
+          type="text"
+          id="card_name"
+          name="card_name"
+          class="form-control"
+          placeholder="J. Smith"
+          autocomplete="cc-name"
+        />
+      </div>
+    </div>
+
+    <button class="btn btn--primary btn--full" type="submit" style="font-size: 1rem; padding: 1rem;">
+      Place order &nbsp;·&nbsp; £{{ grand_total_display }}
+    </button>
+  </form>
+</section>
+{% endblock %}

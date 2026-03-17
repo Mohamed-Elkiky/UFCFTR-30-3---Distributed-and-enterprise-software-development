@@ -14,32 +14,49 @@ from apps.orders.models import CustomerOrder, OrderItem, ProducerOrder
 
 @transaction.atomic
 def create_orders_from_cart(
-    cart,
-    customer_profile,
-    delivery_date,
+    cart=None,
+    customer_profile=None,
+    delivery_date=None,
     delivery_dates_by_producer=None,
     special_instructions="",
+    guest_grouped=None,
+    guest_address="",
+    guest_postcode="",
 ):
     """
     Convert cart contents into a CustomerOrder with ProducerOrder sub-orders.
 
+    For logged-in buyers: pass *cart* and *customer_profile*.
+    For guest buyers:     pass *guest_grouped* (pre-grouped session items),
+                          *guest_address*, and *guest_postcode*.
+
     Args:
-        cart: Cart instance
-        customer_profile: CustomerProfile of the buyer
+        cart: Cart instance (logged-in buyers)
+        customer_profile: CustomerProfile of the buyer (None for guests)
         delivery_date: Default delivery date (date object)
         delivery_dates_by_producer: Optional dict {producer_id: date} for multi-vendor
         special_instructions: Optional delivery note
+        guest_grouped: {ProducerProfile: [GuestCartItem]} for guest orders
+        guest_address: Street/city address string for guests
+        guest_postcode: Postcode string for guests
 
     Returns:
         CustomerOrder instance
     """
-    grouped = group_cart_by_producer(cart)
+    if guest_grouped is not None:
+        grouped = guest_grouped
+    else:
+        grouped = group_cart_by_producer(cart)
 
     if not grouped:
         raise ValueError("Cannot create order from empty cart.")
 
-    delivery_address = f"{customer_profile.street}, {customer_profile.city}"
-    delivery_postcode = customer_profile.postcode
+    if customer_profile is not None:
+        delivery_address = f"{customer_profile.street}, {customer_profile.city}"
+        delivery_postcode = customer_profile.postcode
+    else:
+        delivery_address = guest_address
+        delivery_postcode = guest_postcode
 
     customer_order = CustomerOrder.objects.create(
         customer=customer_profile,
@@ -101,6 +118,7 @@ def create_orders_from_cart(
     customer_order.total_pence = subtotal
     customer_order.save()
 
-    cart.items.all().delete()
+    if cart is not None:
+        cart.items.all().delete()
 
     return customer_order
