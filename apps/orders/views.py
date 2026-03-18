@@ -4,8 +4,10 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
 
 from apps.common.permissions import producer_required
+from apps.cart.services.pricing import add_to_cart, get_or_create_cart
 from apps.orders.models import CustomerOrder, ProducerOrder
 from apps.orders.services.status_flow import transition_producer_order
 
@@ -143,3 +145,55 @@ def customer_order_detail(request, order_id):
             "payment": payment,
         },
     )
+
+
+@login_required
+@require_POST
+def reorder(request, order_id):
+    """
+    Reorder view (TC-021).
+    POST only. Fetches original OrderItem rows from a previous order,
+    calls add_to_cart for each item checking current product.availability
+    != 'unavailable'. For unavailable items, adds a warning message.
+    Redirects to cart_detail.
+    """
+    if not hasattr(request.user, "customer_profile"):
+        messages.error(request, "You need a customer account to reorder.")
+        return redirect("accounts:dashboard")
+
+    order = get_object_or_404(
+        CustomerOrder,
+        id=order_id,
+        customer=request.user.customer_profile,
+    )
+
+    cart = get_or_create_cart(request.user)
+    items = order.items.select_related("product").all()
+
+    added = 0
+    unavailable = []
+
+    for item in items:
+        product = item.product
+        if product is None:
+            unavailable.append(item.product_name)
+            continue
+
+        if product.availability == "unavailable":
+            unavailable.append(product.name)
+            continue
+
+        add_to_cart(cart, product, item.quantity)
+        added += 1
+
+    if added:
+        messages.success(request, f"{added} item(s) added to your cart.")
+
+    if unavailable:
+        names = ", ".join(unavailable)
+        messages.warning(
+            request,
+            f"Some items are currently unavailable and were skipped: {names}",
+        )
+
+    return redirect("cart:cart_detail")

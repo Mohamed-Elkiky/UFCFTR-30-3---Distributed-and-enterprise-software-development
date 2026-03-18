@@ -14,4 +14,5 @@ urlpatterns = [
 
     path("customer/", views.customer_orders, name="customer_orders"),
     path("customer/<uuid:order_id>/", views.customer_order_detail, name="customer_order_detail"),
+    path("customer/<uuid:order_id>/reorder/", views.reorder, name="reorder"),
 ]

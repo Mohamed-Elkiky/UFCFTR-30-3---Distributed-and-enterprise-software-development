@@ -1,19 +1,17 @@
 {% extends "base.html" %}
 {% block title %}Order {{ order.id }} | BRFN{% endblock %}
-
+ 
 {% block content %}
 <section class="auth-card">
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
     <h1 style="margin: 0;">Order detail</h1>
-    <a href="{% url 'orders:customer_orders' %}" class="btn btn--ghost" style="font-size: 0.85rem;">← All orders</a>
-  </div>
-
-  <div style="font-family: monospace; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">{{ order.id }}</div>
-
-  <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-muted);">
-    <span>Placed: {{ order.created_at|date:"d M Y, H:i" }}</span>
-    <span>Status: <strong style="color: var(--text);">{{ order.get_status_display }}</strong></span>
-    <span>Delivery: {{ order.delivery_date|date:"d M Y" }}</span>
+    <div style="display: flex; gap: 0.5rem;">
+      <form method="post" action="{% url 'orders:reorder' order.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn--primary" style="font-size: 0.85rem;">Reorder</button>
+      </form>
+      <a href="{% url 'orders:customer_orders' %}" class="btn btn--ghost" style="font-size: 0.85rem;">← All orders</a>
+    </div>
   </div>
 
   <!-- Items by producer -->
