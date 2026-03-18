@@ -1,6 +1,7 @@
 {% extends "base.html" %}
+{% load payment_filters %}
 {% block title %}Order {{ order.id }} | BRFN{% endblock %}
- 
+
 {% block content %}
 <section class="auth-card">
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
@@ -12,6 +13,14 @@
       </form>
       <a href="{% url 'orders:customer_orders' %}" class="btn btn--ghost" style="font-size: 0.85rem;">← All orders</a>
     </div>
+  </div>
+
+  <div style="font-family: monospace; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">{{ order.id }}</div>
+
+  <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-muted);">
+    <span>Placed: {{ order.created_at|date:"d M Y, H:i" }}</span>
+    <span>Status: <strong style="color: var(--text);">{{ order.get_status_display }}</strong></span>
+    <span>Delivery: {{ order.delivery_date|date:"d M Y" }}</span>
   </div>
 
   <!-- Items by producer -->
@@ -29,7 +38,7 @@
         {% if item.product.producer == producer_order.producer %}
           <div style="display: flex; justify-content: space-between; font-size: 0.95rem; padding: 0.3rem 0;">
             <span>{{ item.product_name }} × {{ item.quantity }}</span>
-            <span>£{% widthratio item.line_total_pence 100 1 %}</span>
+            <span>£{{ item.line_total_pence|pence_to_pounds }}</span>
           </div>
         {% endif %}
       {% endfor %}
@@ -40,15 +49,15 @@
   <div style="margin-top: 1rem; padding: 1rem; background: var(--surface-alt, #f9f6f1); border-radius: 12px;">
     <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;">
       <span>Subtotal</span>
-      <span>£{% widthratio order.subtotal_pence 100 1 %}</span>
+      <span>£{{ order.subtotal_pence|pence_to_pounds }}</span>
     </div>
     <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem; color: var(--text-muted); font-size: 0.9rem;">
       <span>Network commission (5%)</span>
-      <span>£{% widthratio order.commission_pence 100 1 %}</span>
+      <span>£{{ order.commission_pence|pence_to_pounds }}</span>
     </div>
     <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 1.1rem; padding-top: 0.5rem; border-top: 1px solid var(--border);">
       <span>Total paid</span>
-      <span>£{% widthratio order.total_pence 100 1 %}</span>
+      <span>£{{ order.total_pence|pence_to_pounds }}</span>
     </div>
   </div>
 

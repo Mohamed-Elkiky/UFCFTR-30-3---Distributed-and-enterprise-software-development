@@ -106,6 +106,10 @@
               <a class="nav-link" href="{% url 'marketplace:product_list' %}">My Products</a>
               <a class="nav-link" href="{% url 'orders:producer_orders' %}">Orders</a>
               <a class="nav-link" href="{% url 'payments:producer_settlements' %}">Settlements</a>
+            {% elif user.role == 'customer' or user.role == 'community_group' %}
+              <a class="nav-link" href="{% url 'orders:customer_orders' %}">My Orders</a>
+            {% elif user.role == 'admin' %}
+              <a class="nav-link" href="{% url 'payments:admin_commission_report' %}">Commission Report</a>
             {% endif %}
             <a class="nav-link nav-link--logout" href="{% url 'accounts:logout' %}">Logout</a>
           </div>

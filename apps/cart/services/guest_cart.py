@@ -51,6 +51,14 @@ class GuestCartItem:
     product: object
     quantity: int
 
+    @property
+    def line_total_pence(self):
+        return self.product.price_pence * self.quantity
+
+    @property
+    def line_total_display(self):
+        return f"{self.line_total_pence / 100:.2f}"
+
 
 def get_guest_cart_items(session):
     """Return list of GuestCartItem for items stored in session."""

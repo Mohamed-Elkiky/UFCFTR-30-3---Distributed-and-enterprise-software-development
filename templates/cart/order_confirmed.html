@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load payment_filters %}
 {% block title %}Order Confirmed | BRFN{% endblock %}
 
 {% block content %}
@@ -32,7 +33,7 @@
           {% if item.product.producer == producer_order.producer %}
             <div style="display: flex; justify-content: space-between; font-size: 0.95rem; padding: 0.3rem 0;">
               <span>{{ item.product_name }} × {{ item.quantity }}</span>
-              <span>£{% widthratio item.line_total_pence 100 1 %}</span>
+              <span>£{{ item.line_total_pence|pence_to_pounds }}</span>
             </div>
           {% endif %}
         {% endfor %}
@@ -42,7 +43,7 @@
     <!-- TOTAL -->
     <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 1.1rem; padding: 0.75rem 0; border-top: 2px solid var(--border);">
       <span>Total paid</span>
-      <span>£{% widthratio order.total_pence 100 1 %}</span>
+      <span>£{{ order.total_pence|pence_to_pounds }}</span>
     </div>
   </div>
 

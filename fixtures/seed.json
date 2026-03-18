@@ -224,22 +224,6 @@
   }
 },
 {
-  "model": "sessions.session",
-  "pk": "nm9r7fc9t143ffrl509jv6hm74wg4t37",
-  "fields": {
-    "session_data": ".eJxVjEEOwiAQRe_C2pBhCHRw6d4zkAGmUjU0Ke3KeHdt0oVu_3vvv1Tkba1x67LEqaizMqBOv2Pi_JC2k3Lndpt1ntu6TEnvij5o19e5yPNyuH8HlXv91gMhIgQkCoSjhJKcd4Fc8o4GDBkkc04WBMEYdmSE2QNbDxZhtKLeH9USNw0:1w01sp:nkXXYvUfJqmHd6IEDLr_fnji-t9GB0sM5XpEthUiRBA",
-    "expire_date": "2026-03-24T18:32:43.172Z"
-  }
-},
-{
-  "model": "sessions.session",
-  "pk": "yvr1f2l6dr0brvsq1r0gqcy0fb9ga9z8",
-  "fields": {
-    "session_data": ".eJxVjDsOwjAQBe_iGllZe_1ZSnrOYK0_wQHkSHFSIe4OkVJA-2bmvUTgba1h62UJUxZnASBOv2Pk9ChtJ_nO7TbLNLd1maLcFXnQLq9zLs_L4f4dVO71WztwQOiUMgm04zigURE0WJ9HPbBBwqJcJguYKI8RLHH0JXmrAQuSeH8Ayj426Q:1w2cAo:Ca7hJHf6rN-d4rq3vYych0CqQ7bI-mEd2rzcWfAmuMA",
-    "expire_date": "2026-03-31T21:41:58.818Z"
-  }
-},
-{
   "model": "marketplace.productcategory",
   "pk": 1,
   "fields": {
@@ -301,7 +285,7 @@
   "fields": {
     "producer": 4,
     "category": 2,
-    "name": "strawberry",
+    "name": "Strawberries (Orchard View)",
     "description": "Freshly picked strawberries, sweet and juicy from our local farm. Perfect for desserts, smoothies, or simply enjoyed on their own.",
     "price_pence": 350,
     "unit": "kg",
@@ -334,7 +318,7 @@
     "low_stock_threshold": 10,
     "organic_certified": true,
     "harvest_date": "2026-02-20",
-    "best_before_date": "2026-03-06",
+    "best_before_date": "2026-03-31",
     "created_at": "2026-01-01T09:00:00Z",
     "updated_at": "2026-01-01T09:00:00Z"
   }
@@ -444,7 +428,7 @@
     "low_stock_threshold": 10,
     "organic_certified": true,
     "harvest_date": "2026-02-24",
-    "best_before_date": "2026-02-28",
+    "best_before_date": "2026-03-31",
     "created_at": "2026-01-01T09:00:00Z",
     "updated_at": "2026-01-01T09:00:00Z"
   }
@@ -488,7 +472,7 @@
     "low_stock_threshold": 8,
     "organic_certified": true,
     "harvest_date": "2026-02-25",
-    "best_before_date": "2026-02-28",
+    "best_before_date": "2026-03-31",
     "created_at": "2026-01-01T09:00:00Z",
     "updated_at": "2026-01-01T09:00:00Z"
   }
@@ -510,7 +494,7 @@
     "low_stock_threshold": 10,
     "organic_certified": false,
     "harvest_date": "2025-10-20",
-    "best_before_date": "2026-03-20",
+    "best_before_date": "2026-03-31",
     "created_at": "2026-01-01T09:00:00Z",
     "updated_at": "2026-01-01T09:00:00Z"
   }
@@ -532,7 +516,7 @@
     "low_stock_threshold": 10,
     "organic_certified": false,
     "harvest_date": "2025-10-05",
-    "best_before_date": "2026-03-10",
+    "best_before_date": "2026-03-31",
     "created_at": "2026-01-01T09:00:00Z",
     "updated_at": "2026-01-01T09:00:00Z"
   }
@@ -620,7 +604,7 @@
     "low_stock_threshold": 15,
     "organic_certified": false,
     "harvest_date": "2026-02-26",
-    "best_before_date": "2026-03-03",
+    "best_before_date": "2026-03-31",
     "created_at": "2026-01-01T09:00:00Z",
     "updated_at": "2026-01-01T09:00:00Z"
   }
@@ -708,7 +692,7 @@
     "low_stock_threshold": 5,
     "organic_certified": false,
     "harvest_date": null,
-    "best_before_date": "2026-03-15",
+    "best_before_date": "2026-03-31",
     "created_at": "2026-01-01T09:00:00Z",
     "updated_at": "2026-01-01T09:00:00Z"
   }
@@ -796,7 +780,7 @@
     "low_stock_threshold": 4,
     "organic_certified": false,
     "harvest_date": null,
-    "best_before_date": "2026-02-28",
+    "best_before_date": "2026-03-31",
     "created_at": "2026-01-01T09:00:00Z",
     "updated_at": "2026-01-01T09:00:00Z"
   }
@@ -906,7 +890,7 @@
     "low_stock_threshold": 3,
     "organic_certified": false,
     "harvest_date": "2026-02-23",
-    "best_before_date": "2026-03-01",
+    "best_before_date": "2026-03-31",
     "created_at": "2026-01-01T09:00:00Z",
     "updated_at": "2026-01-01T09:00:00Z"
   }
@@ -928,7 +912,7 @@
     "low_stock_threshold": 8,
     "organic_certified": true,
     "harvest_date": "2026-02-25",
-    "best_before_date": "2026-03-01",
+    "best_before_date": "2026-03-31",
     "created_at": "2026-01-01T09:00:00Z",
     "updated_at": "2026-01-01T09:00:00Z"
   }
@@ -950,7 +934,7 @@
     "low_stock_threshold": 5,
     "organic_certified": false,
     "harvest_date": "2025-10-15",
-    "best_before_date": "2026-03-01",
+    "best_before_date": "2026-03-31",
     "created_at": "2026-01-01T09:00:00Z",
     "updated_at": "2026-01-01T09:00:00Z"
   }
@@ -1202,8 +1186,8 @@
   "pk": "3fcb75dc-c0b4-4500-9194-8ad71b5c7dea",
   "fields": {
     "product": "a1b2c3d4-0001-0001-0001-000000000017",
-    "url": null,
-    "image": "products/Double_cream.jpg",
+    "url": "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=600&q=80",
+    "image": "",
     "created_at": null
   }
 },
@@ -1212,8 +1196,8 @@
   "pk": "54afeaeb-2e0e-416c-b499-218e97bc903b",
   "fields": {
     "product": "a1b2c3d4-0001-0001-0001-000000000003",
-    "url": null,
-    "image": "products/Courgettes.webp",
+    "url": "https://images.unsplash.com/photo-1563252722-6434563a985d?w=600&q=80",
+    "image": "",
     "created_at": null
   }
 },
@@ -1222,8 +1206,8 @@
   "pk": "5d1cc22b-3142-49cc-b9ae-2601cab3c9bc",
   "fields": {
     "product": "a1b2c3d4-0001-0001-0001-000000000016",
-    "url": null,
-    "image": "products/Natural_yoghurt.jpg",
+    "url": "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600&q=80",
+    "image": "",
     "created_at": null
   }
 },
@@ -1232,8 +1216,8 @@
   "pk": "68b7d9db-bff6-4775-82a3-9f9d3de1d8a9",
   "fields": {
     "product": "a1b2c3d4-0001-0001-0001-000000000012",
-    "url": null,
-    "image": "products/conference-pear-variet.jpg",
+    "url": "https://images.unsplash.com/photo-1514756331096-242fdeb70d4a?w=600&q=80",
+    "image": "",
     "created_at": null
   }
 },
@@ -1242,8 +1226,8 @@
   "pk": "7239b197-e30d-43e1-b828-682343022d73",
   "fields": {
     "product": "26884068-629f-4089-af31-7e3394bc8d01",
-    "url": null,
-    "image": "products/Strawberry.jpeg",
+    "url": "https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=600&q=80",
+    "image": "",
     "created_at": null
   }
 },
@@ -1252,8 +1236,8 @@
   "pk": "73a53281-3961-4f26-a1c3-2b507f5032c0",
   "fields": {
     "product": "a1b2c3d4-0001-0001-0001-000000000004",
-    "url": null,
-    "image": "products/Salad_potatoes.jpg",
+    "url": "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=600&q=80",
+    "image": "",
     "created_at": null
   }
 },
@@ -1262,8 +1246,8 @@
   "pk": "8b42f706-763c-45a3-a0b3-0c572b85a08c",
   "fields": {
     "product": "a1b2c3d4-0001-0001-0001-000000000021",
-    "url": null,
-    "image": "products/Seeded_batch_loaf.jpg",
+    "url": "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&q=80",
+    "image": "",
     "created_at": null
   }
 },
@@ -1272,8 +1256,8 @@
   "pk": "923cd440-cf93-4fa1-9829-cde3d2b04120",
   "fields": {
     "product": "a1b2c3d4-0001-0001-0001-000000000026",
-    "url": null,
-    "image": "products/pork_sausage.jpg",
+    "url": "https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?w=600&q=80",
+    "image": "",
     "created_at": null
   }
 },
@@ -1282,8 +1266,8 @@
   "pk": "9ed13fc2-60db-4438-bde9-2862413eb89d",
   "fields": {
     "product": "a1b2c3d4-0001-0001-0001-000000000002",
-    "url": null,
-    "image": "products/Organic_tomatoes.jpeg",
+    "url": "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=600&q=80",
+    "image": "",
     "created_at": null
   }
 },
@@ -1462,8 +1446,8 @@
   "pk": "b9bce44a-95e3-4ac9-a4ea-39dc90a3b2cf",
   "fields": {
     "product": "a1b2c3d4-0001-0001-0001-000000000024",
-    "url": null,
-    "image": "products/Apple_chutney.jpg",
+    "url": "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=600&q=80",
+    "image": "",
     "created_at": null
   }
 },
@@ -1472,8 +1456,8 @@
   "pk": "c013f00a-ad23-4647-b598-4418a33effde",
   "fields": {
     "product": "a1b2c3d4-0001-0001-0001-000000000020",
-    "url": null,
-    "image": "products/Sourdough_loaf.jpg",
+    "url": "https://images.unsplash.com/photo-1586444248879-bc604cbd555a?w=600&q=80",
+    "image": "",
     "created_at": null
   }
 },
@@ -1482,8 +1466,8 @@
   "pk": "e4d22f5e-26fe-434c-bfcb-06d2c4715cb5",
   "fields": {
     "product": "a1b2c3d4-0001-0001-0001-000000000023",
-    "url": null,
-    "image": "products/Strawberry_jam.jpg",
+    "url": "https://images.unsplash.com/photo-1563822249366-3efb23b8e0c9?w=600&q=80",
+    "image": "",
     "created_at": null
   }
 },
@@ -1492,8 +1476,8 @@
   "pk": "ea3f106b-e423-44bd-b288-84aade555d30",
   "fields": {
     "product": "a1b2c3d4-0001-0001-0001-000000000019",
-    "url": null,
-    "image": "products/Walnut_bread.jpg",
+    "url": "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&q=80",
+    "image": "",
     "created_at": null
   }
 },
@@ -3543,10 +3527,10 @@
     "user": [
       "test@producer.com"
     ],
-    "business_name": "brisotl",
-    "contact_name": "test test",
-    "business_address": "bristol.com",
-    "postcode": "123456",
+    "business_name": "Bristol Test Farm",
+    "contact_name": "Test Producer",
+    "business_address": "Test Street, Bristol",
+    "postcode": "BS1 1AA",
     "latitude": null,
     "longitude": null,
     "created_at": "2026-03-10T18:32:43.170Z",
@@ -3560,12 +3544,12 @@
     "user": [
       "test@test.com"
     ],
-    "full_name": "Test",
-    "street": "",
-    "city": "",
-    "state": "",
-    "postcode": "",
-    "country": "",
+    "full_name": "Test Customer",
+    "street": "45 Park Street",
+    "city": "Bristol",
+    "state": "Avon",
+    "postcode": "BS1 5JG",
+    "country": "UK",
     "latitude": null,
     "longitude": null,
     "created_at": "2026-03-17T16:53:55.082Z",
