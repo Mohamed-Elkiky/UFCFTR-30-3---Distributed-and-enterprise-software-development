@@ -104,7 +104,16 @@
         <p>
           <strong>Average rating:</strong>
           {% if average_stars %}
-            {{ average_stars|floatformat:1 }} / 5
+            <span class="stars-display" aria-label="{{ average_stars|floatformat:1 }} out of 5 stars">
+              {% for i in "12345" %}
+                {% if forloop.counter <= average_stars %}
+                  <span class="star star--filled">★</span>
+                {% else %}
+                  <span class="star star--empty">★</span>
+                {% endif %}
+              {% endfor %}
+            </span>
+            <span class="stars-label">{{ average_stars|floatformat:1 }} / 5</span>
           {% else %}
             No ratings yet
           {% endif %}
@@ -117,7 +126,18 @@
           {% for review in reviews %}
             <article class="review-card">
               <h3>{{ review.title }}</h3>
-              <p><strong>{{ review.stars }}/5</strong> by {{ review.customer.full_name }}</p>
+              <p>
+                <span class="stars-display" aria-label="{{ review.stars }} out of 5 stars">
+                  {% for i in "12345" %}
+                    {% if forloop.counter <= review.stars %}
+                      <span class="star star--filled">★</span>
+                    {% else %}
+                      <span class="star star--empty">★</span>
+                    {% endif %}
+                  {% endfor %}
+                </span>
+                <span class="stars-label">by {{ review.customer.full_name }}</span>
+              </p>
               <p>{{ review.body }}</p>
               <p><small>{{ review.created_at|date:"M d, Y H:i" }}</small></p>
             </article>
@@ -135,10 +155,25 @@
             <h3>Leave a Review</h3>
             <form method="post" action="{% url 'reviews:review_submit' product.id %}">
               {% csrf_token %}
+
+              <input type="hidden" name="stars" id="id_stars" value="">
+
               <div class="form-row">
-                <label for="{{ review_form.stars.id_for_label }}">Rating</label>
-                {{ review_form.stars }}
+                <label>Rating</label>
+                <div class="star-picker" role="radiogroup" aria-label="Rating">
+                  {% for val in "12345" %}
+                    <button
+                      type="button"
+                      class="star-btn"
+                      data-value="{{ val }}"
+                      aria-label="{{ val }} star{% if val != '1' %}s{% endif %}"
+                      title="{{ val }} star{% if val != '1' %}s{% endif %}"
+                    >★</button>
+                  {% endfor %}
+                </div>
+                <span class="star-picker-hint" id="star-hint">Select a rating</span>
               </div>
+
               <div class="form-row">
                 <label for="{{ review_form.title.id_for_label }}">Title</label>
                 {{ review_form.title }}
@@ -209,9 +244,7 @@
     padding-top: 24px;
     border-top: 1px solid #ddd;
   }
-  .reviews-summary {
-    margin-bottom: 18px;
-  }
+  .reviews-summary { margin-bottom: 18px; }
   .reviews-list {
     display: grid;
     gap: 16px;
@@ -223,10 +256,7 @@
     border-radius: 10px;
     background: #fff;
   }
-  .review-card h3 {
-    margin-top: 0;
-    margin-bottom: 8px;
-  }
+  .review-card h3 { margin-top: 0; margin-bottom: 8px; }
   .review-form-wrap {
     margin-top: 20px;
     padding: 18px;
@@ -234,14 +264,8 @@
     border-radius: 10px;
     background: #fafafa;
   }
-  .review-form-wrap .form-row {
-    margin-bottom: 14px;
-  }
-  .review-form-wrap label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: 600;
-  }
+  .review-form-wrap .form-row { margin-bottom: 14px; }
+  .review-form-wrap label { display: block; margin-bottom: 6px; font-weight: 600; }
   .review-form-wrap .form-control {
     width: 100%;
     padding: 10px 12px;
@@ -250,5 +274,71 @@
     font: inherit;
     box-sizing: border-box;
   }
+
+  /* Star display (read-only) */
+  .stars-display { display: inline-flex; gap: 2px; vertical-align: middle; }
+  .star { font-size: 1.2rem; line-height: 1; }
+  .star--filled { color: #c8922a; }
+  .star--empty  { color: #ddd; }
+  .stars-label  { vertical-align: middle; margin-left: 4px; font-size: 0.9rem; color: #555; }
+
+  /* Star picker (interactive) */
+  .star-picker { display: inline-flex; gap: 4px; margin-top: 2px; }
+  .star-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 2rem;
+    color: #ddd;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.15s, transform 0.1s;
+  }
+  .star-btn:hover,
+  .star-btn.hovered { color: #e8a020; transform: scale(1.15); }
+  .star-btn.selected { color: #c8922a; }
+  .star-picker-hint { display: block; font-size: 0.82rem; color: #888; margin-top: 4px; }
 </style>
+
+<script>
+(function () {
+  const picker = document.querySelector('.star-picker');
+  if (!picker) return;
+
+  const buttons = Array.from(picker.querySelectorAll('.star-btn'));
+  const hidden  = document.getElementById('id_stars');
+  const hint    = document.getElementById('star-hint');
+  const labels  = ['', '1 star – Poor', '2 stars – Fair', '3 stars – Good', '4 stars – Very good', '5 stars – Excellent'];
+
+  let currentVal = 0;
+
+  function paint(upTo, className) {
+    buttons.forEach(function (btn, idx) {
+      btn.classList.toggle(className, idx < upTo);
+    });
+  }
+
+  buttons.forEach(function (btn, idx) {
+    btn.addEventListener('mouseenter', function () {
+      paint(idx + 1, 'hovered');
+    });
+  });
+
+  picker.addEventListener('mouseleave', function () {
+    paint(0, 'hovered');
+    paint(currentVal, 'selected');
+  });
+
+  buttons.forEach(function (btn, idx) {
+    btn.addEventListener('click', function () {
+      currentVal   = idx + 1;
+      hidden.value = currentVal;
+      paint(0, 'selected');
+      paint(currentVal, 'selected');
+      hint.textContent = labels[currentVal];
+    });
+  });
+})();
+</script>
+
 {% endblock %}

@@ -10,10 +10,9 @@ class ReviewForm(forms.ModelForm):
         model = ProductReview
         fields = ["stars", "title", "body"]
         widgets = {
-            "stars": forms.Select(
-                attrs={"class": "form-control"},
-                choices=[(1, "1"), (2, "2"), (3, "3"), (4, "4"), (5, "5")],
-            ),
+            # stars is now submitted via the hidden input populated by the
+            # star-picker JavaScript in product_detail.html
+            "stars": forms.HiddenInput(),
             "title": forms.TextInput(
                 attrs={
                     "class": "form-control",
