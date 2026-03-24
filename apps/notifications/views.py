@@ -1,7 +1,8 @@
 # apps/notifications/views.py
 
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
 
 from apps.notifications.models import Notification
 
@@ -19,9 +20,29 @@ def notification_list(request):
     })
 
 
+@require_POST
 @login_required
 def mark_all_read(request):
     """Mark all notifications as read for the logged-in user."""
-    if request.method == "POST":
-        Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
+    Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
+    return redirect("notifications:notification_list")
+
+
+@require_POST
+@login_required
+def mark_read(request, notification_id):
+    """Mark a single notification as read."""
+    notification = get_object_or_404(Notification, pk=notification_id, user=request.user)
+    if not notification.is_read:
+        notification.is_read = True
+        notification.save(update_fields=["is_read"])
+    return redirect("notifications:notification_list")
+
+
+@require_POST
+@login_required
+def dismiss(request, notification_id):
+    """Delete a single notification entirely."""
+    notification = get_object_or_404(Notification, pk=notification_id, user=request.user)
+    notification.delete()
     return redirect("notifications:notification_list")

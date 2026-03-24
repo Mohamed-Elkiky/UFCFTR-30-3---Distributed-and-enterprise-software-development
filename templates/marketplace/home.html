@@ -121,6 +121,9 @@
             {% if product.organic_certified %}
               <span class="product-badge badge-organic">Organic</span>
             {% endif %}
+            {% if product.stock_qty == 0 %}
+              <span class="product-badge badge-out-of-stock">Out of Stock</span>
+            {% endif %}
           </div>
           <div class="product-info">
             {% if product.category %}
@@ -177,6 +180,8 @@
         </a>
         <div class="product-card-actions">
           {% if user.is_authenticated and user.is_producer %}
+          {% elif product.stock_qty == 0 %}
+            <button type="button" class="btn btn--ghost btn--full" disabled style="opacity:0.5; cursor:not-allowed;">Out of Stock</button>
           {% else %}
             <form method="post" action="{% url 'cart:cart_add' product.pk %}">
               {% csrf_token %}
@@ -232,6 +237,9 @@
       const organicBadge = p.organic_certified
         ? `<span class="product-badge badge-organic">Organic</span>` : '';
 
+      const oosBadge = p.stock_qty === 0
+        ? `<span class="product-badge badge-out-of-stock">Out of Stock</span>` : '';
+
       const availClass = p.availability === 'in_season'
         ? 'availability-in-season'
         : p.availability === 'available_year_round'
@@ -243,6 +251,8 @@
       const isProducer = {{ user.is_producer|yesno:"true,false" }};
       const actionHTML = isProducer
         ? ''
+        : p.stock_qty === 0
+        ? `<button type="button" class="btn btn--ghost btn--full" disabled style="opacity:0.5;cursor:not-allowed;">Out of Stock</button>`
         : `<form method="post" action="/cart/add/${p.id}/"><input type="hidden" name="csrfmiddlewaretoken" value="${getCookie('csrftoken')}"><input type="hidden" name="quantity" value="1"><button type="submit" class="btn btn--primary btn--full">Add to Basket</button></form>`;
 
       return `
@@ -251,6 +261,7 @@
             <div class="product-image">
               ${imgHTML}
               ${organicBadge}
+              ${oosBadge}
             </div>
             <div class="product-info">
               ${p.category ? `<span class="product-category">${p.category}</span>` : ''}

@@ -73,7 +73,9 @@
 
         <td>
           {% if product.stock_qty is not None %}
-            {% if product.low_stock_threshold and product.stock_qty <= product.low_stock_threshold %}
+            {% if product.stock_qty == 0 %}
+              <span class="badge-pill badge-red">Out of Stock</span>
+            {% elif product.low_stock_threshold and product.stock_qty <= product.low_stock_threshold %}
               <span class="badge-pill badge-yellow">⚠ {{ product.stock_qty }} low</span>
             {% else %}
               <span class="badge-pill badge-green">{{ product.stock_qty }}</span>

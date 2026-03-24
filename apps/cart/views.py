@@ -116,6 +116,19 @@ def add_to_cart_view(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
     quantity = int(request.POST.get("quantity", 1))
 
+    # Block out-of-stock products
+    if product.stock_qty <= 0:
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return JsonResponse({"status": "error", "message": "This product is out of stock."}, status=400)
+        messages.error(request, f'"{product.name}" is out of stock and cannot be added to your basket.')
+        referer = request.META.get("HTTP_REFERER", "")
+        return redirect(referer if referer else "cart:cart_detail")
+
+    # Cap quantity at available stock
+    if quantity > product.stock_qty:
+        quantity = product.stock_qty
+        messages.warning(request, f'Only {product.stock_qty} {product.unit} available. Quantity adjusted.')
+
     if _is_buyer(request.user):
         cart = get_or_create_cart(request.user)
         add_to_cart(cart, product, quantity)

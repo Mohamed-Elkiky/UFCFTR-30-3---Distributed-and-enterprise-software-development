@@ -1321,6 +1321,13 @@ img {
   color: #fff;
 }
 
+.badge-out-of-stock {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  color: #fff;
+  left: auto;
+  right: 0.75rem;
+}
+
 /* Product Info */
 .product-info {
   padding: 1rem 1.25rem 1.25rem;

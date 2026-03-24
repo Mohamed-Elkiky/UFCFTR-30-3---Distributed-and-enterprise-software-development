@@ -2,41 +2,197 @@
 
 {% block title %}Notifications{% endblock %}
 
+{% block extra_head %}
+<style>
+  .notif-page { max-width: 740px; margin: 2rem auto; padding: 0 1rem; }
+
+  .notif-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .notif-header h1 { margin: 0; font-size: 1.5rem; }
+
+  .btn-mark-all {
+    font-size: 0.85rem;
+    padding: 0.4rem 1rem;
+    background: var(--brand);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 600;
+  }
+  .btn-mark-all:hover { background: var(--brand-2); }
+
+  /* ---- Notification card ---- */
+  .notif-card {
+    padding: 0.85rem 1rem;
+    margin-bottom: 0.6rem;
+    border-radius: 10px;
+    border: 1px solid var(--card-border);
+    background: var(--card);
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    transition: background 0.15s;
+  }
+  .notif-card:hover { background: var(--bg-warm); }
+  .notif-card--unread {
+    border-left: 3px solid var(--brand);
+    background: var(--brand-light);
+  }
+  .notif-card--unread:hover { background: rgba(166, 124, 82, 0.18); }
+
+  .notif-dot {
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-top: 0.45rem;
+  }
+  .notif-dot--unread { background: var(--brand); }
+  .notif-dot--read   { background: transparent; }
+
+  .notif-body { flex: 1; min-width: 0; }
+  .notif-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 0.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .notif-text {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.45;
+    margin: 0;
+  }
+  .notif-time {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 0.3rem;
+  }
+
+  /* Type badge */
+  .notif-type {
+    display: inline-block;
+    padding: 0.1rem 0.5rem;
+    border-radius: 5px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+  .notif-type--low_stock   { background: #FFF3CD; color: #856404; }
+  .notif-type--order_status { background: #D1ECF1; color: #0C5460; }
+  .notif-type--surplus_deal { background: #D4EDDA; color: #155724; }
+  .notif-type--system       { background: #E2E3E5; color: #383D41; }
+  .notif-type--recurring_order { background: #CCE5FF; color: #004085; }
+
+  [data-theme="dark"] .notif-type--low_stock    { background: #4A3F1A; color: #F5D86E; }
+  [data-theme="dark"] .notif-type--order_status  { background: #1A3A42; color: #7ACFE0; }
+  [data-theme="dark"] .notif-type--surplus_deal  { background: #1A3A2A; color: #7ACA8F; }
+  [data-theme="dark"] .notif-type--system        { background: #2A2A2A; color: #AAAAAA; }
+  [data-theme="dark"] .notif-type--recurring_order { background: #1A2A42; color: #7AB0E0; }
+
+  /* Actions */
+  .notif-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    flex-shrink: 0;
+  }
+  .notif-btn {
+    font-size: 0.78rem;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid var(--border-strong);
+    border-radius: 6px;
+    cursor: pointer;
+    background: var(--bg);
+    color: var(--text-secondary);
+    font: inherit;
+    font-size: 0.78rem;
+    white-space: nowrap;
+  }
+  .notif-btn:hover { background: var(--bg-secondary); }
+  .notif-btn--dismiss {
+    border-color: transparent;
+    color: var(--muted);
+  }
+  .notif-btn--dismiss:hover {
+    background: var(--danger);
+    color: #fff;
+    border-color: var(--danger);
+  }
+
+  .notif-empty {
+    text-align: center;
+    padding: 4rem 1rem;
+    color: var(--muted);
+    font-size: 1rem;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
-<div style="max-width:720px; margin:2rem auto; padding:0 1rem;">
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-    <h1 style="margin:0;">Notifications</h1>
+<div class="notif-page">
+
+  <div class="notif-header">
+    <h1>
+      Notifications
+      {% if unread_count > 0 %}
+        <span style="font-size:0.85rem; font-weight:500; color:var(--muted); margin-left:0.3rem;">({{ unread_count }} unread)</span>
+      {% endif %}
+    </h1>
     {% if unread_count > 0 %}
       <form method="post" action="{% url 'notifications:mark_all_read' %}">
         {% csrf_token %}
-        <button type="submit" class="btn" style="font-size:0.9rem; padding:0.4rem 1rem; background:#4a7c59; color:#fff; border:none; border-radius:6px; cursor:pointer;">
-          Mark all as read ({{ unread_count }})
-        </button>
+        <button type="submit" class="btn-mark-all">Mark all as read</button>
       </form>
     {% endif %}
   </div>
 
   {% if notifications %}
     {% for n in notifications %}
-      <div style="padding:1rem; margin-bottom:0.75rem; border-radius:8px; border:1px solid {% if n.is_read %}#ddd{% else %}#4a7c59{% endif %}; background:{% if n.is_read %}transparent{% else %}rgba(74,124,89,0.06){% endif %};">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-          <div>
-            <strong style="font-size:1rem;">
-              {{ n.title }}
-            </strong>
-            {% if not n.is_read %}
-              <span style="display:inline-block; width:8px; height:8px; background:#4a7c59; border-radius:50%; margin-left:6px; vertical-align:middle;"></span>
-            {% endif %}
-            <p style="margin:0.4rem 0 0; opacity:0.85;">{{ n.body }}</p>
+      <div class="notif-card {% if not n.is_read %}notif-card--unread{% endif %}">
+
+        <span class="notif-dot {% if not n.is_read %}notif-dot--unread{% else %}notif-dot--read{% endif %}"></span>
+
+        <div class="notif-body">
+          <div class="notif-title">
+            {{ n.title }}
+            <span class="notif-type notif-type--{{ n.type }}">{{ n.get_type_display }}</span>
           </div>
-          <span style="font-size:0.8rem; opacity:0.6; white-space:nowrap; margin-left:1rem;">
-            {{ n.created_at|timesince }} ago
-          </span>
+          <p class="notif-text">{{ n.body }}</p>
+          <div class="notif-time">{{ n.created_at|timesince }} ago</div>
         </div>
+
+        <div class="notif-actions">
+          {% if not n.is_read %}
+            <form method="post" action="{% url 'notifications:mark_read' n.pk %}" style="margin:0;">
+              {% csrf_token %}
+              <button type="submit" class="notif-btn">Mark read</button>
+            </form>
+          {% endif %}
+          <form method="post" action="{% url 'notifications:dismiss' n.pk %}" style="margin:0;">
+            {% csrf_token %}
+            <button type="submit" class="notif-btn notif-btn--dismiss" title="Dismiss notification">✕</button>
+          </form>
+        </div>
+
       </div>
     {% endfor %}
   {% else %}
-    <p style="text-align:center; opacity:0.6; padding:3rem 0;">No notifications yet.</p>
+    <div class="notif-empty">No notifications yet.</div>
   {% endif %}
+
 </div>
 {% endblock %}

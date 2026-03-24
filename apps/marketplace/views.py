@@ -116,6 +116,7 @@ def product_edit(request, product_id):
             product.save()
             form.save_allergens(product)
             form.save_image(product)
+            check_and_notify_low_stock(product)
             messages.success(request, f'Product "{product.name}" updated successfully!')
             return redirect('marketplace:product_list')
     else:
@@ -405,6 +406,7 @@ def product_search_json(request):
             'availability': p.availability,
             'organic_certified': p.organic_certified,
             'image_url': image_url,
+            'stock_qty': p.stock_qty,
         })
 
     return JsonResponse({'results': results})
