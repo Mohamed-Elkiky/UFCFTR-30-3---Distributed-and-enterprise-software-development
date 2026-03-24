@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block title %}Order Commission Detail – {{ order.id|truncatechars:12 }}{% endblock %}
+
+{% block extra_head %}
+<style>
+  .detail-container {
+    max-width: 860px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+  .detail-container h1 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.9rem;
+    color: var(--brand);
+    text-decoration: none;
+    margin-bottom: 1rem;
+  }
+  .back-link:hover { text-decoration: underline; }
+
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .detail-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.25rem;
+    box-shadow: var(--shadow);
+  }
+  .detail-card .label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    margin-bottom: 0.2rem;
+  }
+  .detail-card .value { font-size: 1.25rem; font-weight: 700; }
+
+  .info-table {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+  .info-table td {
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+  }
+  .info-table td:first-child {
+    font-weight: 600;
+    color: var(--muted);
+    width: 200px;
+  }
+  .info-table tr:last-child td { border-bottom: none; }
+
+  .breakdown-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    font-size: 0.9rem;
+  }
+  .breakdown-table thead { background: var(--bg-secondary); }
+  .breakdown-table th {
+    padding: 0.6rem 1rem;
+    text-align: left;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--muted);
+    font-weight: 600;
+    border-bottom: 2px solid var(--border-strong);
+  }
+  .breakdown-table th.right { text-align: right; }
+  .breakdown-table td {
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .breakdown-table td.right { text-align: right; }
+  .breakdown-table tr:last-child td { border-bottom: none; }
+  .mono { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.82rem; }
+
+  .status-badge {
+    display: inline-block;
+    padding: 0.15rem 0.55rem;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+  .status-badge--pending   { background: #FFF3CD; color: #856404; }
+  .status-badge--confirmed { background: #D1ECF1; color: #0C5460; }
+  .status-badge--ready     { background: #D4EDDA; color: #155724; }
+  .status-badge--delivered  { background: #C8E6C9; color: #2E7D32; }
+  .status-badge--cancelled  { background: #F8D7DA; color: #721C24; }
+  .status-badge--captured  { background: #C8E6C9; color: #2E7D32; }
+
+  .section-heading {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 1.5rem 0 0.75rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="detail-container">
+
+  <a href="{% url 'payments:admin_commission_report' %}" class="back-link">&larr; Back to Commission Report</a>
+
+  <h1>Order {{ order.id|truncatechars:12 }}</h1>
+
+  <div class="detail-grid">
+    <div class="detail-card">
+      <div class="label">Order Total (Gross)</div>
+      <div class="value">&pound;{{ gross|floatformat:2 }}</div>
+    </div>
+    <div class="detail-card">
+      <div class="label">Network Commission (5%)</div>
+      <div class="value">&pound;{{ comm|floatformat:2 }}</div>
+    </div>
+    <div class="detail-card">
+      <div class="label">Net to Producers (95%)</div>
+      <div class="value">&pound;{{ net|floatformat:2 }}</div>
+    </div>
+    <div class="detail-card">
+      <div class="label">Payment Status</div>
+      <div class="value" style="font-size:1rem;">{{ payment_status }}</div>
+    </div>
+  </div>
+
+  <table class="info-table">
+    <tr><td>Order ID</td><td class="mono">{{ order.id }}</td></tr>
+    <tr><td>Customer</td><td>{{ customer_name }}</td></tr>
+    <tr><td>Order Date</td><td>{{ order.created_at|date:"j M Y, H:i" }}</td></tr>
+    <tr><td>Delivery Date</td><td>{{ order.delivery_date|date:"j M Y" }}</td></tr>
+    <tr><td>Order Status</td><td><span class="status-badge status-badge--{{ order.status }}">{{ order.get_status_display }}</span></td></tr>
+    <tr><td>Delivery Address</td><td>{{ order.delivery_address }}, {{ order.delivery_postcode }}</td></tr>
+  </table>
+
+  <h2 class="section-heading">Producer Payment Breakdown</h2>
+  <table class="breakdown-table">
+    <thead>
+      <tr>
+        <th>Producer</th>
+        <th>Status</th>
+        <th class="right">Gross (&pound;)</th>
+        <th class="right">Commission 5% (&pound;)</th>
+        <th class="right">Producer Payment 95% (&pound;)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for pb in breakdown %}
+      <tr>
+        <td>{{ pb.producer }}</td>
+        <td><span class="status-badge status-badge--{{ pb.status|lower }}">{{ pb.status }}</span></td>
+        <td class="right mono">&pound;{{ pb.gross|floatformat:2 }}</td>
+        <td class="right mono">&pound;{{ pb.commission|floatformat:2 }}</td>
+        <td class="right mono">&pound;{{ pb.payment|floatformat:2 }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5" style="text-align:center; color:var(--muted); padding:1.5rem;">No producer orders found for this order.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+</div>
+{% endblock %}

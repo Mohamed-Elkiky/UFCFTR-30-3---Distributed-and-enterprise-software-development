@@ -1,61 +1,476 @@
 {% extends "base.html" %}
 
-{% block title %}Commission Report{% endblock %}
+{% block title %}Commission Report – Admin{% endblock %}
+
+{% block extra_head %}
+<style>
+  .report-container {
+    max-width: 1120px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+
+  .report-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+  .report-header h1 { margin: 0; font-size: 1.75rem; }
+  .report-header .order-count {
+    font-size: 0.95rem;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  /* ---- Summary cards ---- */
+  .summary-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+  }
+  .summary-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.25rem;
+    box-shadow: var(--shadow);
+  }
+  .summary-card .label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    margin-bottom: 0.25rem;
+  }
+  .summary-card .value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .summary-card .sub {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-top: 0.15rem;
+  }
+
+  /* ---- Filter form ---- */
+  .filter-bar {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+  }
+  .filter-grid {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+  .filter-group { display: flex; flex-direction: column; gap: 0.25rem; }
+  .filter-group label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--muted);
+  }
+  .filter-group input,
+  .filter-group select {
+    padding: 0.45rem 0.65rem;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    font: inherit;
+    font-size: 0.9rem;
+    background: var(--bg);
+    color: var(--text);
+    min-width: 150px;
+  }
+  .filter-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-left: auto;
+  }
+  .btn-filter {
+    padding: 0.45rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    background: var(--brand);
+    color: #fff;
+  }
+  .btn-filter:hover { background: var(--brand-2); }
+  .btn-reset {
+    padding: 0.45rem 0.85rem;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    font: inherit;
+    font-size: 0.9rem;
+    cursor: pointer;
+    background: var(--bg);
+    color: var(--text-secondary);
+    text-decoration: none;
+  }
+  .btn-reset:hover { background: var(--bg-secondary); }
+  .btn-csv {
+    padding: 0.45rem 0.85rem;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    font: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+    background: var(--bg);
+    color: var(--text-secondary);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .btn-csv:hover { background: var(--bg-secondary); }
+
+  /* ---- Tables ---- */
+  .report-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .report-table thead { background: var(--bg-secondary); }
+  .report-table th {
+    padding: 0.65rem 0.75rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--muted);
+    border-bottom: 2px solid var(--border-strong);
+  }
+  .report-table th.right,
+  .report-table td.right { text-align: right; }
+
+  .report-table td {
+    padding: 0.6rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: top;
+  }
+  .report-table tbody tr:hover { background: var(--bg-warm); }
+  .report-table tfoot td {
+    font-weight: 700;
+    border-top: 2px solid var(--border-strong);
+    border-bottom: none;
+    background: var(--bg-secondary);
+  }
+
+  .mono { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.82rem; }
+
+  /* Status badges */
+  .status-badge {
+    display: inline-block;
+    padding: 0.15rem 0.55rem;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: capitalize;
+  }
+  .status-badge--pending   { background: #FFF3CD; color: #856404; }
+  .status-badge--confirmed { background: #D1ECF1; color: #0C5460; }
+  .status-badge--ready     { background: #D4EDDA; color: #155724; }
+  .status-badge--delivered  { background: #C8E6C9; color: #2E7D32; }
+  .status-badge--cancelled  { background: #F8D7DA; color: #721C24; }
+  .status-badge--captured  { background: #C8E6C9; color: #2E7D32; }
+  .status-badge--failed    { background: #F8D7DA; color: #721C24; }
+
+  .multi-vendor-badge {
+    display: inline-block;
+    padding: 0.1rem 0.45rem;
+    border-radius: 5px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    background: var(--brand-light);
+    color: var(--brand);
+  }
+
+  /* Expandable row */
+  .detail-toggle {
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0.15rem 0.4rem;
+    font-size: 0.85rem;
+    color: var(--brand);
+    border-radius: 4px;
+    font-weight: 600;
+  }
+  .detail-toggle:hover { background: var(--brand-light); }
+
+  .producer-detail-row { display: none; }
+  .producer-detail-row.open { display: table-row; }
+  .producer-detail-row td {
+    padding: 0;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-secondary);
+  }
+  .producer-subtable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+  .producer-subtable td {
+    padding: 0.4rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-secondary);
+  }
+  .producer-subtable tr:last-child td { border-bottom: none; }
+  .producer-subtable .producer-label {
+    padding-left: 2.25rem;
+    font-weight: 500;
+  }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--muted);
+  }
+
+  /* Section heading */
+  .section-heading {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 2rem 0 0.75rem;
+    color: var(--text);
+  }
+
+  /* Monthly summary table */
+  .monthly-table { margin-bottom: 1.5rem; }
+
+  /* Dark mode tweaks */
+  [data-theme="dark"] .status-badge--pending   { background: #4A3F1A; color: #F5D86E; }
+  [data-theme="dark"] .status-badge--confirmed { background: #1A3A42; color: #7ACFE0; }
+  [data-theme="dark"] .status-badge--ready     { background: #1A3A2A; color: #7ACA8F; }
+  [data-theme="dark"] .status-badge--delivered  { background: #1A3A2A; color: #7ACA8F; }
+  [data-theme="dark"] .status-badge--cancelled  { background: #3A1A1A; color: #E87C7C; }
+  [data-theme="dark"] .status-badge--captured  { background: #1A3A2A; color: #7ACA8F; }
+  [data-theme="dark"] .status-badge--failed    { background: #3A1A1A; color: #E87C7C; }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container" style="max-width:960px; margin:2rem auto; padding:0 1rem;">
-  <h1>Commission Report</h1>
+<div class="report-container">
 
-  <form method="get" style="display:flex; gap:1rem; align-items:flex-end; margin-bottom:1.5rem; flex-wrap:wrap;">
-    <div>
-      <label for="date_from">From</label><br>
-      <input type="date" id="date_from" name="date_from" value="{{ date_from }}" class="form-control">
-    </div>
-    <div>
-      <label for="date_to">To</label><br>
-      <input type="date" id="date_to" name="date_to" value="{{ date_to }}" class="form-control">
-    </div>
-    <div>
-      <button type="submit" class="btn btn-primary">Filter</button>
-    </div>
-    <div style="margin-left:auto;">
-      <a href="?format=csv&date_from={{ date_from }}&date_to={{ date_to }}" class="btn btn-secondary">Download CSV</a>
-    </div>
-  </form>
+  <!-- ---- Header ---- -->
+  <div class="report-header">
+    <h1>Commission Report</h1>
+    <span class="order-count">{{ total_orders }} order{{ total_orders|pluralize }} in period</span>
+  </div>
 
-  <table style="width:100%; border-collapse:collapse;">
+  <!-- ---- YTD + Period Summary Cards ---- -->
+  <div class="summary-row">
+    <div class="summary-card">
+      <div class="label">Period Gross</div>
+      <div class="value">&pound;{{ total_gross }}</div>
+      <div class="sub">{{ total_orders }} order{{ total_orders|pluralize }}</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">Period Commission (5%)</div>
+      <div class="value">&pound;{{ total_commission }}</div>
+      <div class="sub">Network revenue</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">Period Net to Producers (95%)</div>
+      <div class="value">&pound;{{ total_net }}</div>
+      <div class="sub">Distributed to producers</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">Year-to-Date Commission</div>
+      <div class="value">&pound;{{ ytd.commission }}</div>
+      <div class="sub">&pound;{{ ytd.gross }} gross &middot; {{ ytd.orders }} order{{ ytd.orders|pluralize }}</div>
+    </div>
+  </div>
+
+  <!-- ---- Filter Bar ---- -->
+  <div class="filter-bar">
+    <form method="get" class="filter-grid">
+      <div class="filter-group">
+        <label for="date_from">From</label>
+        <input type="date" id="date_from" name="date_from" value="{{ date_from }}">
+      </div>
+      <div class="filter-group">
+        <label for="date_to">To</label>
+        <input type="date" id="date_to" name="date_to" value="{{ date_to }}">
+      </div>
+      <div class="filter-group">
+        <label for="producer">Producer</label>
+        <select id="producer" name="producer">
+          <option value="">All producers</option>
+          {% for p in producers %}
+            <option value="{{ p.pk }}" {% if producer_filter == p.pk|stringformat:"s" %}selected{% endif %}>{{ p.business_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="status">Order Status</label>
+        <select id="status" name="status">
+          <option value="">All statuses</option>
+          {% for val, display in status_choices %}
+            <option value="{{ val }}" {% if status_filter == val %}selected{% endif %}>{{ display }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="filter-actions">
+        <button type="submit" class="btn-filter">Filter</button>
+        <a href="{% url 'payments:admin_commission_report' %}" class="btn-reset">Reset</a>
+        <a href="?format=csv&date_from={{ date_from }}&date_to={{ date_to }}{% if producer_filter %}&producer={{ producer_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}"
+           class="btn-csv">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download CSV
+        </a>
+      </div>
+    </form>
+  </div>
+
+  <!-- ---- Orders Table ---- -->
+  <table class="report-table" id="orders-table">
     <thead>
-      <tr style="border-bottom:2px solid #dee2e6; text-align:left;">
-        <th style="padding:0.5rem 0.75rem;">Order ID</th>
-        <th style="padding:0.5rem 0.75rem;">Order Date</th>
-        <th style="padding:0.5rem 0.75rem; text-align:right;">Gross</th>
-        <th style="padding:0.5rem 0.75rem; text-align:right;">Commission</th>
-        <th style="padding:0.5rem 0.75rem; text-align:right;">Net</th>
+      <tr>
+        <th style="width:2rem;"></th>
+        <th>Order ID</th>
+        <th>Date</th>
+        <th>Customer</th>
+        <th>Status</th>
+        <th>Payment</th>
+        <th class="right">Gross</th>
+        <th class="right">Commission (5%)</th>
+        <th class="right">Net (95%)</th>
       </tr>
     </thead>
     <tbody>
       {% for r in rows %}
-      <tr style="border-bottom:1px solid #dee2e6;">
-        <td style="padding:0.5rem 0.75rem; font-family:monospace; font-size:0.85rem;">{{ r.order_id }}</td>
-        <td style="padding:0.5rem 0.75rem;">{{ r.order_date }}</td>
-        <td style="padding:0.5rem 0.75rem; text-align:right;">£{{ r.gross }}</td>
-        <td style="padding:0.5rem 0.75rem; text-align:right;">£{{ r.commission }}</td>
-        <td style="padding:0.5rem 0.75rem; text-align:right;">£{{ r.net }}</td>
+      <tr>
+        <td>
+          {% if r.producer_breakdown %}
+          <button class="detail-toggle" onclick="toggleDetail('detail-{{ forloop.counter }}')" title="Show producer breakdown" aria-expanded="false">&#9654;</button>
+          {% endif %}
+        </td>
+        <td>
+          <span class="mono">{{ r.order_id_short }}&hellip;</span>
+          {% if r.is_multi_vendor %}
+            <span class="multi-vendor-badge">Multi</span>
+          {% endif %}
+        </td>
+        <td>{{ r.order_date|date:"Y-m-d" }}</td>
+        <td>{{ r.customer_name }}</td>
+        <td><span class="status-badge status-badge--{{ r.order_status_raw }}">{{ r.order_status }}</span></td>
+        <td><span class="status-badge status-badge--{{ r.payment_status|lower|cut:' ' }}">{{ r.payment_status }}</span></td>
+        <td class="right mono">&pound;{{ r.gross|floatformat:2 }}</td>
+        <td class="right mono">&pound;{{ r.commission|floatformat:2 }}</td>
+        <td class="right mono">&pound;{{ r.net|floatformat:2 }}</td>
       </tr>
+      <!-- Producer breakdown (hidden by default) -->
+      {% if r.producer_breakdown %}
+      <tr class="producer-detail-row" id="detail-{{ forloop.counter }}">
+        <td colspan="9">
+          <table class="producer-subtable">
+            <tr>
+              <td colspan="2" style="padding-left:2.25rem; font-weight:600; color:var(--muted); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.03em;">Producer Breakdown</td>
+              <td style="font-weight:600; color:var(--muted); font-size:0.78rem;">Status</td>
+              <td class="right" style="font-weight:600; color:var(--muted); font-size:0.78rem;">Gross</td>
+              <td class="right" style="font-weight:600; color:var(--muted); font-size:0.78rem;">Commission</td>
+              <td class="right" style="font-weight:600; color:var(--muted); font-size:0.78rem;">Producer Payment</td>
+            </tr>
+            {% for pb in r.producer_breakdown %}
+            <tr>
+              <td colspan="2" class="producer-label">{{ pb.name }}</td>
+              <td><span class="status-badge status-badge--{{ pb.status|lower }}">{{ pb.status }}</span></td>
+              <td class="right mono">&pound;{{ pb.gross|floatformat:2 }}</td>
+              <td class="right mono">&pound;{{ pb.commission|floatformat:2 }}</td>
+              <td class="right mono">&pound;{{ pb.payment|floatformat:2 }}</td>
+            </tr>
+            {% endfor %}
+          </table>
+        </td>
+      </tr>
+      {% endif %}
       {% empty %}
       <tr>
-        <td colspan="5" style="padding:1rem 0.75rem; text-align:center; color:#6c757d;">No commission records found for this period.</td>
+        <td colspan="9" class="empty-state">No commission records found for the selected filters.</td>
       </tr>
       {% endfor %}
     </tbody>
+    {% if rows %}
     <tfoot>
-      <tr style="border-top:2px solid #dee2e6; font-weight:600;">
-        <td colspan="2" style="padding:0.5rem 0.75rem;">Totals</td>
-        <td style="padding:0.5rem 0.75rem; text-align:right;">£{{ total_gross }}</td>
-        <td style="padding:0.5rem 0.75rem; text-align:right;">£{{ total_commission }}</td>
-        <td style="padding:0.5rem 0.75rem; text-align:right;">£{{ total_net }}</td>
+      <tr>
+        <td colspan="2">Totals</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="right mono">&pound;{{ total_gross|floatformat:2 }}</td>
+        <td class="right mono">&pound;{{ total_commission|floatformat:2 }}</td>
+        <td class="right mono">&pound;{{ total_net|floatformat:2 }}</td>
       </tr>
     </tfoot>
+    {% endif %}
   </table>
+
+  <!-- ---- Monthly Summary ---- -->
+  {% if monthly_summary %}
+  <h2 class="section-heading">Monthly Summary</h2>
+  <table class="report-table monthly-table">
+    <thead>
+      <tr>
+        <th>Month</th>
+        <th class="right">Orders</th>
+        <th class="right">Gross</th>
+        <th class="right">Commission (5%)</th>
+        <th class="right">Net to Producers (95%)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for m in monthly_summary %}
+      <tr>
+        <td>{{ m.month|date:"F Y" }}</td>
+        <td class="right">{{ m.orders }}</td>
+        <td class="right mono">&pound;{{ m.gross|floatformat:2 }}</td>
+        <td class="right mono">&pound;{{ m.commission|floatformat:2 }}</td>
+        <td class="right mono">&pound;{{ m.net|floatformat:2 }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function toggleDetail(id) {
+    var row = document.getElementById(id);
+    if (!row) return;
+    var btn = row.previousElementSibling.querySelector('.detail-toggle');
+    if (row.classList.contains('open')) {
+      row.classList.remove('open');
+      if (btn) { btn.innerHTML = '&#9654;'; btn.setAttribute('aria-expanded', 'false'); }
+    } else {
+      row.classList.add('open');
+      if (btn) { btn.innerHTML = '&#9660;'; btn.setAttribute('aria-expanded', 'true'); }
+    }
+  }
+</script>
 {% endblock %}
