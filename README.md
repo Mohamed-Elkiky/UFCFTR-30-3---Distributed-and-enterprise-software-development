@@ -140,3 +140,4 @@ docker compose exec web pytest apps/marketplace/tests/ -v
 
 # Build management command for weekly settlement (TC-012)
 docker exec -it ufcftr-30-3---distributed-and-enterprise-software-development-web-1 python manage.py run_weekly_settlement
+.
