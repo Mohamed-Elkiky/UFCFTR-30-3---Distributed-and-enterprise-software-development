@@ -191,3 +191,130 @@ class OrderStatusHistory(models.Model):
     
     def __str__(self):
         return f"{self.old_status} → {self.new_status}"
+    
+# ---------------------------------------------------------------------------
+# Recurring Orders (TC-018)
+# ---------------------------------------------------------------------------
+# Allows business customers (e.g. restaurants) to set up a repeating order
+# schedule defined by an iCal RRULE string. A scheduler periodically calls
+# generate_upcoming_instances() to materialise RecurringOrderInstance rows
+# for upcoming dates, and place_recurring_instance() converts a scheduled
+# instance into a real CustomerOrder using the template's items.
+
+
+class RecurringOrderTemplate(models.Model):
+    """
+    A reusable order template owned by a customer.
+    Defines what items to order and on what schedule (via RRULE).
+    """
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    customer = models.ForeignKey(
+        'accounts.CustomerProfile',
+        on_delete=models.CASCADE,
+        related_name='recurring_templates',
+    )
+
+    name = models.CharField(max_length=200)
+
+    # iCal RRULE string, e.g. "FREQ=WEEKLY;BYDAY=MO"
+    # Parsed at runtime with dateutil.rrule.rrulestr().
+    rrule = models.TextField(
+        help_text="iCal RRULE string defining the recurrence schedule"
+    )
+
+    active = models.BooleanField(default=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.name} ({self.customer})"
+
+
+class RecurringOrderItem(models.Model):
+    """
+    A line item within a RecurringOrderTemplate.
+    Stores the product and the quantity to be ordered each occurrence.
+    Composite uniqueness on (template, product) prevents duplicate lines.
+    """
+
+    template = models.ForeignKey(
+        RecurringOrderTemplate,
+        on_delete=models.CASCADE,
+        related_name='items',
+    )
+
+    product = models.ForeignKey(
+        'marketplace.Product',
+        on_delete=models.CASCADE,
+        related_name='recurring_order_items',
+    )
+
+    quantity = models.PositiveIntegerField(default=1)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['template', 'product'],
+                name='recurring_order_item_pk',
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.quantity}x {self.product.name} ({self.template.name})"
+
+
+class RecurringOrderInstance(models.Model):
+    """
+    A scheduled occurrence of a RecurringOrderTemplate.
+    Created by generate_upcoming_instances() ahead of time so the customer
+    can preview, modify, or skip an upcoming run before it's placed.
+    """
+
+    class Status(models.TextChoices):
+        SCHEDULED = 'scheduled', 'Scheduled'
+        PLACED = 'placed', 'Placed'
+        SKIPPED = 'skipped', 'Skipped'
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    template = models.ForeignKey(
+        RecurringOrderTemplate,
+        on_delete=models.CASCADE,
+        related_name='instances',
+    )
+
+    scheduled_for = models.DateField()
+
+    # Set once the instance is converted into a real order.
+    customer_order = models.ForeignKey(
+        'orders.CustomerOrder',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='recurring_instance',
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=Status.choices,
+        default=Status.SCHEDULED,
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['scheduled_for']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['template', 'scheduled_for'],
+                name='recurring_instance_unique_per_date',
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.template.name} on {self.scheduled_for} ({self.status})"
