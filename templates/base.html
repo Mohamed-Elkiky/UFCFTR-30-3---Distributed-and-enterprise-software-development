@@ -106,6 +106,7 @@
               <a class="nav-link" href="{% url 'marketplace:product_list' %}">My Products</a>
               <a class="nav-link" href="{% url 'orders:producer_orders' %}">Orders</a>
               <a class="nav-link" href="{% url 'payments:producer_settlements' %}">Settlements</a>
+              <a class="nav-link" href="{% url 'content:content_list' %}">Content</a>
             {% elif user.role == 'customer' or user.role == 'community_group' %}
               <a class="nav-link" href="{% url 'orders:customer_orders' %}">My Orders</a>
             {% elif user.role == 'admin' %}

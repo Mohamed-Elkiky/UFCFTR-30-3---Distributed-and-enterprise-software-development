@@ -1,0 +1,284 @@
+{% extends "base.html" %}
+
+{% block title %}New Content Post — BRFN{% endblock %}
+
+{% block extra_head %}
+<style>
+  .cf-page {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1.5rem 5rem;
+  }
+
+  .cf-header {
+    margin-bottom: 2rem;
+  }
+
+  .cf-header h1 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    margin: 0 0 0.25rem;
+  }
+
+  .cf-header p {
+    color: var(--muted);
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  .cf-section {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .cf-field {
+    margin-bottom: 1.1rem;
+  }
+
+  .cf-field:last-child {
+    margin-bottom: 0;
+  }
+
+  .cf-label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+
+  .cf-label span.req {
+    color: var(--danger);
+    margin-left: 2px;
+  }
+
+  .cf-input,
+  .cf-select,
+  .cf-textarea {
+    width: 100%;
+    padding: 0.65rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.92rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+  }
+
+  .cf-input:focus,
+  .cf-select:focus,
+  .cf-textarea:focus {
+    outline: none;
+    border-color: var(--brand);
+    box-shadow: var(--focus);
+  }
+
+  .cf-input.error,
+  .cf-select.error,
+  .cf-textarea.error {
+    border-color: var(--danger);
+  }
+
+  .cf-textarea {
+    resize: vertical;
+    min-height: 200px;
+    font-family: inherit;
+    line-height: 1.5;
+  }
+
+  .cf-help {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 0.3rem;
+  }
+
+  .cf-error {
+    font-size: 0.8rem;
+    color: var(--danger);
+    margin-top: 0.3rem;
+  }
+
+  .cf-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 1.25rem;
+  }
+
+  @media (max-width: 600px) {
+    .cf-grid-2 { grid-template-columns: 1fr; }
+  }
+
+  /* Product checkbox list */
+  .cf-product-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cf-product-list li {
+    list-style: none;
+  }
+
+  .cf-product-list label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+  }
+
+  .cf-product-list label:hover {
+    background: var(--bg-secondary);
+    border-color: var(--border-strong);
+  }
+
+  .cf-product-list label:has(input:checked) {
+    background: var(--brand-light);
+    border-color: var(--brand);
+    color: var(--brand);
+    font-weight: 600;
+  }
+
+  .cf-product-empty {
+    color: var(--muted);
+    font-size: 0.85rem;
+    padding: 0.75rem;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    margin: 0;
+  }
+
+  .cf-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .cf-form-error {
+    background: rgba(196,77,77,0.1);
+    border: 1px solid var(--danger);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    color: var(--danger);
+    font-size: 0.9rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cf-page">
+
+  <div class="cf-header">
+    <h1>New Content Post</h1>
+    <p>Share a recipe, farm story, or storage guide with your customers.</p>
+  </div>
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+      <div class="cf-form-error">
+        {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="cf-section">
+
+      <div class="cf-grid-2">
+        <div class="cf-field">
+          <label class="cf-label" for="{{ form.kind.id_for_label }}">
+            Kind <span class="req">*</span>
+          </label>
+          <select name="{{ form.kind.html_name }}" id="{{ form.kind.id_for_label }}"
+                  class="cf-select {% if form.kind.errors %}error{% endif %}">
+            {% for value, label in form.fields.kind.choices %}
+              <option value="{{ value }}" {% if form.kind.value == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+          {% if form.kind.errors %}<div class="cf-error">{{ form.kind.errors|join:", " }}</div>{% endif %}
+        </div>
+
+        <div class="cf-field">
+          <label class="cf-label" for="{{ form.seasonal_tag.id_for_label }}">
+            Seasonal tag
+          </label>
+          <select name="{{ form.seasonal_tag.html_name }}" id="{{ form.seasonal_tag.id_for_label }}"
+                  class="cf-select {% if form.seasonal_tag.errors %}error{% endif %}">
+            {% for value, label in form.fields.seasonal_tag.choices %}
+              <option value="{{ value }}" {% if form.seasonal_tag.value == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+          {% if form.seasonal_tag.errors %}<div class="cf-error">{{ form.seasonal_tag.errors|join:", " }}</div>{% endif %}
+        </div>
+      </div>
+
+      <div class="cf-field">
+        <label class="cf-label" for="{{ form.title.id_for_label }}">
+          Title <span class="req">*</span>
+        </label>
+        <input type="text" name="{{ form.title.html_name }}" id="{{ form.title.id_for_label }}"
+               value="{{ form.title.value|default:'' }}"
+               class="cf-input {% if form.title.errors %}error{% endif %}"
+               placeholder="e.g. Roasted Root Vegetable Medley"
+               maxlength="200" required>
+        {% if form.title.errors %}<div class="cf-error">{{ form.title.errors|join:", " }}</div>{% endif %}
+      </div>
+
+      <div class="cf-field">
+        <label class="cf-label" for="{{ form.body.id_for_label }}">
+          Body <span class="req">*</span>
+        </label>
+        <textarea name="{{ form.body.html_name }}" id="{{ form.body.id_for_label }}"
+                  class="cf-textarea {% if form.body.errors %}error{% endif %}"
+                  placeholder="Write your recipe instructions, farm story, or storage guidance here..."
+                  required>{{ form.body.value|default:'' }}</textarea>
+        <div class="cf-help">For recipes, include ingredients and step-by-step instructions.</div>
+        {% if form.body.errors %}<div class="cf-error">{{ form.body.errors|join:", " }}</div>{% endif %}
+      </div>
+
+      <div class="cf-field">
+        <label class="cf-label">Linked products</label>
+        <p class="cf-help" style="margin-top:0; margin-bottom:0.5rem;">
+          {{ form.products.help_text }}
+        </p>
+        {% if form.products.field.queryset.exists %}
+          <ul class="cf-product-list">
+            {% for checkbox in form.products %}
+              <li>{{ checkbox.tag }} <label for="{{ checkbox.id_for_label }}">{{ checkbox.choice_label }}</label></li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="cf-product-empty">
+            You don't have any products yet. <a href="{% url 'marketplace:product_create' %}">Add a product</a> to link it here.
+          </p>
+        {% endif %}
+        {% if form.products.errors %}<div class="cf-error">{{ form.products.errors|join:", " }}</div>{% endif %}
+      </div>
+
+    </div>
+
+    <div class="cf-actions">
+      <a href="{% url 'content:content_list' %}" class="btn btn--ghost">Cancel</a>
+      <button type="submit" class="btn btn--primary">Publish</button>
+    </div>
+
+  </form>
+</div>
+{% endblock %}

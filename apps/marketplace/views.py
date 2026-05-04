@@ -6,6 +6,7 @@ from django.http import HttpResponseForbidden, JsonResponse
 from django.utils import timezone
 from django.db.models import Q, Avg
 
+from apps.content.models import ContentProductLink
 from apps.common.permissions import producer_required
 from apps.notifications.services.low_stock import check_and_notify_low_stock
 from apps.orders.models import CustomerOrder
@@ -263,6 +264,11 @@ def product_detail(request, product_id):
     except Exception:
         surplus_deal = None
 
+    # Linked content (recipes, farm stories, storage guides) — TC-020
+    linked_content = ContentProductLink.objects.filter(
+        product=product
+    ).select_related('content')
+
     return render(request, 'marketplace/product_detail.html', {
         'product': product,
         'allergens': allergens,
@@ -276,6 +282,7 @@ def product_detail(request, product_id):
         'has_review': has_review,
         'discounted_display': discounted_display,
         'surplus_deal': surplus_deal,
+        'linked_content': linked_content
     })
 
 
