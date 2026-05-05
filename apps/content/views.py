@@ -7,7 +7,8 @@ Provides producer-only screens for listing and creating ContentPosts
 
 from django.contrib import messages
 from django.db import transaction
-from django.shortcuts import redirect, render
+from django.http import HttpResponseForbidden
+from django.shortcuts import get_object_or_404, redirect, render
 
 from apps.common.permissions import producer_required
 
@@ -70,3 +71,26 @@ def content_create(request):
     return render(request, 'producer/content_form.html', {
         'form': form,
     })
+
+
+@producer_required
+def content_delete(request, post_id):
+    """
+    Delete a ContentPost owned by the current producer.
+    POST-only to prevent accidental deletes via stale GET links / prefetchers.
+    Cascade removes any associated ContentProductLink rows automatically.
+    """
+    post = get_object_or_404(ContentPost, id=post_id)
+
+    # Ownership check — producers can only delete their own posts.
+    if post.producer != request.user.producer_profile:
+        return HttpResponseForbidden('You do not own this post.')
+
+    if request.method != 'POST':
+        messages.warning(request, 'Invalid request method for deletion.')
+        return redirect('content:content_list')
+
+    title = post.title
+    post.delete()
+    messages.success(request, f'"{title}" has been deleted.')
+    return redirect('content:content_list')
