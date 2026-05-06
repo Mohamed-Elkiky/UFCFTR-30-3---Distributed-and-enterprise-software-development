@@ -1,6 +1,5 @@
 services:
   db:
-    # Pull from GitHub Container Registry; fall back to local build
     image: ghcr.io/mohamed-elkiky/ufcftr-30-3---distributed-and-enterprise-software-development/db:latest
     build:
       context: ./docker/postgres
@@ -19,14 +18,15 @@ services:
       retries: 10
 
   web:
-    # Pull from GitHub Container Registry; fall back to local build
     image: ghcr.io/mohamed-elkiky/ufcftr-30-3---distributed-and-enterprise-software-development/web:latest
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: gunicorn brfn.wsgi:application --bind 0.0.0.0:8000 --workers 3
     volumes:
       - .:/app
-    ports:
-      - "8000:8000"
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    expose:
+      - "8000"
     depends_on:
       db:
         condition: service_healthy
@@ -40,5 +40,18 @@ services:
       - DJANGO_DB_PORT=5432
       - DATABASE_URL=postgresql://myuser:mypassword@db:5432/mydb
 
+  nginx:
+    image: nginx:1.25-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    depends_on:
+      - web
+
 volumes:
   postgres_data:
+  static_volume:
+  media_volume:

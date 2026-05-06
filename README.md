@@ -1,249 +1,157 @@
-# BRFN Marketplace Platform
+# Bristol Regional Food Network — Digital Marketplace
 
-Distributed and enterprise software development project for a regional food network marketplace. The platform supports multi-role users, multi-vendor ordering, recurring orders, seasonal product logic, logistics calculations, reviews, notifications, and producer payouts.
+A Django-based multi-vendor marketplace connecting local food producers with customers in the Bristol region. Built with Docker multi-container architecture (PostgreSQL + Django/Gunicorn + Nginx).
 
-## Tech Stack
+**Module:** UFCFTR-30-3 Distributed & Enterprise Software Development  
+**Group:** DESD Group 2
 
-- Python 3.11
-- Django 4.2.11
-- PostgreSQL
-- Docker and Docker Compose
-- pytest and pytest-django
+## Team
+
+| Name | Student ID 
+|------|------------
+| Mohamed Elkiky | 21068307 |
+| Sergio Salas | 23039230 |
+| Kirill Gontar | 23077530 |
+| Konstantinos Demetriou | 23004235
+
+## Architecture
+
+The application uses a three-container Docker architecture:
+
+- **db** — PostgreSQL 15 database
+- **web** — Django 4.2 application served by Gunicorn (WSGI)
+- **nginx** — Nginx reverse proxy serving static/media files and forwarding requests to Gunicorn
+
+## Quick Start
+
+```bash
+# Clone the repository
+git clone https://github.com/Mohamed-Elkiky/UFCFTR-30-3---Distributed-and-enterprise-software-development.git
+cd UFCFTR-30-3---Distributed-and-enterprise-software-development
+
+# Build and start all containers
+docker compose up --build
+
+# The site is available at http://localhost
+```
+
+On first run, the entrypoint automatically:
+1. Waits for PostgreSQL to be ready
+2. Runs Django migrations
+3. Collects static files for Nginx
+4. Loads seed data from `fixtures/seed.json` (if the database is empty)
+
+## Default Accounts
+
+| Role | Email | Password |
+|------|-------|----------|
+| Admin | admin@brfn.com | Admin123 |
+
+Producer and customer accounts are created via the registration pages or loaded from seed data. See `producer_accounts.txt` for pre-seeded producer credentials.
+
+## Common Commands
+
+```bash
+# Stop all containers
+docker compose down
+
+# Reset database and rebuild (after model/migration changes)
+docker compose down -v && docker compose up --build
+
+# Run the test suite
+docker compose exec web pytest -q
+
+# Create a superuser
+docker compose exec web python manage.py createsuperuser
+
+# Run weekly settlement processing
+docker compose exec web python manage.py run_weekly_settlement
+
+# Generate recurring order instances
+docker compose exec web python manage.py generate_recurring_instances --days=7
+
+# Access the database shell
+docker compose exec db psql -U myuser -d mydb
+```
+
+## Test Cases
+
+The system implements all 25 test cases defined in `Test_Cases.pdf`:
+
+| ID | Feature | Priority |
+|----|---------|----------|
+| TC-001 | Producer registration | Critical |
+| TC-002 | Customer registration | Critical |
+| TC-003 | Product listing with seasonal availability | Critical |
+| TC-004 | Browse products by category | Critical |
+| TC-005 | Search by name, description, producer | High |
+| TC-006 | Shopping cart with quantity management | Critical |
+| TC-007 | Single-producer checkout | Critical |
+| TC-008 | Multi-vendor checkout with payment distribution | Critical |
+| TC-009 | Producer order dashboard | Critical |
+| TC-010 | Order status updates with notifications | High |
+| TC-011 | Inventory and stock management | High |
+| TC-012 | Weekly payment settlements (95% to producers) | Critical |
+| TC-013 | Food miles calculation | Medium |
+| TC-014 | Organic certification filter | Medium |
+| TC-015 | Allergen warnings (UK 14 major allergens) | Critical |
+| TC-016 | Seasonal availability with date ranges | High |
+| TC-017 | Community group bulk orders | Medium |
+| TC-018 | Restaurant recurring weekly orders | Medium |
+| TC-019 | Surplus produce discounts | Medium |
+| TC-020 | Recipes and farm stories | Low |
+| TC-021 | Order history with reorder | High |
+| TC-022 | Secure authentication and RBAC | Critical |
+| TC-023 | Low stock notifications | Medium |
+| TC-024 | Product ratings and reviews | Medium |
+| TC-025 | Commission monitoring and financial reports | High |
+
+## Running Tests
+
+```bash
+docker compose exec web pytest -q
+```
+
+Tests are organised by app:
+
+- `apps/accounts/tests/` — Registration (TC-001, TC-002, TC-017), Auth/RBAC (TC-022)
+- `apps/marketplace/tests/` — Products, cart, orders, payments, reviews, surplus, content, notifications
+- `apps/logistics/tests/` — Food miles (TC-013)
+- `apps/payments/tests/` — Mock payment gateway (TC-007)
+- `tests/` — Factory smoke tests
+
+## Technology Stack
+
+- **Backend:** Django 4.2, Django REST Framework
+- **Database:** PostgreSQL 15
+- **WSGI Server:** Gunicorn
+- **Reverse Proxy:** Nginx
+- **Containerisation:** Docker, Docker Compose
+- **Testing:** pytest, factory-boy
+- **Payment:** Mock gateway (test sandbox)
+- **Geocoding:** Postcode-based distance calculation for food miles
 
 ## Project Structure
 
-Core Django apps:
-
-- apps/accounts: authentication and role-based profiles
-- apps/cart: cart and pricing logic
-- apps/common: shared permissions and validators
-- apps/content: CMS pages and product-linked content
-- apps/logistics: geocoding and food miles
-- apps/marketplace: product catalog, search, seasonal and surplus flows
-- apps/notifications: in-app notifications
-- apps/orders: customer, producer, and recurring order flows
-- apps/payments: payment and commission logic
-- apps/reviews: product reviews and ratings
-
-Other key folders:
-
-- templates: Django templates for all features
-- static: CSS and JavaScript assets
-- fixtures: seed data
-- tests: shared factories and test helpers
-
-## User Roles
-
-- admin
-- producer
-- customer
-- community_group
-
-Community groups are allowed through buyer-only routes via shared customer permission handling.
-
-## Key Features
-
-### Marketplace
-
-- Product catalog, category browsing, search, and filtering
-- Organic and in-season filters
-- Product detail with food miles and reviews
-
-### Orders
-
-- Single cart checkout across multiple producers
-- Producer-level sub-orders and commission split
-- Order status transitions and reorder flow
-
-### Recurring Orders
-
-- Create recurring templates with RRULE strings
-- Generate upcoming instances
-- Modify next instance quantities
-- Quantity overrides are persisted on RecurringOrderInstance as JSON
-- Scheduler command: generate_recurring_instances
-
-### Community Group Buying
-
-- Dedicated registration endpoint
-- Organisation type capture in registration form
-- Buyer permission parity with customer flows
-
-### Seasonal and Surplus Logic
-
-- Seasonal availability states on products
-- Surplus deal creation and discounted pricing
-- Seasonal tests and surplus tests in marketplace test suite
-
-## Season-Based Product Selector
-
-The dynamic product selector and API are season-based.
-
-- API endpoint: /marketplace/api/products/
-- Seasonal query parameter: in_season=true
-- Backend filter: Product.AvailabilityStatus.IN_SEASON
-- Frontend default: in-season checkbox checked
-
-The selector does include an available flag in API response payload for display badges, but filtering for selector fetches is driven by in_season.
-
-## Local Setup (Without Docker)
-
-1. Create and activate a virtual environment.
-2. Install dependencies.
-3. Configure environment variables for database connection.
-4. Run migrations.
-5. Optionally load seed data.
-6. Start the server.
-
-Commands:
-
-python -m venv venv
-
-Windows:
-venv\Scripts\activate
-
-Mac/Linux:
-source venv/bin/activate
-
-pip install -r requirements.txt
-python manage.py migrate
-python manage.py loaddata fixtures/seed.json
-python manage.py runserver
-
-## Docker Setup
-
-Build and run:
-
-docker-compose up --build
-
-Stop:
-
-docker-compose down
-
-Create superuser:
-
-docker-compose exec web python manage.py createsuperuser
-
-Run migrations:
-
-docker-compose exec web python manage.py migrate
-
-Run tests:
-
-docker-compose exec web pytest -q
-
-## Common Development Commands
-
-Create migrations:
-
-python manage.py makemigrations
-
-Apply migrations:
-
-python manage.py migrate
-
-Run Django system checks:
-
-python manage.py check
-
-Run all tests:
-
-pytest
-
-Run marketplace seasonal tests:
-
-pytest apps/marketplace/tests/test_seasonal.py -v
-
-Run marketplace test suite:
-
-pytest apps/marketplace/tests/ -v
-
-Generate recurring instances manually:
-
-python manage.py generate_recurring_instances --days=7 --verbose
-
-Dry-run recurring generation:
-
-python manage.py generate_recurring_instances --dry-run --verbose
-
-Mark an order delivered:
-
-python manage.py deliver_order --order-id <order_uuid>
-
-Run weekly settlement:
-
-python manage.py run_weekly_settlement
-
-## Database Access (Docker)
-
-Open Postgres shell:
-
-docker-compose exec db psql -U myuser -d mydb
-
-Query user emails:
-
-psql "postgresql://myuser:mypassword@localhost:5432/mydb" -c "SELECT id, email FROM accounts_user ORDER BY id DESC LIMIT 20;"
-
-## Recurring Scheduler Operations
-
-Recommended daily job (example, 1 AM):
-
-0 1 * * * python manage.py generate_recurring_instances --days=14
-
-If using Celery beat, wire a periodic task that calls the same command or service function.
-
-## API Notes
-
-### Products API for dynamic selector
-
-Route:
-
-/marketplace/api/products/
-
-Supported query parameters:
-
-- in_season=true
-- producer_id=<uuid>
-- category_id=<id>
-- search=<text>
-- limit=<int>
-- page=<int>
-
-Example:
-
-/marketplace/api/products/?in_season=true&search=tomato&limit=50
-
-## Testing Guidance
-
-Focus areas covered in tests include:
-
-- Seasonal availability transitions
-- Surplus discount behavior
-- Cart total pricing effects
-- Recurring template and instance logic
-- Role and permission behavior
-
-## Deployment Checklist
-
-1. Use Python 3.11 runtime.
-2. Install dependencies from requirements.txt.
-3. Apply migrations.
-4. Load required seed data.
-5. Set DEBUG to false for production.
-6. Collect static files.
-7. Configure recurring scheduler job.
-8. Run smoke tests across all user roles.
-
-## Troubleshooting
-
-- If recurring instances are missing, run the scheduler command manually in verbose mode.
-- If community group users are blocked from buyer pages, verify role and profile records.
-- If seasonal selector results look wrong, confirm API requests include in_season=true.
-- If product filtering is empty, check product availability state values in database.
-
-## Notes for Contributors
-
-- Prefer service-layer logic in apps/*/services for business rules.
-- Keep permission decorators consistent with role model changes.
-- Add or update tests when changing checkout, seasonal, or recurring behavior.
-- Keep documentation in this README aligned with implemented routes and management commands.
+```
+├── apps/
+│   ├── accounts/       # User registration, authentication, profiles (TC-001, TC-002, TC-022)
+│   ├── cart/           # Shopping cart and checkout (TC-006, TC-007, TC-008)
+│   ├── common/         # Shared permissions (RBAC decorators)
+│   ├── content/        # Recipes, farm stories (TC-020)
+│   ├── logistics/      # Food miles calculation (TC-013)
+│   ├── marketplace/    # Products, categories, search, surplus deals (TC-003–TC-005, TC-014–TC-016, TC-019)
+│   ├── notifications/  # Low stock alerts, order notifications (TC-023)
+│   ├── orders/         # Order management, recurring orders (TC-009, TC-010, TC-018, TC-021)
+│   ├── payments/       # Settlements, commission, mock gateway (TC-012, TC-025)
+│   └── reviews/        # Product ratings and reviews (TC-024)
+├── docker/
+│   ├── nginx/          # Nginx reverse proxy configuration
+│   └── postgres/       # PostgreSQL initialisation
+├── fixtures/           # Seed data (seed.json)
+├── templates/          # Django HTML templates
+├── static/             # Static assets (CSS, JS)
+├── docker-compose.yml  # Multi-container orchestration
+├── Dockerfile          # Django application image
+└── requirements.txt    # Python dependencies
+```

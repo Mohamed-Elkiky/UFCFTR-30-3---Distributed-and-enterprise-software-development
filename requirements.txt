@@ -18,6 +18,9 @@ requests==2.31.0
 # Date/time utilities
 python-dateutil==2.8.2
 
+# Production WSGI server
+gunicorn==22.0.0
+
 # Testing
 pytest==8.0.2
 pytest-django==4.8.0

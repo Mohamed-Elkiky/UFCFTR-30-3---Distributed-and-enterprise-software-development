@@ -20,6 +20,9 @@ echo "==> PostgreSQL is up!"
 echo "==> Running migrations..."
 python manage.py migrate --noinput
 
+echo "==> Collecting static files..."
+python manage.py collectstatic --noinput
+
 # Load seed data only if the DB is empty (no users yet)
 USER_COUNT=$(python -c "
 import django, os

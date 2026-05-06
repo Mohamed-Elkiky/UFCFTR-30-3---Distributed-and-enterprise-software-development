@@ -5,8 +5,8 @@ from .base import *
 
 DEBUG = True
 
-# Allow connections from Docker and localhost
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'web']
+# Allow connections from Docker services and localhost
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'web', 'nginx']
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -20,3 +20,6 @@ DATABASES = {
         'PORT': os.environ.get('DJANGO_DB_PORT', '5432'),
     }
 }
+
+# Static files collected here for nginx to serve
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
