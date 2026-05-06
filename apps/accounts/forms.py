@@ -238,14 +238,16 @@ class CustomerRegistrationForm(forms.ModelForm):
         user.role = User.Role.CUSTOMER
         if commit:
             user.save()
-            CustomerProfile.objects.create(
+            CustomerProfile.objects.update_or_create(
                 user=user,
-                full_name=self.cleaned_data['full_name'],
-                street=self.cleaned_data['street'],
-                city=self.cleaned_data['city'],
-                state=self.cleaned_data['state'],
-                postcode=self.cleaned_data['postcode'],
-                country=self.cleaned_data['country'],
+                defaults={
+                    'full_name': self.cleaned_data['full_name'],
+                    'street': self.cleaned_data['street'],
+                    'city': self.cleaned_data['city'],
+                    'state': self.cleaned_data['state'],
+                    'postcode': self.cleaned_data['postcode'],
+                    'country': self.cleaned_data['country'],
+                },
             )
         return user
 
