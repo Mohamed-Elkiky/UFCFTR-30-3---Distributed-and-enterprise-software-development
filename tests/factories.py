@@ -61,6 +61,7 @@ class ProducerProfileFactory(factory.django.DjangoModelFactory):
 class CustomerProfileFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = CustomerProfile
+        django_get_or_create = ("user",)
 
     user = factory.SubFactory(CustomerUserFactory)
     full_name = factory.Sequence(lambda n: f"Customer {n} Example")
@@ -115,6 +116,7 @@ class ProductFactory(factory.django.DjangoModelFactory):
 class AllergenFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Allergen
+        django_get_or_create = ("name",)
 
     name = factory.Sequence(lambda n: f"Allergen {n}")
 

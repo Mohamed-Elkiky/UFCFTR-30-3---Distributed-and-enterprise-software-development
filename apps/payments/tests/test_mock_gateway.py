@@ -13,14 +13,16 @@ from apps.payments.models import PaymentTransaction
 
 def make_order():
     user = User.objects.create_user(email="buyer@example.com", password="pw")
-    profile = CustomerProfile.objects.create(
+    profile, _ = CustomerProfile.objects.get_or_create(
         user=user,
-        full_name="Test Buyer",
-        street="1 Test St",
-        city="Bristol",
-        state="England",
-        postcode="BS1 1AA",
-        country="UK",
+        defaults={
+            "full_name": "Test Buyer",
+            "street": "1 Test St",
+            "city": "Bristol",
+            "state": "England",
+            "postcode": "BS1 1AA",
+            "country": "UK",
+        },
     )
     return CustomerOrder.objects.create(
         customer=profile,
@@ -71,3 +73,4 @@ class MockGatewayCaptureTests(TestCase):
         self.gw.capture(self.ref)
         tx = PaymentTransaction.objects.get(provider_ref=self.ref)
         self.assertEqual(tx.status, PaymentTransaction.Status.CAPTURED)
+        
