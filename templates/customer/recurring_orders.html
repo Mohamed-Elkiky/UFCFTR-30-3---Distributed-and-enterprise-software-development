@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block title %}Recurring Orders | BRFN{% endblock %}
+
+{% block content %}
+<section class="auth-card">
+  <h1>Recurring Orders</h1>
+  <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Manage your recurring order templates for regular bulk orders.</p>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}" role="alert" style="margin-bottom: 1rem;">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <div style="margin-bottom: 2rem;">
+    <a href="#create-template" style="background: var(--primary); color: white; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; display: inline-block;">
+      + Create New Template
+    </a>
+  </div>
+
+  {% if templates %}
+    <div style="display: grid; gap: 1.5rem;">
+      {% for template in templates %}
+        <div style="padding: 1.5rem; border: 1px solid var(--border); border-radius: 12px; background: var(--surface-alt, #f9f6f1);">
+          <h3 style="margin: 0 0 0.5rem 0;">{{ template.name }}</h3>
+          
+          <div style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
+            <p style="margin: 0.25rem 0;">
+              <strong>Schedule:</strong> {{ template.rrule }}
+            </p>
+            <p style="margin: 0.25rem 0;">
+              <strong>Status:</strong> {% if template.active %}Active{% else %}Inactive{% endif %}
+            </p>
+            <p style="margin: 0.25rem 0;">
+              <strong>Items:</strong> {{ template.items.count }} product{{ template.items.count|pluralize }}
+            </p>
+          </div>
+
+          <div style="margin-bottom: 1rem; padding: 0.75rem; background: white; border-radius: 8px;">
+            <p style="margin: 0 0 0.5rem 0; font-weight: 600; font-size: 0.9rem;">Items:</p>
+            <ul style="margin: 0; padding-left: 1.5rem;">
+              {% for item in template.items.all %}
+                <li style="margin: 0.25rem 0; font-size: 0.9rem;">
+                  {{ item.quantity }}x {{ item.product.name }} ({{ item.product.unit }})
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem;">
+            <form method="post" action="{% url 'orders:recurring_modify_next' template.id %}" style="display: inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem; cursor: pointer;">
+                Modify Next Order
+              </button>
+            </form>
+            <a href="{% url 'orders:recurring_orders' %}" style="padding: 0.5rem 1rem; background: var(--border); border-radius: 6px; text-decoration: none; font-size: 0.9rem; cursor: pointer;">
+              View Details
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div style="padding: 2rem; text-align: center; background: var(--surface-alt); border-radius: 12px;">
+      <p style="color: var(--text-muted); margin: 0;">You haven't created any recurring order templates yet.</p>
+      <p style="color: var(--text-muted); margin: 0.5rem 0 0 0;">Create one to automate your regular orders.</p>
+    </div>
+  {% endif %}
+
+  <!-- Create Template Form -->
+  <div id="create-template" style="margin-top: 3rem; padding: 2rem; background: var(--surface-alt); border-radius: 12px;">
+    <h2 style="margin-top: 0;">Create Recurring Order Template</h2>
+    
+    <form method="post" action="{% url 'orders:recurring_create' %}">
+      {% csrf_token %}
+
+      <div class="form-row">
+        <label for="template-name">Template Name</label>
+        <input type="text" id="template-name" name="name" class="form-control" 
+               placeholder="e.g. Weekly Produce Order" required />
+        <small style="color: var(--text-muted);">Give your template a descriptive name.</small>
+      </div>
+
+      <div class="form-row">
+        <label for="rrule">Recurrence Rule (RRULE)</label>
+        <input type="text" id="rrule" name="rrule" class="form-control" 
+               placeholder="e.g. FREQ=WEEKLY;BYDAY=MO" required />
+        <small style="color: var(--text-muted);">
+          iCal format. Examples:
+          <br/>• FREQ=WEEKLY;BYDAY=MO (every Monday)
+          <br/>• FREQ=WEEKLY;BYDAY=MO,WE,FR (Mon, Wed, Fri)
+          <br/>• FREQ=DAILY (every day)
+          <br/>• FREQ=BIWEEKLY;BYDAY=MO (every other Monday)
+        </small>
+      </div>
+
+      <div class="form-row">
+        <label style="font-weight: 600; margin-bottom: 1rem;">Select Products</label>
+        <div style="background: white; padding: 1rem; border-radius: 8px; max-height: 400px; overflow-y: auto;">
+          {% comment %} 
+          This section should be populated dynamically with available products.
+          For now, showing placeholder structure.
+          {% endcomment %}
+          <p style="color: var(--text-muted); text-align: center; padding: 2rem 0;">
+            Products would be loaded here via AJAX or server-side rendering.
+          </p>
+        </div>
+        <small style="color: var(--text-muted);">Select at least one product and specify quantity.</small>
+      </div>
+
+      <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+        <button type="submit" class="btn-primary" style="padding: 0.75rem 1.5rem; cursor: pointer;">
+          Create Template
+        </button>
+        <a href="#" onclick="document.getElementById('create-template').style.display='none'" 
+           style="padding: 0.75rem 1.5rem; background: var(--border); border-radius: 6px; text-decoration: none; cursor: pointer;">
+          Cancel
+        </a>
+      </div>
+    </form>
+  </div>
+
+</section>
+{% endblock %}

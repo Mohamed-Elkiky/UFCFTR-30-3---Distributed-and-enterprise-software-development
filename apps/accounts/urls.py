@@ -14,6 +14,7 @@ urlpatterns = [
     # Registration endpoints
     path('register/producer/', views.register_producer, name='register_producer'),
     path('register/customer/', views.register_customer, name='register_customer'),
+    path('register/community/', views.register_community_group, name='register_community_group'),
 
     # Registration success
     path('register/success/', views.register_success, name='register_success'),

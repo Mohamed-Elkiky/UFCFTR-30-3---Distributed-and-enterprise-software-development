@@ -254,6 +254,15 @@ class CommunityGroupRegistrationForm(forms.ModelForm):
     """
     Registration form for Community Group accounts (TC-017).
     """
+    ORGANISATION_TYPES = [
+        ('food_bank', 'Food Bank'),
+        ('school', 'School/Educational'),
+        ('community_center', 'Community Center'),
+        ('charity', 'Charity/Non-profit'),
+        ('restaurant', 'Restaurant/Catering'),
+        ('other', 'Other'),
+    ]
+
     email = forms.EmailField(
         widget=forms.EmailInput(attrs={
             'class': 'form-control',
@@ -287,6 +296,13 @@ class CommunityGroupRegistrationForm(forms.ModelForm):
             'class': 'form-control',
             'placeholder': 'Bristol Food Bank'
         })
+    )
+    organisation_type = forms.ChoiceField(
+        choices=ORGANISATION_TYPES,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+        }),
+        help_text='Select your organisation type'
     )
     organisation_address = forms.CharField(
         widget=forms.Textarea(attrs={
@@ -324,6 +340,7 @@ class CommunityGroupRegistrationForm(forms.ModelForm):
             CommunityGroupProfile.objects.create(
                 user=user,
                 organisation_name=self.cleaned_data['organisation_name'],
+                organisation_type=self.cleaned_data['organisation_type'],
                 organisation_address=self.cleaned_data['organisation_address'],
                 postcode=self.cleaned_data['postcode']
             )

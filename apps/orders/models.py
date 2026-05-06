@@ -305,6 +305,13 @@ class RecurringOrderInstance(models.Model):
         default=Status.SCHEDULED,
     )
 
+    # Persistent storage for quantity overrides (replaces session-based approach)
+    quantity_overrides = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text="Override quantities for this specific instance. Format: {product_id: quantity}"
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

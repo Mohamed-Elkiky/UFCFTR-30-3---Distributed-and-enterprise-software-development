@@ -15,4 +15,13 @@ urlpatterns = [
     path("customer/", views.customer_orders, name="customer_orders"),
     path("customer/<uuid:order_id>/", views.customer_order_detail, name="customer_order_detail"),
     path("customer/<uuid:order_id>/reorder/", views.reorder, name="reorder"),
+
+    # Recurring orders (TC-018)
+    path("recurring/", views.recurring_orders, name="recurring_orders"),
+    path("recurring/create/", views.create_recurring_order, name="recurring_create"),
+    path(
+        "recurring/<uuid:template_id>/modify-next/",
+        views.modify_next_instance,
+        name="recurring_modify_next",
+    ),
 ]

@@ -228,7 +228,11 @@ def place_recurring_instance(instance):
 
         for tmpl_item in producer_items:
             product = tmpl_item.product
-            qty = tmpl_item.quantity
+            # Check if this product has a quantity override for this instance
+            qty = instance.quantity_overrides.get(
+                str(product.id),
+                tmpl_item.quantity  # Fall back to template default
+            )
             line_total = product.price_pence * qty
             producer_subtotal += line_total
 

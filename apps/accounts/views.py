@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.db import transaction
 from django.urls import reverse_lazy
 
-from .forms import LoginForm, ProducerRegistrationForm, CustomerRegistrationForm
+from .forms import LoginForm, ProducerRegistrationForm, CustomerRegistrationForm, CommunityGroupRegistrationForm
 
 User = get_user_model()
 
@@ -80,6 +80,32 @@ def register_producer(request):
 
     if not form.is_valid():
         return render(request, 'auth/register.html', _register_context(producer_form=form))
+
+    with transaction.atomic():
+        user = form.save()
+
+    login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+    return redirect('accounts:register_success')
+
+
+def register_community_group(request):
+    """
+    Register a new Community Group account (TC-017).
+    Handles both GET (display form) and POST (process registration).
+    """
+    if request.user.is_authenticated:
+        return redirect('marketplace:home')
+
+    if request.method != 'POST':
+        return redirect('accounts:register')
+
+    form = CommunityGroupRegistrationForm(request.POST, prefix="community_group")
+
+    if not form.is_valid():
+        # For now, redirect to register and show error. In the future,
+        # could add a dedicated community group registration page.
+        messages.error(request, "Please correct the errors below.")
+        return render(request, 'auth/register.html', _register_context())
 
     with transaction.atomic():
         user = form.save()

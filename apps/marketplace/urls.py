@@ -19,6 +19,8 @@ urlpatterns = [
     path('category/<int:category_id>/', views.product_list_by_category, name='product_list_by_category'),
     path('product/<uuid:product_id>/', views.product_detail, name='product_detail'),
     path('search/json/', views.product_search_json, name='product_search_json'),
+    # API endpoints (TC-024)
+    path('api/products/', views.api_products, name='api_products'),
     # Surplus deals (TC-019)
     path('surplus/', views.surplus_deals, name='surplus_deals'),
     path('products/<uuid:product_id>/surplus/', views.mark_as_surplus, name='mark_as_surplus'),

@@ -135,13 +135,27 @@ class CustomerProfile(models.Model):
 
 class CommunityGroupProfile(models.Model):
     """Extended profile for Community Group accounts (TC-017)."""
+    
+    class OrganisationType(models.TextChoices):
+        FOOD_BANK = 'food_bank', 'Food Bank'
+        SCHOOL = 'school', 'School/Educational'
+        COMMUNITY_CENTER = 'community_center', 'Community Center'
+        CHARITY = 'charity', 'Charity/Non-profit'
+        RESTAURANT = 'restaurant', 'Restaurant/Catering'
+        OTHER = 'other', 'Other'
+    
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
         related_name='community_group_profile'
     )
     organisation_name = models.CharField(max_length=200)
-    organisation_type = models.CharField(max_length=100)
+    organisation_type = models.CharField(
+        max_length=100,
+        choices=OrganisationType.choices,
+        default=OrganisationType.OTHER,
+        help_text='Type of organisation'
+    )
     contact_name = models.CharField(max_length=100)
     delivery_address = models.TextField()
     postcode = models.CharField(max_length=10)

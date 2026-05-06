@@ -1,143 +1,249 @@
-# Create virtual environment
+# BRFN Marketplace Platform
+
+Distributed and enterprise software development project for a regional food network marketplace. The platform supports multi-role users, multi-vendor ordering, recurring orders, seasonal product logic, logistics calculations, reviews, notifications, and producer payouts.
+
+## Tech Stack
+
+- Python 3.11
+- Django 4.2.11
+- PostgreSQL
+- Docker and Docker Compose
+- pytest and pytest-django
+
+## Project Structure
+
+Core Django apps:
+
+- apps/accounts: authentication and role-based profiles
+- apps/cart: cart and pricing logic
+- apps/common: shared permissions and validators
+- apps/content: CMS pages and product-linked content
+- apps/logistics: geocoding and food miles
+- apps/marketplace: product catalog, search, seasonal and surplus flows
+- apps/notifications: in-app notifications
+- apps/orders: customer, producer, and recurring order flows
+- apps/payments: payment and commission logic
+- apps/reviews: product reviews and ratings
+
+Other key folders:
+
+- templates: Django templates for all features
+- static: CSS and JavaScript assets
+- fixtures: seed data
+- tests: shared factories and test helpers
+
+## User Roles
+
+- admin
+- producer
+- customer
+- community_group
+
+Community groups are allowed through buyer-only routes via shared customer permission handling.
+
+## Key Features
+
+### Marketplace
+
+- Product catalog, category browsing, search, and filtering
+- Organic and in-season filters
+- Product detail with food miles and reviews
+
+### Orders
+
+- Single cart checkout across multiple producers
+- Producer-level sub-orders and commission split
+- Order status transitions and reorder flow
+
+### Recurring Orders
+
+- Create recurring templates with RRULE strings
+- Generate upcoming instances
+- Modify next instance quantities
+- Quantity overrides are persisted on RecurringOrderInstance as JSON
+- Scheduler command: generate_recurring_instances
+
+### Community Group Buying
+
+- Dedicated registration endpoint
+- Organisation type capture in registration form
+- Buyer permission parity with customer flows
+
+### Seasonal and Surplus Logic
+
+- Seasonal availability states on products
+- Surplus deal creation and discounted pricing
+- Seasonal tests and surplus tests in marketplace test suite
+
+## Season-Based Product Selector
+
+The dynamic product selector and API are season-based.
+
+- API endpoint: /marketplace/api/products/
+- Seasonal query parameter: in_season=true
+- Backend filter: Product.AvailabilityStatus.IN_SEASON
+- Frontend default: in-season checkbox checked
+
+The selector does include an available flag in API response payload for display badges, but filtering for selector fetches is driven by in_season.
+
+## Local Setup (Without Docker)
+
+1. Create and activate a virtual environment.
+2. Install dependencies.
+3. Configure environment variables for database connection.
+4. Run migrations.
+5. Optionally load seed data.
+6. Start the server.
+
+Commands:
+
 python -m venv venv
 
-# Activate venv (Mac/Linux)
-source venv/bin/activate
-
-# Activate venv (Windows)
+Windows:
 venv\Scripts\activate
 
-# Install dependencies (if needed)
-pip install -r requirements.txt
+Mac/Linux:
+source venv/bin/activate
 
-# Run Django server
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py loaddata fixtures/seed.json
 python manage.py runserver
 
-# Marketplace Migrations
-python manage.py makemigrations marketplace
-python manage.py migrate
+## Docker Setup
 
+Build and run:
 
-# Start the project
-docker-compose up
+docker-compose up --build
 
-# Stop the project
+Stop:
+
 docker-compose down
 
-# Create admin user (if needed)
+Create superuser:
+
 docker-compose exec web python manage.py createsuperuser
 
-# Run migrations after model changes
-docker-compose exec web python manage.py makemigrations
+Run migrations:
+
 docker-compose exec web python manage.py migrate
 
-# database viewing 
- docker-compose exec db psql -U myuser -d mydb
-psql "postgresql://myuser:mypassword@localhost:5432/mydb"
+Run tests:
 
-# database selecting emails
- psql "postgresql://myuser:mypassword@localhost:5432/mydb" -c "SELECT id, email FROM accounts_user ORDER BY id DESC LIMIT 20;"
-
-# test
 docker-compose exec web pytest -q
 
-# admin account login
-user name = admin@brfn.com
-password = Admin123
+## Common Development Commands
 
+Create migrations:
 
-# if changes was made to db run
-git pull
-docker compose down -v
-docker compose up --build
-docker exec -it ufcftr-30-3---distributed-and-enterprise-software-development-web-1 python manage.py loaddata fixtures/seed.json
+python manage.py makemigrations
 
-# command to make the order show up as delievered (swap out the fake order id with the real one that shows up when the order is delivered)
-docker compose exec web python manage.py deliver_order --order-id a1b2c3d4-0001-0001-0001-000000000001
-# command to get the latest order 
-docker compose exec web python manage.py shell -c "from apps.orders.models import CustomerOrder; print(CustomerOrder.objects.latest('created_at').pk)"
+Apply migrations:
 
-# geocode test
-docker exec -it ufcftr-30-3---distributed-and-enterprise-software-development-web-1 python manage.py shell -c "from apps.logistics.services.geocoding import geocode_postcode; print(geocode_postcode('BS1 4DJ'))"
+python manage.py migrate
 
-# food miles distance calculation 
-docker exec -it ufcftr-30-3---distributed-and-enterprise-software-development-web-1 python manage.py shell -c "
-from apps.logistics.services.distance import haversine_miles, get_food_miles
-from apps.marketplace.models import Product
-from apps.accounts.models import CustomerProfile, ProducerProfile
-from apps.logistics.services.geocoding import geocode_postcode
-customer_lat, customer_lng = geocode_postcode('BS1 5JG')
-for producer in ProducerProfile.objects.filter(latitude__isnull=False):
-    miles = haversine_miles(producer.latitude, producer.longitude, customer_lat, customer_lng)
-    print(f'{producer.business_name} ({producer.postcode}) -> {miles} miles from BS1 5JG')
-"
+Run Django system checks:
 
-# seasonal products
+python manage.py check
+
+Run all tests:
+
+pytest
+
+Run marketplace seasonal tests:
+
 pytest apps/marketplace/tests/test_seasonal.py -v
-Key things being tested:
 
-Test	What it covers
-Parametrised is_in_season	Normal range, wrap-around, boundary months
-Missing months	Guards against None values
-Year-round product	Non-seasonal products always return False
-auto_update brings in season	DB round-trip, OUT_OF_SEASON → IN_SEASON
-auto_update takes out of season	DB round-trip, IN_SEASON → OUT_OF_SEASON
-Ignores year-round	AVAILABLE_YEAR_ROUND products untouched
+Run marketplace test suite:
 
+pytest apps/marketplace/tests/ -v
 
+Generate recurring instances manually:
 
-# test surpluss deals
-docker compose exec web python manage.py shell
+python manage.py generate_recurring_instances --days=7 --verbose
 
-from tests.factories import ProductFactory, ProducerProfileFactory, UserFactory
-from apps.marketplace.services.surplus import create_surplus_deal, get_active_surplus_deals, apply_surplus_discount
+Dry-run recurring generation:
 
-# Create a producer + product
-producer = ProducerProfileFactory()
-product = ProductFactory(producer=producer, price_pence=1000, name="Test Apples")
+python manage.py generate_recurring_instances --dry-run --verbose
 
-# Create a 20% deal valid 24h
-deal = create_surplus_deal(product, discount_percent=20, hours_valid=24, note="Selling fast!")
+Mark an order delivered:
 
-print("Active deals:", get_active_surplus_deals().count())  # 1
-print("Original price:", product.price_pence)               # 1000
-print("Discounted price:", apply_surplus_discount(product)) # 800
+python manage.py deliver_order --order-id <order_uuid>
 
-http://localhost:8000/surplus/
+Run weekly settlement:
 
-from tests.factories import ProductFactory, CustomerProfileFactory, CartFactory, CartItemFactory
-from apps.marketplace.services.surplus import create_surplus_deal
-from apps.cart.services.pricing import get_cart_total_pence
+python manage.py run_weekly_settlement
 
-product = ProductFactory(price_pence=1000)
-cart = CartFactory()
-CartItemFactory(cart=cart, product=product, quantity=2)
+## Database Access (Docker)
 
-print(get_cart_total_pence(cart))  # 2000 — no deal yet
+Open Postgres shell:
 
-create_surplus_deal(product, discount_percent=25, hours_valid=24)
-print(get_cart_total_pence(cart))  # 1500 — 25% off × 2 items
+docker-compose exec db psql -U myuser -d mydb
 
-from django.core.exceptions import ValidationError
-try:
-    create_surplus_deal(product, discount_percent=5, hours_valid=24)  # below 10%
-except ValidationError as e:
-    print(e)  # "discount_percent must be between 10 and 50"
+Query user emails:
 
-from datetime import timedelta
-from django.utils.timezone import now
-from apps.marketplace.models import SurplusDeal
-from apps.marketplace.services.surplus import expire_old_deals
+psql "postgresql://myuser:mypassword@localhost:5432/mydb" -c "SELECT id, email FROM accounts_user ORDER BY id DESC LIMIT 20;"
 
-# Manually expire the deal
-SurplusDeal.objects.all().update(expires_at=now() - timedelta(hours=1))
+## Recurring Scheduler Operations
 
-print(get_active_surplus_deals().count())  # 0 — expired, not shown
-expire_old_deals()                          # deletes it from DB
-print(SurplusDeal.objects.count())          # 0
+Recommended daily job (example, 1 AM):
 
-docker compose exec web pytest apps/marketplace/tests/ -v
+0 1 * * * python manage.py generate_recurring_instances --days=14
 
-# Build management command for weekly settlement (TC-012)
-docker exec -it ufcftr-30-3---distributed-and-enterprise-software-development-web-1 python manage.py run_weekly_settlement
-.
+If using Celery beat, wire a periodic task that calls the same command or service function.
+
+## API Notes
+
+### Products API for dynamic selector
+
+Route:
+
+/marketplace/api/products/
+
+Supported query parameters:
+
+- in_season=true
+- producer_id=<uuid>
+- category_id=<id>
+- search=<text>
+- limit=<int>
+- page=<int>
+
+Example:
+
+/marketplace/api/products/?in_season=true&search=tomato&limit=50
+
+## Testing Guidance
+
+Focus areas covered in tests include:
+
+- Seasonal availability transitions
+- Surplus discount behavior
+- Cart total pricing effects
+- Recurring template and instance logic
+- Role and permission behavior
+
+## Deployment Checklist
+
+1. Use Python 3.11 runtime.
+2. Install dependencies from requirements.txt.
+3. Apply migrations.
+4. Load required seed data.
+5. Set DEBUG to false for production.
+6. Collect static files.
+7. Configure recurring scheduler job.
+8. Run smoke tests across all user roles.
+
+## Troubleshooting
+
+- If recurring instances are missing, run the scheduler command manually in verbose mode.
+- If community group users are blocked from buyer pages, verify role and profile records.
+- If seasonal selector results look wrong, confirm API requests include in_season=true.
+- If product filtering is empty, check product availability state values in database.
+
+## Notes for Contributors
+
+- Prefer service-layer logic in apps/*/services for business rules.
+- Keep permission decorators consistent with role model changes.
+- Add or update tests when changing checkout, seasonal, or recurring behavior.
+- Keep documentation in this README aligned with implemented routes and management commands.

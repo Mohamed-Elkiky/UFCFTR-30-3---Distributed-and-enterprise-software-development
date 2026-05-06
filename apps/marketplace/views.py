@@ -313,6 +313,100 @@ def product_search(request):
 
 
 # =============================================================================
+# API ENDPOINTS (TC-024)
+# =============================================================================
+
+def api_products(request):
+    """
+    JSON API endpoint for dynamic product selection (TC-024).
+    Returns products with availability status for AJAX-based selectors.
+    
+    Query params:
+    - in_season: 'true' to return only in-season products
+    - producer_id: filter by producer ID
+    - category_id: filter by category ID
+    - search: search by name or producer name
+    - limit: max results (default: 100)
+    
+    Response format:
+    {
+        'products': [
+            {
+                'id': '123e4567-e89b-12d3-a456-426614174000',
+                'name': 'Organic Tomatoes',
+                'producer': 'Bristol Valley Farm',
+                'category': 'Vegetables',
+                'price_pence': 250,
+                'price_display': '£2.50',
+                'stock_qty': 50,
+                'availability': 'in_season',
+                'available': true
+            },
+            ...
+        ]
+    }
+    """
+    from django.core.paginator import Paginator
+    
+    # Start with base queryset
+    products = Product.objects.select_related('producer', 'category')
+    
+    # Filter by seasonal availability
+    if request.GET.get('in_season') == 'true':
+        products = products.filter(availability=Product.AvailabilityStatus.IN_SEASON)
+    
+    # Filter by producer
+    producer_id = request.GET.get('producer_id', '').strip()
+    if producer_id:
+        products = products.filter(producer__id=producer_id)
+    
+    # Filter by category
+    category_id = request.GET.get('category_id', '').strip()
+    if category_id:
+        products = products.filter(category__id=category_id)
+    
+    # Search
+    search_q = request.GET.get('search', '').strip()
+    if search_q:
+        products = products.filter(
+            Q(name__icontains=search_q) |
+            Q(producer__business_name__icontains=search_q) |
+            Q(category__name__icontains=search_q)
+        )
+    
+    # Order by name
+    products = products.order_by('name')
+    
+    # Pagination
+    limit = min(int(request.GET.get('limit', 100)), 1000)  # Max 1000
+    paginator = Paginator(products, limit)
+    page = paginator.get_page(request.GET.get('page', 1))
+    
+    # Serialize response
+    product_list = [
+        {
+            'id': str(p.id),
+            'name': p.name,
+            'producer': p.producer.business_name if p.producer else 'Unknown',
+            'category': p.category.name if p.category else 'Uncategorized',
+            'price_pence': p.price_pence,
+            'price_display': f'£{p.price_pence / 100:.2f}',
+            'stock_qty': p.stock_qty,
+            'availability': p.availability,
+            'available': p.availability not in ['unavailable', 'out_of_season'] and p.stock_qty > 0,
+        }
+        for p in page.object_list
+    ]
+    
+    return JsonResponse({
+        'products': product_list,
+        'count': paginator.count,
+        'page': page.number,
+        'total_pages': paginator.num_pages,
+    })
+
+
+# =============================================================================
 # SURPLUS DEALS VIEWS (TC-019)
 # =============================================================================
 

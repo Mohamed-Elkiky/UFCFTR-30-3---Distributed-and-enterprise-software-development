@@ -48,8 +48,9 @@ def producer_required(view_func):
 
 def customer_required(view_func):
     """
-    Decorator that checks request.user is authenticated, has role == 'customer',
-    and has a customer_profile. Otherwise renders a styled access-restricted page.
+    Decorator that checks request.user is authenticated and has role in 
+    ('customer', 'community_group'). Community groups are treated as bulk buyers.
+    Otherwise renders a styled access-restricted page.
     """
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
@@ -68,7 +69,10 @@ def customer_required(view_func):
                 status=403,
             )
 
-        if getattr(user, "role", None) != "customer":
+        user_role = getattr(user, "role", None)
+        allowed_roles = ("customer", "community_group")
+        
+        if user_role not in allowed_roles:
             return render(
                 request,
                 "errors/customer_only.html",
@@ -84,7 +88,9 @@ def customer_required(view_func):
                 status=403,
             )
 
-        if not hasattr(user, "customer_profile"):
+        # Check for customer profile (or community_group profile)
+        has_profile = hasattr(user, "customer_profile") or hasattr(user, "community_group_profile")
+        if not has_profile:
             return render(
                 request,
                 "errors/customer_only.html",

@@ -6,10 +6,17 @@ from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
-from apps.common.permissions import producer_required
+from apps.common.permissions import producer_required, customer_required
 from apps.cart.services.pricing import add_to_cart, get_or_create_cart
-from apps.orders.models import CustomerOrder, ProducerOrder
+from apps.marketplace.models import Product
+from apps.orders.models import (
+    CustomerOrder,
+    ProducerOrder,
+    RecurringOrderTemplate,
+    RecurringOrderInstance,
+)
 from apps.orders.services.status_flow import transition_producer_order
+from apps.orders.services.recurring import create_recurring_template
 
 
 @login_required
@@ -197,3 +204,171 @@ def reorder(request, order_id):
         )
 
     return redirect("cart:cart_detail")
+
+
+# ---------------------------------------------------------------------------
+# Recurring Orders (TC-018)
+# ---------------------------------------------------------------------------
+
+
+@login_required
+@customer_required
+def recurring_orders(request):
+    """
+    List all RecurringOrderTemplate for the logged-in customer (TC-018).
+    Shows all recurring order templates the customer has created.
+    """
+    templates = (
+        RecurringOrderTemplate.objects
+        .filter(customer=request.user.customer_profile)
+        .prefetch_related('items__product')
+        .order_by('-created_at')
+    )
+
+    return render(
+        request,
+        "customer/recurring_orders.html",
+        {"templates": templates},
+    )
+
+
+@login_required
+@customer_required
+@require_POST
+def create_recurring_order(request):
+    """
+    Create a new RecurringOrderTemplate from form data (TC-018).
+    POST only. Reads template name, rrule, and product/quantity pairs.
+    Calls create_recurring_template and redirects to recurring_orders list.
+    """
+    template_name = (request.POST.get("name") or "").strip()
+    rrule = (request.POST.get("rrule") or "").strip()
+
+    if not template_name:
+        messages.error(request, "Please provide a template name.")
+        return redirect("orders:recurring_orders")
+
+    if not rrule:
+        messages.error(request, "Please provide a recurrence rule (RRULE).")
+        return redirect("orders:recurring_orders")
+
+    # Collect product/quantity pairs from POST data.
+    # Expected format: product_id_1=qty_1, product_id_2=qty_2, etc.
+    items = []
+    for key in request.POST:
+        if key.startswith("product_"):
+            product_id = key.split("_", 1)[1]
+            qty_str = request.POST.get(key, "").strip()
+            
+            if not qty_str or not qty_str.isdigit() or int(qty_str) < 1:
+                continue
+
+            try:
+                product = Product.objects.get(id=product_id)
+                items.append((product, int(qty_str)))
+            except Product.DoesNotExist:
+                continue
+
+    if not items:
+        messages.error(request, "Please select at least one product with a quantity.")
+        return redirect("orders:recurring_orders")
+
+    try:
+        created_template = create_recurring_template(
+            customer_profile=request.user.customer_profile,
+            name=template_name,
+            rrule_str=rrule,
+            items=items,
+        )
+        messages.success(
+            request,
+            f"Recurring order template '{created_template.name}' created successfully.",
+        )
+    except ValueError as e:
+        messages.error(request, f"Error creating template: {str(e)}")
+        return redirect("orders:recurring_orders")
+
+    return redirect("orders:recurring_orders")
+
+
+@login_required
+@customer_required
+def modify_next_instance(request, template_id):
+    """
+    Allow editing quantities for the next scheduled RecurringOrderInstance (TC-018).
+    GET: Show form with next instance items.
+    POST: Store modified quantities and redirect to recurring_orders list.
+    """
+    template = get_object_or_404(
+        RecurringOrderTemplate,
+        id=template_id,
+        customer=request.user.customer_profile,
+    )
+
+    # Get the next scheduled instance for this template
+    next_instance = (
+        RecurringOrderInstance.objects
+        .filter(
+            template=template,
+            status=RecurringOrderInstance.Status.SCHEDULED,
+        )
+        .order_by('scheduled_for')
+        .first()
+    )
+
+    if not next_instance:
+        messages.warning(
+            request,
+            "No upcoming scheduled instances for this template.",
+        )
+        return redirect("orders:recurring_orders")
+
+    if request.method == "POST":
+        # Read modified quantities from POST data
+        # Expected format: product_<product_id>=<quantity>
+        modifications = {}
+        all_items = template.items.all()
+        
+        for item in all_items:
+            qty_key = f"product_{item.product.id}"
+            qty_str = request.POST.get(qty_key, "").strip()
+            
+            if qty_str and qty_str.isdigit() and int(qty_str) >= 1:
+                modifications[str(item.product.id)] = int(qty_str)
+
+        # Store modifications persistently in the model field
+        if modifications:
+            next_instance.quantity_overrides = modifications
+            next_instance.save()
+            messages.success(
+                request,
+                "Quantities updated. They will be used when this order is placed.",
+            )
+        else:
+            # Clear any previous overrides if no changes provided
+            if next_instance.quantity_overrides:
+                next_instance.quantity_overrides = {}
+                next_instance.save()
+            messages.warning(
+                request,
+                "No valid quantity changes were made.",
+            )
+
+        return redirect("orders:recurring_orders")
+
+    # GET request: show the form with current template items
+    template_items = (
+        template.items
+        .select_related('product')
+        .all()
+    )
+
+    return render(
+        request,
+        "customer/recurring_order_modify.html",
+        {
+            "template": template,
+            "next_instance": next_instance,
+            "items": template_items,
+        },
+    )
