@@ -1,3 +1,4 @@
+{% load static %}
 {% extends "base.html" %}
 {% block title %}Recurring Orders | BRFN{% endblock %}
 
@@ -50,12 +51,9 @@
           </div>
 
           <div style="display: flex; gap: 0.75rem;">
-            <form method="post" action="{% url 'orders:recurring_modify_next' template.id %}" style="display: inline;">
-              {% csrf_token %}
-              <button type="submit" class="btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem; cursor: pointer;">
-                Modify Next Order
-              </button>
-            </form>
+            <a href="{% url 'orders:recurring_modify_next' template.id %}" class="btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem; cursor: pointer; text-decoration: none; display: inline-block;">
+              Modify Next Order
+            </a>
             <a href="{% url 'orders:recurring_orders' %}" style="padding: 0.5rem 1rem; background: var(--border); border-radius: 6px; text-decoration: none; font-size: 0.9rem; cursor: pointer;">
               View Details
             </a>
@@ -100,13 +98,8 @@
       <div class="form-row">
         <label style="font-weight: 600; margin-bottom: 1rem;">Select Products</label>
         <div style="background: white; padding: 1rem; border-radius: 8px; max-height: 400px; overflow-y: auto;">
-          {% comment %} 
-          This section should be populated dynamically with available products.
-          For now, showing placeholder structure.
-          {% endcomment %}
-          <p style="color: var(--text-muted); text-align: center; padding: 2rem 0;">
-            Products would be loaded here via AJAX or server-side rendering.
-          </p>
+          <div id="product-selector"></div>
+          <div id="selected-products-inputs"></div>
         </div>
         <small style="color: var(--text-muted);">Select at least one product and specify quantity.</small>
       </div>
@@ -124,4 +117,28 @@
   </div>
 
 </section>
+
+<script src="{% static 'js/product-selector.js' %}"></script>
+<script>
+  (function () {
+    const hiddenInputsContainer = document.getElementById('selected-products-inputs');
+
+    function syncHiddenInputs(selectedProducts) {
+      hiddenInputsContainer.innerHTML = '';
+
+      Object.entries(selectedProducts).forEach(([productId, quantity]) => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = `product_${productId}`;
+        input.value = String(quantity);
+        hiddenInputsContainer.appendChild(input);
+      });
+    }
+
+    new ProductSelector('#product-selector', {
+      endpoint: '/marketplace/api/products/',
+      onSelectionChange: syncHiddenInputs,
+    });
+  })();
+</script>
 {% endblock %}

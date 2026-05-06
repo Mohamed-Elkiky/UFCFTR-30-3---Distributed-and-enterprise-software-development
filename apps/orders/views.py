@@ -19,6 +19,31 @@ from apps.orders.services.status_flow import transition_producer_order
 from apps.orders.services.recurring import create_recurring_template
 
 
+def _get_buyer_profile(user):
+    """Return a CustomerProfile for customer or community_group users."""
+    if hasattr(user, "customer_profile"):
+        return user.customer_profile
+
+    from apps.accounts.models import CustomerProfile
+
+    cg = getattr(user, "community_group_profile", None)
+    if cg is None:
+        return None
+
+    profile, _ = CustomerProfile.objects.get_or_create(
+        user=user,
+        defaults={
+            "full_name": cg.organisation_name,
+            "street": cg.delivery_address,
+            "city": "",
+            "state": "",
+            "postcode": cg.postcode,
+            "country": "UK",
+        },
+    )
+    return profile
+
+
 @login_required
 @producer_required
 def producer_orders(request):
@@ -218,9 +243,13 @@ def recurring_orders(request):
     List all RecurringOrderTemplate for the logged-in customer (TC-018).
     Shows all recurring order templates the customer has created.
     """
+    buyer_profile = _get_buyer_profile(request.user)
+    if buyer_profile is None:
+        return HttpResponseForbidden("Buyer profile required.")
+
     templates = (
         RecurringOrderTemplate.objects
-        .filter(customer=request.user.customer_profile)
+        .filter(customer=buyer_profile)
         .prefetch_related('items__product')
         .order_by('-created_at')
     )
@@ -241,6 +270,10 @@ def create_recurring_order(request):
     POST only. Reads template name, rrule, and product/quantity pairs.
     Calls create_recurring_template and redirects to recurring_orders list.
     """
+    buyer_profile = _get_buyer_profile(request.user)
+    if buyer_profile is None:
+        return HttpResponseForbidden("Buyer profile required.")
+
     template_name = (request.POST.get("name") or "").strip()
     rrule = (request.POST.get("rrule") or "").strip()
 
@@ -275,7 +308,7 @@ def create_recurring_order(request):
 
     try:
         created_template = create_recurring_template(
-            customer_profile=request.user.customer_profile,
+            customer_profile=buyer_profile,
             name=template_name,
             rrule_str=rrule,
             items=items,
@@ -299,10 +332,14 @@ def modify_next_instance(request, template_id):
     GET: Show form with next instance items.
     POST: Store modified quantities and redirect to recurring_orders list.
     """
+    buyer_profile = _get_buyer_profile(request.user)
+    if buyer_profile is None:
+        return HttpResponseForbidden("Buyer profile required.")
+
     template = get_object_or_404(
         RecurringOrderTemplate,
         id=template_id,
-        customer=request.user.customer_profile,
+        customer=buyer_profile,
     )
 
     # Get the next scheduled instance for this template

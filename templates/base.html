@@ -109,6 +109,7 @@
               <a class="nav-link" href="{% url 'content:content_list' %}">Content</a>
             {% elif user.role == 'customer' or user.role == 'community_group' %}
               <a class="nav-link" href="{% url 'orders:customer_orders' %}">My Orders</a>
+              <a class="nav-link" href="{% url 'orders:recurring_orders' %}">Recurring Orders</a>
             {% elif user.role == 'admin' %}
               <a class="nav-link" href="{% url 'payments:admin_commission_report' %}">Commission Report</a>
             {% endif %}
