@@ -26,7 +26,9 @@ def submit_review(request, product_id):
     - One review per (product, customer)
     """
     product = get_object_or_404(Product, id=product_id)
-    customer_profile = request.user.customer_profile
+    customer_profile = getattr(request.user, "customer_profile", None)
+    if customer_profile is None:
+        raise PermissionDenied("Customer profile required to submit reviews.")
 
     has_delivered_order = CustomerOrder.objects.filter(
         customer=customer_profile,

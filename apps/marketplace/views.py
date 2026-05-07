@@ -357,7 +357,8 @@ def product_detail(request, product_id):
     can_review = False
     has_review = False
 
-    if request.user.is_authenticated and getattr(request.user, "is_customer", False):
+    buyer_roles = {"customer", "community_group", "restaurant"}
+    if request.user.is_authenticated and getattr(request.user, "role", None) in buyer_roles:
         try:
             customer_profile = request.user.customer_profile
 
