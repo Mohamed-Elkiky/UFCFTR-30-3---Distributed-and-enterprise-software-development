@@ -7,8 +7,8 @@
     <h1 class="card__title">Producer Order</h1>
 
     <div class="card__meta">
-      <span><strong>Order:</strong> {{ producer_order.id }}</span>
-      <span><strong>Customer order:</strong> {{ producer_order.customer_order.id }}</span>
+      <span><strong>Order:</strong> {{ producer_order.short_ref }}</span>
+      <span><strong>Customer order:</strong> {{ producer_order.customer_order.short_ref }}</span>
       <span><strong>Delivery:</strong> {{ producer_order.delivery_date|default:"—" }}</span>
       <span><strong>Status:</strong> {{ producer_order.get_status_display }}</span>
     </div>
@@ -85,10 +85,10 @@
             {% for h in producer_order.status_history.all %}
               <tr>
                 <td style="padding: .6rem; border-bottom: 1px solid var(--border);">
-                  {{ h.changed_at }}
+                  {{ h.changed_at|date:"d M Y H:i" }}
                 </td>
                 <td style="padding: .6rem; border-bottom: 1px solid var(--border);">
-                  {{ h.old_status }} → {{ h.new_status }}
+                  {{ h.old_status|title }} → {{ h.new_status|title }}
                 </td>
                 <td style="padding: .6rem; border-bottom: 1px solid var(--border);">
                   {{ h.changed_by|default:"—" }}

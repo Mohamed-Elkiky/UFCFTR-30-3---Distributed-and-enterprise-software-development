@@ -110,6 +110,7 @@
             {% elif user.role == 'customer' or user.role == 'community_group' %}
               <a class="nav-link" href="{% url 'orders:customer_orders' %}">My Orders</a>
               <a class="nav-link" href="{% url 'orders:recurring_orders' %}">Recurring Orders</a>
+              <a class="nav-link" href="{% url 'content:public_stories' %}">Stories</a>
             {% elif user.role == 'admin' %}
               <a class="nav-link" href="{% url 'payments:admin_commission_report' %}">Commission Report</a>
             {% endif %}
@@ -428,22 +429,19 @@
       <section class="home-community" aria-label="Community and education">
         <h2>Community</h2>
         <div class="community-grid">
-          <a class="community-link card" href="{% url 'marketplace:home' %}#recipes">
+          <a class="community-link card" href="{% url 'content:public_stories' %}?kind=recipe">
             <strong>Recipes</strong><span>Seasonal inspiration</span>
           </a>
-          <a class="community-link card" href="{% url 'marketplace:home' %}#farm-stories">
+          <a class="community-link card" href="{% url 'content:public_stories' %}?kind=farm_story">
             <strong>Farm Stories</strong><span>Meet producers</span>
           </a>
-          <a class="community-link card" href="{% url 'marketplace:home' %}#storage-guides">
+          <a class="community-link card" href="{% url 'content:public_stories' %}?kind=storage_guide">
             <strong>Storage Guides</strong><span>Keep food fresh</span>
           </a>
         </div>
       </section>
 
       <div id="cart" aria-hidden="true"></div>
-      <div id="recipes" aria-hidden="true"></div>
-      <div id="farm-stories" aria-hidden="true"></div>
-      <div id="storage-guides" aria-hidden="true"></div>
 
     {% endblock %}
   </main>
@@ -456,10 +454,36 @@
 
   <script>
     (function () {
+      var toastTimer;
+      function showCartToast(msg) {
+        var toast = document.getElementById('cart-toast');
+        var text  = document.getElementById('cart-toast-msg');
+        if (!toast) return;
+        text.textContent = msg || 'Added to basket';
+        clearTimeout(toastTimer);
+        toast.classList.add('cart-toast--visible');
+        toastTimer = setTimeout(function () {
+          toast.classList.remove('cart-toast--visible');
+        }, 2200);
+      }
+
+      function bounceBadge() {
+        var badge = document.querySelector('.nav-cart .cart-badge');
+        if (!badge) return;
+        badge.classList.remove('cart-badge--bounce');
+        void badge.offsetWidth;          /* force reflow to restart animation */
+        badge.classList.add('cart-badge--bounce');
+      }
+
       document.addEventListener('submit', function (e) {
         var form = e.target;
         if (!form.action || !form.action.includes('/cart/add/')) return;
         e.preventDefault();
+
+        var btn = form.querySelector('button[type="submit"]');
+        var origLabel = btn ? btn.textContent : '';
+        if (btn) { btn.textContent = 'Adding…'; btn.disabled = true; }
+
         fetch(form.action, {
           method: 'POST',
           headers: { 'X-Requested-With': 'XMLHttpRequest' },
@@ -467,12 +491,21 @@
         })
           .then(function (res) { return res.json(); })
           .then(function (data) {
-            var badge = document.querySelector('.cart-badge');
+            var badge = document.querySelector('.nav-cart .cart-badge');
             if (badge && data.cart_count !== undefined) {
               badge.textContent = data.cart_count;
             }
+            if (data.status === 'ok') {
+              bounceBadge();
+              showCartToast('Added to basket ✓');
+            } else {
+              showCartToast(data.message || 'Could not add item');
+            }
           })
-          .catch(function () { form.submit(); });
+          .catch(function () { form.submit(); })
+          .finally(function () {
+            if (btn) { btn.textContent = origLabel; btn.disabled = false; }
+          });
       });
     })();
   </script>
@@ -497,5 +530,9 @@
       });
     })();
   </script>
+  <div class="cart-toast" id="cart-toast" aria-live="polite">
+    <span class="cart-toast__icon">✓</span>
+    <span id="cart-toast-msg">Added to basket</span>
+  </div>
 </body>
 </html>

@@ -98,7 +98,7 @@ def admin_commission_report(request):
 
         rows.append({
             'order_id': str(order.id),
-            'order_id_short': str(order.id)[:8],
+            'order_id_short': order.short_ref,
             'order_date': c.created_at.date(),
             'customer_name': customer_name,
             'order_status': order.get_status_display(),

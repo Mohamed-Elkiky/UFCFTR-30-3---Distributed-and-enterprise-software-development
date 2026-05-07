@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% load payment_filters %}
+{% block content %}
+<div class="story-detail">
+  <p class="story-detail__back"><a href="{% url 'content:public_stories' %}">&larr; All stories</a></p>
+
+  {% if post.image_url %}
+    <img src="{{ post.image_url }}" alt="{{ post.title }}" class="story-detail__hero">
+  {% endif %}
+
+  <span class="story-badge story-badge--{{ post.kind }}">{{ post.get_kind_display }}</span>
+  <span class="story-detail__season">{{ post.get_seasonal_tag_display }}</span>
+
+  <h1>{{ post.title }}</h1>
+
+  <p class="story-detail__meta">
+    By <strong>{{ post.producer.business_name }}</strong> · {{ post.created_at|date:"j M Y" }}
+  </p>
+
+  <div class="story-detail__body">
+    {{ post.body|linebreaksbr }}
+  </div>
+
+  {% if linked_products %}
+    <section class="story-detail__products">
+      <h2>Featured products</h2>
+      <div class="story-products-grid">
+        {% for link in linked_products %}
+          <a class="story-product-card" href="{% url 'marketplace:product_detail' link.product.pk %}">
+            <strong>{{ link.product.name }}</strong>
+            <span class="story-product-price">{{ link.product.price_display }}</span>
+            <span class="story-product-producer">{{ link.product.producer.business_name }}</span>
+          </a>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  <p class="story-detail__back" style="margin-top: 32px;"><a href="{% url 'content:public_stories' %}">&larr; Back to all stories</a></p>
+</div>
+
+<style>
+  .story-detail { max-width: 720px; margin: 0 auto; padding: 24px 16px; }
+  .story-detail__back { margin-bottom: 16px; }
+  .story-detail__back a { color: #4a7c59; text-decoration: none; font-size: 0.9rem; }
+  .story-detail__back a:hover { text-decoration: underline; }
+
+  .story-detail__hero {
+    width: 100%;
+    max-height: 360px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  .story-badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .story-badge--recipe         { background: #fef3c7; color: #92400e; }
+  .story-badge--farm_story     { background: #d1fae5; color: #065f46; }
+  .story-badge--storage_guide  { background: #dbeafe; color: #1e40af; }
+
+  .story-detail__season {
+    font-size: 0.82rem;
+    color: #888;
+    margin-left: 6px;
+  }
+
+  .story-detail h1 { margin: 14px 0 8px; font-size: 1.6rem; }
+
+  .story-detail__meta {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e5e0d8;
+  }
+
+  .story-detail__body {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #333;
+  }
+
+  .story-detail__products {
+    margin-top: 36px;
+    padding-top: 24px;
+    border-top: 1px solid #e5e0d8;
+  }
+  .story-detail__products h2 { font-size: 1.1rem; margin-bottom: 14px; }
+
+  .story-products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+  .story-product-card {
+    display: block;
+    padding: 14px;
+    border: 1px solid #e5e0d8;
+    border-radius: 8px;
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow 0.15s;
+  }
+  .story-product-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+  .story-product-card strong { display: block; margin-bottom: 4px; }
+  .story-product-price { display: block; font-weight: 600; color: #4a7c59; font-size: 0.9rem; }
+  .story-product-producer { display: block; font-size: 0.8rem; color: #888; margin-top: 2px; }
+</style>
+{% endblock %}

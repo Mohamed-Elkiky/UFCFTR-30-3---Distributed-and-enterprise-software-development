@@ -56,8 +56,13 @@ class CustomerOrder(models.Model):
     class Meta:
         ordering = ['-created_at']
     
+    @property
+    def short_ref(self):
+        """Human-readable order reference, e.g. BRF-1A2B3C."""
+        return f"BRF-{str(self.id)[:6].upper()}"
+
     def __str__(self):
-        return f"Order {self.id} - {self.status}"
+        return f"Order {self.short_ref} - {self.status}"
     
     def calculate_totals(self):
         """Calculate order totals from items."""
@@ -115,9 +120,14 @@ class ProducerOrder(models.Model):
         ordering = ['-created_at']
         unique_together = [('customer_order', 'producer')]
     
+    @property
+    def short_ref(self):
+        """Human-readable sub-order reference, e.g. PO-1A2B3C."""
+        return f"PO-{str(self.id)[:6].upper()}"
+
     def __str__(self):
         producer_name = self.producer.business_name if self.producer else 'Unknown'
-        return f"ProducerOrder {self.id} - {producer_name}"
+        return f"ProducerOrder {self.short_ref} - {producer_name}"
     
     def calculate_totals(self):
         """Calculate totals for this producer's portion."""

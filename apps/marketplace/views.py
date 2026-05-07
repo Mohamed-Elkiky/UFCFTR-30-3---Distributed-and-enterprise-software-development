@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.http import HttpResponseForbidden, JsonResponse
 from django.utils import timezone
-from django.db.models import Q, Avg
+from django.db.models import Q, Avg, Case, When, IntegerField
 
 from apps.content.models import ContentProductLink
 from apps.common.permissions import producer_required
@@ -16,6 +16,66 @@ from apps.reviews.models import ProductReview
 from .models import Product, ProductCategory, ProductAllergen
 from .forms import ProductForm
 from .services.surplus import create_surplus_deal, get_active_surplus_deals, apply_surplus_discount
+
+
+def _get_suggested_products(user, limit=6):
+    """Return AI-powered suggestions for a logged-in customer, or a
+    seasonal fallback for anonymous / non-customer users."""
+    from .services.ai_client import get_suggestions
+
+    available = Product.objects.exclude(
+        availability='unavailable'
+    ).exclude(
+        availability='out_of_season'
+    ).filter(stock_qty__gt=0).select_related('producer', 'category').prefetch_related('images')
+
+    print(f"[suggestions] user authenticated={user.is_authenticated}, "
+          f"has_customer_profile={hasattr(user, 'customer_profile') if user.is_authenticated else 'N/A'}, "
+          f"available products={available.count()}")
+
+    # Try the AI service for logged-in customers
+    if user.is_authenticated and hasattr(user, 'customer_profile'):
+        raw = get_suggestions(str(user.pk), top_n=limit)
+        print(f"[suggestions] AI response: {raw}")
+        if raw:
+            q_filter = Q()
+            for item in raw:
+                term = item.get('product', '')
+                if term:
+                    q_filter |= Q(name__icontains=term) | Q(category__name__icontains=term)
+            if q_filter:
+                matched = list(available.filter(q_filter)[:limit])
+                print(f"[suggestions] matched {len(matched)} products from AI")
+                if matched:
+                    return matched
+
+    # Fallback: in-season first, then year-round, newest first
+    fallback = list(available.order_by(
+        Case(
+            When(availability='in_season', then=0),
+            default=1,
+            output_field=IntegerField(),
+        ),
+        '-created_at',
+    )[:limit])
+    print(f"[suggestions] fallback returning {len(fallback)} products")
+    return fallback
+
+
+def _get_homepage_deals(limit=6):
+    """Active surplus deals enriched with display prices."""
+    deals_qs = get_active_surplus_deals().select_related(
+        'product__producer', 'product__category'
+    ).prefetch_related('product__images')[:limit]
+
+    enriched = []
+    for deal in deals_qs:
+        p = deal.product
+        discounted = apply_surplus_discount(p)
+        p.discounted_display = f'£{discounted / 100:.2f}' if discounted < p.price_pence else None
+        p.discount_pct = deal.discount_bp // 100
+        enriched.append(p)
+    return enriched
 
 
 def home(request):
@@ -54,15 +114,80 @@ def home(request):
         discounted = apply_surplus_discount(p)
         p.discounted_display = f'£{discounted / 100:.2f}' if discounted < p.price_pence else None
 
+    # AI-powered suggestions + active surplus deals for homepage sections
+    # Hide suggestions when the user is actively filtering
+    has_filters = q or category_id or request.GET.get('organic') or request.GET.get('in_season')
+    suggested = [] if has_filters else _get_suggested_products(request.user)
+    deals = _get_homepage_deals()
+
+    # Producer's own products for "Your Products" section on homepage
+    producer_products = []
+    if request.user.is_authenticated and request.user.is_producer:
+        producer_products = list(
+            Product.objects.filter(producer=request.user.producer_profile)
+            .select_related('category')
+            .prefetch_related('images')
+            .order_by('-created_at')[:6]
+        )
+
     context = {
         'categories': categories,
         'products': products,
+        'suggested_products': suggested,
+        'producer_products': producer_products,
+        'deal_products': deals,
         'q': q,
         'selected_category': category_id,
         'filter_organic': request.GET.get('organic', ''),
         'filter_in_season': request.GET.get('in_season', ''),
     }
     return render(request, 'marketplace/home.html', context)
+
+
+def ai_debug(request):
+    """Temporary diagnostic endpoint — hit /ai-debug/ to check connectivity."""
+    import requests as req
+    from django.conf import settings as s
+
+    base = getattr(s, 'AI_API_BASE_URL', 'http://localhost:5000').rstrip('/')
+    timeout = getattr(s, 'AI_API_TIMEOUT', 5)
+    info = {
+        'base_url': base,
+        'timeout': timeout,
+        'user': str(request.user),
+        'is_authenticated': request.user.is_authenticated,
+        'has_customer_profile': (
+            hasattr(request.user, 'customer_profile')
+            if request.user.is_authenticated else None
+        ),
+        'user_role': getattr(request.user, 'role', None),
+    }
+
+    # Test health endpoint
+    try:
+        r = req.get(f'{base}/health', timeout=timeout)
+        info['health'] = {'status': r.status_code, 'body': r.text[:500]}
+    except Exception as e:
+        info['health'] = {'error': str(e)}
+
+    # Try a few common path patterns for the reorder endpoint
+    for path in ['/api/predict/reorder', '/predict/reorder', '/api/reorder/predict']:
+        try:
+            r = req.post(f'{base}{path}', json={'customer_id': 'test', 'top_n': 3}, timeout=timeout)
+            info[f'POST {path}'] = {'status': r.status_code, 'body': r.text[:500]}
+        except Exception as e:
+            info[f'POST {path}'] = {'error': str(e)}
+
+    # Count available products (fallback pool)
+    avail = Product.objects.exclude(
+        availability='unavailable'
+    ).exclude(
+        availability='out_of_season'
+    ).filter(stock_qty__gt=0)
+    info['available_products_with_stock'] = avail.count()
+    info['total_products'] = Product.objects.count()
+
+    return JsonResponse(info, json_dumps_params={'indent': 2})
 
 
 # =============================================================================
@@ -147,6 +272,23 @@ def product_delete(request, product_id):
 
     messages.warning(request, 'Invalid request method for deletion.')
     return redirect('marketplace:product_list')
+
+
+@producer_required
+def quality_check(request):
+    """Upload a produce photo and get an AI quality grade."""
+    from .services.ai_client import check_quality
+
+    result = None
+    if request.method == 'POST' and request.FILES.get('image'):
+        image_file = request.FILES['image']
+        image_bytes = image_file.read()
+        result = check_quality(image_bytes)
+
+        if result is None:
+            messages.error(request, 'Quality check service is currently unavailable. Please try again later.')
+
+    return render(request, 'producer/quality_check.html', {'result': result})
 
 
 # =============================================================================

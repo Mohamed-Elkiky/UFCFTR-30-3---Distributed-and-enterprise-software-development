@@ -17,10 +17,10 @@ class ProductCategory(models.Model):
 class Product(models.Model):
     # SQL enum: availability_status
     class AvailabilityStatus(models.TextChoices):
-        IN_SEASON = "in_season", "in_season"
-        AVAILABLE_YEAR_ROUND = "available_year_round", "available_year_round"
-        OUT_OF_SEASON = "out_of_season", "out_of_season"
-        UNAVAILABLE = "unavailable", "unavailable"
+        IN_SEASON = "in_season", "In Season"
+        AVAILABLE_YEAR_ROUND = "available_year_round", "Available Year Round"
+        OUT_OF_SEASON = "out_of_season", "Out of Season"
+        UNAVAILABLE = "unavailable", "Unavailable"
 
     # SQL: product(id uuid PK, ...)
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

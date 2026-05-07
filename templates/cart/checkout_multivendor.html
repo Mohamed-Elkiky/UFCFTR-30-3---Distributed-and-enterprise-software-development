@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load payment_filters %}
 {% block title %}Checkout | BRFN{% endblock %}
 
 {% block content %}
@@ -17,7 +18,7 @@
         {% for item in data.items %}
           <div style="display: flex; justify-content: space-between; padding: 0.4rem 0; font-size: 0.95rem;">
             <span>{{ item.product.name }} × {{ item.quantity }}</span>
-            <span>£{{ item.line_total_pence|default:item.product.price_pence }}</span>
+            <span>£{{ item.line_total_pence|pence_to_pounds }}</span>
           </div>
         {% endfor %}
 

@@ -368,7 +368,7 @@
           {% endif %}
         </td>
         <td>
-          <span class="mono">{{ r.order_id_short }}&hellip;</span>
+          <span class="mono">{{ r.order_id_short }}</span>
           {% if r.is_multi_vendor %}
             <span class="multi-vendor-badge">Multi</span>
           {% endif %}
@@ -396,7 +396,7 @@
             {% for pb in r.producer_breakdown %}
             <tr>
               <td colspan="2" class="producer-label">{{ pb.name }}</td>
-              <td><span class="status-badge status-badge--{{ pb.status|lower }}">{{ pb.status }}</span></td>
+              <td><span class="status-badge status-badge--{{ pb.status|lower }}">{{ pb.get_status_display }}</span></td>
               <td class="right mono">&pound;{{ pb.gross|floatformat:2 }}</td>
               <td class="right mono">&pound;{{ pb.commission|floatformat:2 }}</td>
               <td class="right mono">&pound;{{ pb.payment|floatformat:2 }}</td>

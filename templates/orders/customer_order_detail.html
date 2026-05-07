@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load payment_filters %}
-{% block title %}Order {{ order.id }} | BRFN{% endblock %}
+{% block title %}Order {{ order.short_ref }} | BRFN{% endblock %}
 
 {% block content %}
 <section class="auth-card">
@@ -15,7 +15,7 @@
     </div>
   </div>
 
-  <div style="font-family: monospace; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">{{ order.id }}</div>
+  <div style="font-family: monospace; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">{{ order.short_ref }}</div>
 
   <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-muted);">
     <span>Placed: {{ order.created_at|date:"d M Y, H:i" }}</span>

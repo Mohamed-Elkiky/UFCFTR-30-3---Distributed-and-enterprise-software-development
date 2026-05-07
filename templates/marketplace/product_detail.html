@@ -201,6 +201,23 @@
       {% endif %}
     </section>
 
+    {% if linked_content %}
+    <section class="linked-content-section">
+      <h2>Recipes &amp; Stories</h2>
+      <div class="linked-content-list">
+        {% for link in linked_content %}
+          <a href="{% url 'content:story_detail' link.content.pk %}" class="linked-content-card">
+            <span class="story-card__badge story-card__badge--{{ link.content.kind }}">{{ link.content.get_kind_display }}</span>
+            <h3>{{ link.content.title }}</h3>
+            <p class="linked-content-excerpt">{{ link.content.body|truncatewords:30 }}</p>
+            <p class="linked-content-producer">By {{ link.content.producer.business_name }}</p>
+            <span class="linked-content-read">Read more →</span>
+          </a>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+
     <p class="back-link">
       <a href="{% url 'marketplace:home' %}">← Back to marketplace</a>
     </p>
@@ -277,6 +294,39 @@
   }
 
   .back-link { margin-top: 20px; }
+
+  .linked-content-section {
+    margin-top: 36px;
+    padding-top: 24px;
+    border-top: 1px solid #ddd;
+  }
+  .linked-content-list { display: grid; gap: 14px; margin-top: 12px; }
+  .linked-content-card {
+    display: block;
+    padding: 16px;
+    border: 1px solid #e5e0d8;
+    border-radius: 10px;
+    background: #fafaf8;
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow 0.15s;
+  }
+  .linked-content-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+  .linked-content-card h3 { margin: 8px 0 6px; font-size: 1rem; }
+  .linked-content-excerpt { font-size: 0.9rem; color: #555; margin: 0 0 6px; }
+  .linked-content-producer { font-size: 0.82rem; color: #888; margin: 0; }
+  .linked-content-read { display: inline-block; margin-top: 8px; font-size: 0.85rem; font-weight: 600; color: #4a7c59; }
+  .story-card__badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 12px;
+    text-transform: uppercase;
+  }
+  .story-card__badge--recipe       { background: #fef3c7; color: #92400e; }
+  .story-card__badge--farm_story   { background: #d1fae5; color: #065f46; }
+  .story-card__badge--storage_guide { background: #dbeafe; color: #1e40af; }
   .add-to-basket-form { margin: 20px 0; }
   .qty-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
   .qty-input { width: 70px; padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px; font: inherit; }

@@ -22,6 +22,12 @@ def test_weak_password_rejected():
 
 
 @pytest.mark.django_db
+def test_numeric_password_rejected():
+    with pytest.raises(ValidationError):
+        validate_password("12345678")
+
+
+@pytest.mark.django_db
 def test_login_wrong_password_no_user_reveal(client):
     user = UserFactory()
     response = client.post(

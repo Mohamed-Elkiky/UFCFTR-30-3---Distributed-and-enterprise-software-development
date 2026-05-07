@@ -2,6 +2,7 @@
 
 from pathlib import Path
 import dj_database_url
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -96,3 +97,6 @@ LOGIN_REDIRECT_URL = 'marketplace:home'
 LOGOUT_REDIRECT_URL = 'accounts:login'
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+AI_API_BASE_URL = os.getenv('AI_API_BASE_URL', 'http://localhost:5000')
+AI_API_TIMEOUT = int(os.getenv('AI_API_TIMEOUT', '5'))  # seconds

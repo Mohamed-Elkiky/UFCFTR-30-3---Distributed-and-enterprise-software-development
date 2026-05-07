@@ -94,3 +94,47 @@ def content_delete(request, post_id):
     post.delete()
     messages.success(request, f'"{title}" has been deleted.')
     return redirect('content:content_list')
+
+
+def public_stories(request):
+    """
+    Public listing of all published content — accessible to everyone (TC-020).
+    Supports filtering by kind (recipe, farm_story, storage_guide) and
+    seasonal_tag via GET parameters.
+    """
+    posts = ContentPost.objects.filter(is_published=True).select_related('producer')
+
+    kind = request.GET.get('kind', '')
+    season = request.GET.get('season', '')
+
+    if kind in dict(ContentPost.Kind.choices):
+        posts = posts.filter(kind=kind)
+    if season in dict(ContentPost.SeasonalTag.choices):
+        posts = posts.filter(seasonal_tag=season)
+
+    return render(request, 'marketplace/stories.html', {
+        'posts': posts,
+        'current_kind': kind,
+        'current_season': season,
+        'kind_choices': ContentPost.Kind.choices,
+        'season_choices': ContentPost.SeasonalTag.choices,
+    })
+
+
+def story_detail(request, post_id):
+    """
+    Public detail page for a single ContentPost (TC-020).
+    Shows full body text, linked products, and producer info.
+    """
+    post = get_object_or_404(
+        ContentPost.objects.select_related('producer'),
+        id=post_id,
+        is_published=True,
+    )
+
+    linked_products = post.product_links.select_related('product').all()
+
+    return render(request, 'marketplace/story_detail.html', {
+        'post': post,
+        'linked_products': linked_products,
+    })

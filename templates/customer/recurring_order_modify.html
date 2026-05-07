@@ -1,69 +1,111 @@
 {% extends "base.html" %}
 {% block title %}Modify Recurring Order | BRFN{% endblock %}
 
+{% block extra_head %}
+<style>
+  .pf-page { max-width: 700px; margin: 2rem auto; padding: 0 1.5rem 3rem; }
+  .pf-header { margin-bottom: 2rem; }
+  .pf-header h1 { font-size: 1.75rem; font-weight: 800; margin: 0 0 0.25rem; }
+  .pf-header p { color: var(--muted); margin: 0; font-size: 0.9rem; }
+
+  .pf-section {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .ro-item-card {
+    padding: 1rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 0.75rem;
+  }
+  .ro-item-card:last-child { margin-bottom: 0; }
+  .ro-item-name { font-weight: 600; font-size: 0.95rem; }
+  .ro-item-meta { color: var(--muted); font-size: 0.85rem; margin-top: 0.15rem; }
+
+  .pf-label {
+    display: block; font-size: 0.82rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--muted); margin-bottom: 0.35rem;
+  }
+  .pf-input {
+    width: 100%; padding: 0.65rem 0.9rem;
+    border: 1px solid var(--border); border-radius: 10px;
+    background: var(--bg); color: var(--text);
+    font: inherit; font-size: 0.92rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+  }
+  .pf-input:focus { outline: none; border-color: var(--brand); box-shadow: var(--focus); }
+
+  .ro-info-banner {
+    display: flex; align-items: flex-start; gap: 0.65rem;
+    padding: 0.85rem 1rem; background: var(--brand-light);
+    border-radius: 10px; font-size: 0.88rem; color: var(--brand); line-height: 1.45;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
-<section class="auth-card">
-  <h1>Modify Next Recurring Order</h1>
-  <p style="color: var(--text-muted); margin-bottom: 1rem;">Template: <strong>{{ template.name }}</strong></p>
-  <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Scheduled for: <strong>{{ next_instance.scheduled_for|date:"D, d M Y" }}</strong></p>
+<div class="pf-page">
+
+  <div class="pf-header">
+    <h1>Modify Next Order</h1>
+    <p>
+      Template: <strong>{{ template.name }}</strong> —
+      Scheduled for: <strong>{{ next_instance.scheduled_for|date:"D, d M Y" }}</strong>
+    </p>
+  </div>
 
   {% if messages %}
     {% for message in messages %}
-      <div class="alert alert-{{ message.tags }}" role="alert" style="margin-bottom: 1rem;">
+      <div style="background: var(--brand-light); border: 1px solid rgba(166,124,82,0.2); border-radius: 10px; padding: 0.65rem 1rem; font-size: 0.9rem; color: var(--brand); font-weight: 600; margin-bottom: 1rem;">
         {{ message }}
       </div>
     {% endfor %}
   {% endif %}
 
-  <form method="post" style="background: var(--surface-alt); padding: 1.5rem; border-radius: 12px;">
-    {% csrf_token %}
+  <div class="pf-section">
+    <h2 style="font-size: 1.1rem; font-weight: 700; margin: 0 0 0.25rem;">Update Quantities</h2>
+    <p style="color: var(--muted); font-size: 0.88rem; margin: 0 0 1.25rem;">Adjust quantities for this upcoming order. Leave blank to use template defaults.</p>
 
-    <h2 style="font-size: 1.1rem; margin-bottom: 1rem;">Update Quantities</h2>
-    <p style="color: var(--text-muted); margin-bottom: 1rem;">Adjust the quantities for this upcoming order. Leave blank to use the template defaults.</p>
+    <form method="post">
+      {% csrf_token %}
 
-    <div style="display: grid; gap: 1rem;">
       {% for item in items %}
-        <div style="padding: 1rem; background: white; border: 1px solid var(--border); border-radius: 8px; display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; align-items: center;">
+        <div class="ro-item-card">
           <div>
-            <div style="font-weight: 600;">{{ item.product.name }}</div>
-            <div style="color: var(--text-muted); font-size: 0.9rem;">
-              Current: {{ item.quantity }} {{ item.product.unit }}
-              (£{{ item.product.price_pence|default:0 }})
+            <div class="ro-item-name">{{ item.product.name }}</div>
+            <div class="ro-item-meta">
+              Current: {{ item.quantity }} {{ item.product.unit }} — {{ item.product.price_display }}
             </div>
           </div>
-          <div class="form-row" style="margin: 0;">
-            <label for="product_{{ item.product.id }}" style="font-size: 0.85rem; margin-bottom: 0.25rem;">New Qty</label>
-            <input 
-              type="number" 
-              id="product_{{ item.product.id }}" 
-              name="product_{{ item.product.id }}"
-              class="form-control"
-              min="1"
-              placeholder="{{ item.quantity }}"
-              style="width: 100%;"
-            />
+          <div>
+            <label class="pf-label" for="product_{{ item.product.id }}">New Qty</label>
+            <input type="number" id="product_{{ item.product.id }}" name="product_{{ item.product.id }}" class="pf-input" min="1" placeholder="{{ item.quantity }}">
           </div>
         </div>
       {% endfor %}
-    </div>
 
-    <div style="display: flex; gap: 1rem; margin-top: 2rem;">
-      <button type="submit" class="btn-primary" style="padding: 0.75rem 1.5rem; cursor: pointer;">
-        Update Order
-      </button>
-      <a href="{% url 'orders:recurring_orders' %}" 
-         style="padding: 0.75rem 1.5rem; background: var(--border); border-radius: 6px; text-decoration: none; cursor: pointer;">
-        Cancel
-      </a>
-    </div>
-  </form>
-
-  <div style="margin-top: 2rem; padding: 1rem; background: #f0f8ff; border-left: 4px solid var(--primary); border-radius: 4px;">
-    <p style="margin: 0; font-size: 0.9rem; color: #333;">
-      <strong>ℹ️ Info:</strong> Changes to this order will only affect this upcoming delivery. 
-      Your template defaults remain unchanged for future orders.
-    </p>
+      <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
+        <button type="submit" class="btn btn--primary">Update Order</button>
+        <a href="{% url 'orders:recurring_orders' %}" class="btn btn--ghost">Cancel</a>
+      </div>
+    </form>
   </div>
 
-</section>
+  <div class="ro-info-banner">
+    <span>Changes only affect this upcoming delivery. Your template defaults remain unchanged for future orders.</span>
+  </div>
+
+</div>
 {% endblock %}

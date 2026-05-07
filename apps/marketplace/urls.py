@@ -13,6 +13,7 @@ urlpatterns = [
     path('products/<uuid:product_id>/edit/', views.product_edit, name='product_edit'),
     path('products/<uuid:product_id>/delete/', views.product_delete, name='product_delete'),
     path('products/<uuid:product_id>/stock/', views.update_stock, name='update_stock'),
+    path('products/quality-check/', views.quality_check, name='quality_check'),
     # Customer browsing (DESDG2-14)
     path('search/', views.product_search, name='product_search'),
     path('categories/', views.category_list, name='category_list'),
@@ -25,4 +26,6 @@ urlpatterns = [
     path('surplus/', views.surplus_deals, name='surplus_deals'),
     path('products/<uuid:product_id>/surplus/', views.mark_as_surplus, name='mark_as_surplus'),
     path('products/<uuid:product_id>/surplus/cancel/', views.cancel_surplus_deal, name='cancel_surplus_deal'),
+    # Temporary debug — remove after testing
+    path('ai-debug/', views.ai_debug, name='ai_debug'),
 ]

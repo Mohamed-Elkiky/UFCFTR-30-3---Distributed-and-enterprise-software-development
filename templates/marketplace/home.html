@@ -95,6 +95,193 @@
     });
   </script>
 
+  <!-- Your Products (producer) / Suggested For You (customer) / Seasonal Picks (anon) -->
+  {% if user.is_authenticated and user.is_producer %}
+    {% if producer_products %}
+    <section class="products-section">
+      <div class="section-header" style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <h2 class="section-title">Your Products</h2>
+          <p class="section-subtitle">A quick look at your current listings</p>
+        </div>
+        <div style="display:flex; gap:0.5rem;">
+          <a href="{% url 'marketplace:product_create' %}" class="btn btn--primary" style="white-space:nowrap;">+ Add Product</a>
+          <a href="{% url 'marketplace:product_list' %}" class="btn btn--ghost" style="white-space:nowrap;">Manage All</a>
+        </div>
+      </div>
+      <div class="product-grid">
+        {% for product in producer_products %}
+        <article class="product-card">
+          <a href="{% url 'marketplace:product_edit' product.pk %}" class="product-card-link">
+            <div class="product-image">
+              {% with img=product.images.first %}
+                {% if img and img.image %}
+                  <img src="{{ img.image.url }}" alt="{{ product.name }}" class="product-img" style="width:100%;height:100%;object-fit:cover;" loading="lazy">
+                {% elif img and img.url %}
+                  <img src="{{ img.url }}" alt="{{ product.name }}" class="product-img" style="width:100%;height:100%;object-fit:cover;" loading="lazy">
+                {% else %}
+                  <div class="product-image-placeholder">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Z"/><path d="M12 6v6l4 2"/></svg>
+                  </div>
+                {% endif %}
+              {% endwith %}
+              {% if product.organic_certified %}
+                <span class="product-badge badge-organic">Organic</span>
+              {% endif %}
+              {% if product.stock_qty == 0 %}
+                <span class="product-badge badge-out-of-stock">Out of Stock</span>
+              {% elif product.stock_qty <= product.low_stock_threshold %}
+                <span class="product-badge" style="background:#f59e0b;color:#fff;">Low Stock</span>
+              {% endif %}
+            </div>
+            <div class="product-info">
+              {% if product.category %}<span class="product-category">{{ product.category.name }}</span>{% endif %}
+              <h3 class="product-name">{{ product.name }}</h3>
+              <p class="product-producer" style="font-size:0.85rem; opacity:0.7;">Stock: {{ product.stock_qty }} {{ product.unit }}{{ product.stock_qty|pluralize }}</p>
+              <div class="product-footer">
+                <span class="product-price">{{ product.price_display }} <span class="product-unit">/ {{ product.unit }}</span></span>
+                <span class="product-availability
+                  {% if product.availability == 'in_season' %}availability-in-season
+                  {% elif product.availability == 'available_year_round' %}availability-available
+                  {% else %}availability-unavailable{% endif %}">
+                  {% if product.availability == 'in_season' %}In Season
+                  {% elif product.availability == 'available_year_round' %}Available
+                  {% elif product.availability == 'out_of_season' %}Out of Season
+                  {% else %}{{ product.get_availability_display }}{% endif %}
+                </span>
+              </div>
+            </div>
+          </a>
+          <div class="product-card-actions">
+            <a href="{% url 'marketplace:product_edit' product.pk %}" class="btn btn--ghost btn--full">Edit Product</a>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+    </section>
+    {% else %}
+    <section class="products-section">
+      <div class="section-header" style="text-align:center;">
+        <h2 class="section-title">Your Products</h2>
+        <p class="section-subtitle">You haven't listed any products yet — get started below!</p>
+        <a href="{% url 'marketplace:product_create' %}" class="btn btn--primary" style="margin-top:1rem;">+ Add Your First Product</a>
+      </div>
+    </section>
+    {% endif %}
+  {% elif suggested_products %}
+  <section class="products-section">
+    <div class="section-header">
+      <h2 class="section-title">{% if user.is_authenticated %}Suggested For You{% else %}Seasonal Picks{% endif %}</h2>
+      <p class="section-subtitle">{% if user.is_authenticated %}Based on your order history{% else %}Fresh seasonal items from local producers{% endif %}</p>
+    </div>
+    <div class="product-grid">
+      {% for product in suggested_products %}
+      <article class="product-card">
+        <a href="{% url 'marketplace:product_detail' product.pk %}" class="product-card-link">
+          <div class="product-image">
+            {% with img=product.images.first %}
+              {% if img and img.image %}
+                <img src="{{ img.image.url }}" alt="{{ product.name }}" class="product-img" style="width:100%;height:100%;object-fit:cover;" loading="lazy">
+              {% elif img and img.url %}
+                <img src="{{ img.url }}" alt="{{ product.name }}" class="product-img" style="width:100%;height:100%;object-fit:cover;" loading="lazy">
+              {% else %}
+                <div class="product-image-placeholder">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Z"/><path d="M12 6v6l4 2"/></svg>
+                </div>
+              {% endif %}
+            {% endwith %}
+            {% if product.organic_certified %}
+              <span class="product-badge badge-organic">Organic</span>
+            {% endif %}
+          </div>
+          <div class="product-info">
+            {% if product.category %}<span class="product-category">{{ product.category.name }}</span>{% endif %}
+            <h3 class="product-name">{{ product.name }}</h3>
+            {% if product.producer %}<p class="product-producer">{{ product.producer.business_name }}</p>{% endif %}
+            <div class="product-footer">
+              <span class="product-price">{{ product.price_display }} <span class="product-unit">/ {{ product.unit }}</span></span>
+              <span class="product-availability {% if product.availability == 'in_season' %}availability-in-season{% else %}availability-available{% endif %}">
+                {% if product.availability == 'in_season' %}In Season{% else %}Available{% endif %}
+              </span>
+            </div>
+          </div>
+        </a>
+        <div class="product-card-actions">
+          {% if product.stock_qty == 0 %}
+            <button type="button" class="btn btn--ghost btn--full" disabled style="opacity:0.5; cursor:not-allowed;">Out of Stock</button>
+          {% else %}
+            <form method="post" action="{% url 'cart:cart_add' product.pk %}">
+              {% csrf_token %}
+              <input type="hidden" name="quantity" value="1">
+              <button type="submit" class="btn btn--primary btn--full">Add to Basket</button>
+            </form>
+          {% endif %}
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- Offers & Surplus Deals -->
+  {% if deal_products %}
+  <section class="products-section">
+    <div class="section-header" style="display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <h2 class="section-title">🌱 Offers &amp; Surplus Deals</h2>
+        <p class="section-subtitle">Discounted items from local producers — help reduce food waste</p>
+      </div>
+      <a href="{% url 'marketplace:surplus_deals' %}" class="btn btn--ghost" style="white-space:nowrap;">View All</a>
+    </div>
+    <div class="product-grid">
+      {% for product in deal_products %}
+      <article class="product-card">
+        <a href="{% url 'marketplace:product_detail' product.pk %}" class="product-card-link">
+          <div class="product-image">
+            {% with img=product.images.first %}
+              {% if img and img.image %}
+                <img src="{{ img.image.url }}" alt="{{ product.name }}" class="product-img" style="width:100%;height:100%;object-fit:cover;" loading="lazy">
+              {% elif img and img.url %}
+                <img src="{{ img.url }}" alt="{{ product.name }}" class="product-img" style="width:100%;height:100%;object-fit:cover;" loading="lazy">
+              {% else %}
+                <div class="product-image-placeholder">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Z"/><path d="M12 6v6l4 2"/></svg>
+                </div>
+              {% endif %}
+            {% endwith %}
+            <span class="product-badge badge-surplus" style="background:#16a34a;color:#fff;">{{ product.discount_pct }}% OFF</span>
+          </div>
+          <div class="product-info">
+            {% if product.category %}<span class="product-category">{{ product.category.name }}</span>{% endif %}
+            <h3 class="product-name">{{ product.name }}</h3>
+            {% if product.producer %}<p class="product-producer">{{ product.producer.business_name }}</p>{% endif %}
+            <div class="product-footer">
+              <span class="product-price">
+                <span style="text-decoration:line-through; opacity:0.45; font-size:0.85em;">{{ product.price_display }}</span>
+                <span style="color:#16a34a; font-weight:800;">{{ product.discounted_display }}</span>
+                <span class="product-unit">/ {{ product.unit }}</span>
+              </span>
+            </div>
+          </div>
+        </a>
+        <div class="product-card-actions">
+          {% if user.is_authenticated and user.is_producer %}
+          {% elif product.stock_qty == 0 %}
+            <button type="button" class="btn btn--ghost btn--full" disabled style="opacity:0.5; cursor:not-allowed;">Out of Stock</button>
+          {% else %}
+            <form method="post" action="{% url 'cart:cart_add' product.pk %}">
+              {% csrf_token %}
+              <input type="hidden" name="quantity" value="1">
+              <button type="submit" class="btn btn--primary btn--full">Add to Basket</button>
+            </form>
+          {% endif %}
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
   <!-- Featured Products Section -->
   <section class="products-section">
     <div class="section-header">
@@ -197,7 +384,8 @@
     </div>
   </section>
 
-  <!-- Surplus Deals Teaser -->
+  <!-- Surplus Deals Teaser (only if no deals shown above) -->
+  {% if not deal_products %}
   <section class="surplus-section">
     <div class="surplus-banner">
       <div class="surplus-content">
@@ -210,6 +398,7 @@
       </div>
     </div>
   </section>
+  {% endif %}
 
 <script>
 (function () {
@@ -246,7 +435,7 @@
         ? 'availability-available' : 'availability-unavailable';
 
       const availLabel = p.availability === 'in_season' ? 'In Season'
-        : p.availability === 'available_year_round' ? 'Available' : p.availability;
+        : p.availability === 'available_year_round' ? 'Available' : p.availability === 'out_of_season' ? 'Out of Season' : p.availability === 'unavailable' ? 'Unavailable' : p.availability;
 
       const isProducer = {{ user.is_producer|yesno:"true,false" }};
       const actionHTML = isProducer

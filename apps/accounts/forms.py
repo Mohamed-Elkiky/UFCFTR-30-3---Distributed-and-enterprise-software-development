@@ -198,10 +198,8 @@ class CustomerRegistrationForm(forms.ModelForm):
     )
     country = forms.CharField(
         max_length=100,
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'United Kingdom'
-        })
+        initial='United Kingdom',
+        widget=forms.HiddenInput(),
     )
     terms_accepted = forms.BooleanField(
         required=True,

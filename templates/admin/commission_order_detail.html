@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Order Commission Detail – {{ order.id|truncatechars:12 }}{% endblock %}
+{% block title %}Order Commission Detail – {{ order.short_ref }}{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -121,7 +121,7 @@
 
   <a href="{% url 'payments:admin_commission_report' %}" class="back-link">&larr; Back to Commission Report</a>
 
-  <h1>Order {{ order.id|truncatechars:12 }}</h1>
+  <h1>Order {{ order.short_ref }}</h1>
 
   <div class="detail-grid">
     <div class="detail-card">
@@ -143,7 +143,7 @@
   </div>
 
   <table class="info-table">
-    <tr><td>Order ID</td><td class="mono">{{ order.id }}</td></tr>
+    <tr><td>Order Ref</td><td class="mono">{{ order.short_ref }}</td></tr>
     <tr><td>Customer</td><td>{{ customer_name }}</td></tr>
     <tr><td>Order Date</td><td>{{ order.created_at|date:"j M Y, H:i" }}</td></tr>
     <tr><td>Delivery Date</td><td>{{ order.delivery_date|date:"j M Y" }}</td></tr>
@@ -166,7 +166,7 @@
       {% for pb in breakdown %}
       <tr>
         <td>{{ pb.producer }}</td>
-        <td><span class="status-badge status-badge--{{ pb.status|lower }}">{{ pb.status }}</span></td>
+        <td><span class="status-badge status-badge--{{ pb.status|lower }}">{{ pb.get_status_display }}</span></td>
         <td class="right mono">&pound;{{ pb.gross|floatformat:2 }}</td>
         <td class="right mono">&pound;{{ pb.commission|floatformat:2 }}</td>
         <td class="right mono">&pound;{{ pb.payment|floatformat:2 }}</td>

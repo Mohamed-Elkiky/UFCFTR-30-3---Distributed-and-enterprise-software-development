@@ -65,16 +65,60 @@
   .page-register .address-grid .full-width {
     grid-column: span 2;
   }
+
+  .page-register .country-locked {
+    display: inline-block;
+    padding: 10px 14px;
+    background: var(--bg-muted, #f5f5f5);
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    color: var(--text-muted, #666);
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .page-register h2 {
+    font-size: 1.25rem;
+    margin: 1.5rem 0 0.75rem;
+  }
+
+  .page-register label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 0.35rem;
+  }
+
+  .page-register .form-control {
+    font-size: 0.95rem;
+    padding: 10px 12px;
+    border-radius: 8px;
+  }
+
+  .page-register .address-grid label {
+    font-size: 0.85rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .page-register .btn--ghost {
+    width: 100%;
+    max-width: 520px;
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+  }
 </style>
 {% endblock %}
 
 {% block content %}
 <section class="auth-card page-register">
-  <h1>Register</h1>
-  <p>Select the account type you want to create.</p>
+  <h1>Create an account</h1>
+  <p>Join the Bristol Regional Food Network and start shopping local.</p>
 
   <div class="form-row">
-    <label for="accountType">Account type</label>
+    <label for="accountType">I want to register as a&hellip;</label>
     <select id="accountType" class="form-control">
       <option value="customer" selected>Customer (Individual)</option>
       <option value="producer">Producer</option>
@@ -83,7 +127,7 @@
 
   <!-- CUSTOMER -->
   <div id="customerForm">
-    <h2>Customer details</h2>
+    <h2>Your details</h2>
 
     <form method="post" action="{% url 'accounts:register_customer' %}" novalidate data-phone-form="customer" data-name-form="customer">
       {% csrf_token %}
@@ -232,19 +276,19 @@
             {% for e in customer_form.city.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
           </div>
           <div>
-            <label for="{{ customer_form.state.id_for_label }}">State / County</label>
+            <label for="{{ customer_form.state.id_for_label }}">County</label>
             {{ customer_form.state }}
             {% for e in customer_form.state.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
           </div>
           <div>
-            <label for="{{ customer_form.postcode.id_for_label }}">Postcode / Zip</label>
+            <label for="{{ customer_form.postcode.id_for_label }}">Postcode</label>
             {{ customer_form.postcode }}
             {% for e in customer_form.postcode.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
           </div>
           <div>
-            <label for="{{ customer_form.country.id_for_label }}">Country</label>
+            <label>Country</label>
             {{ customer_form.country }}
-            {% for e in customer_form.country.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+            <span class="country-locked">United Kingdom</span>
           </div>
         </div>
       </div>
@@ -257,13 +301,13 @@
         {% for e in customer_form.terms_accepted.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
       </div>
 
-      <button class="btn btn--ghost" type="submit">Create customer account</button>
+      <button class="btn btn--ghost" type="submit">Create my account</button>
     </form>
   </div>
 
   <!-- PRODUCER -->
   <div id="producerForm" style="display:none;">
-    <h2>Producer details</h2>
+    <h2>Your details</h2>
 
     <form method="post" action="{% url 'accounts:register_producer' %}" novalidate data-phone-form="producer" data-name-form="producer">
       {% csrf_token %}
@@ -414,12 +458,12 @@
         {% for e in producer_form.postcode.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
       </div>
 
-      <button class="btn btn--ghost" type="submit">Create producer account</button>
+      <button class="btn btn--ghost" type="submit">Create my account</button>
     </form>
   </div>
 
-  <hr style="margin: 1.5rem 0;" />
-  <p>Already registered? <a href="{% url 'accounts:login' %}">Login</a></p>
+  <hr style="margin: 2rem 0 1.25rem; border: none; border-top: 1px solid #e0e0e0;" />
+  <p style="text-align:center;">Already have an account? <a href="{% url 'accounts:login' %}">Log in</a></p>
 </section>
 
 <script>

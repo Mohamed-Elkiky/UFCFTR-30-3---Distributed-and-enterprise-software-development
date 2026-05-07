@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+
+{% block title %}Quality Check — BRFN{% endblock %}
+
+{% block extra_head %}
+<style>
+  .pf-page { max-width: 700px; margin: 2rem auto; padding: 0 1.5rem 3rem; }
+  .pf-header { margin-bottom: 2rem; }
+  .pf-header h1 { font-size: 1.75rem; font-weight: 800; margin: 0 0 0.25rem; }
+  .pf-header p { color: var(--muted); margin: 0; font-size: 0.9rem; }
+
+  .pf-section {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .pf-image-drop {
+    border: 2px dashed var(--border-strong);
+    border-radius: 12px;
+    padding: 2.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--bg-secondary);
+  }
+  .pf-image-drop:hover, .pf-image-drop.drag-over {
+    border-color: var(--brand);
+    background: var(--brand-light);
+  }
+  .pf-image-drop p { color: var(--muted); font-size: 0.9rem; margin: 0.5rem 0 0; }
+
+  .pf-preview-img {
+    max-width: 280px;
+    border-radius: 10px;
+    margin: 1rem auto 0;
+    display: none;
+  }
+
+  /* Result card */
+  .qc-result {
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--card-border);
+    background: var(--card);
+    box-shadow: var(--shadow);
+  }
+
+  .qc-grade-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #fff;
+  }
+  .qc-grade-A { background: #16a34a; }
+  .qc-grade-B { background: #d97706; }
+  .qc-grade-C { background: #dc2626; }
+
+  .qc-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; }
+  .qc-header-text h3 { margin: 0; font-size: 1.1rem; font-weight: 700; }
+  .qc-header-text p { margin: 0.15rem 0 0; font-size: 0.85rem; color: var(--muted); }
+
+  .qc-scores { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1.25rem; }
+  .qc-score-item {
+    text-align: center;
+    padding: 0.75rem;
+    background: var(--bg-secondary);
+    border-radius: 10px;
+  }
+  .qc-score-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--muted); letter-spacing: 0.04em; }
+  .qc-score-value { font-size: 1.25rem; font-weight: 800; margin-top: 0.2rem; }
+
+  .qc-bar { height: 6px; border-radius: 99px; background: var(--border); margin-top: 0.4rem; overflow: hidden; }
+  .qc-bar-fill { height: 100%; border-radius: 99px; transition: width 0.6s ease; }
+
+  .qc-detail-row { display: flex; justify-content: space-between; font-size: 0.88rem; padding: 0.5rem 0; border-bottom: 1px solid var(--border); }
+  .qc-detail-row:last-child { border-bottom: none; }
+  .qc-detail-label { color: var(--muted); }
+  .qc-detail-value { font-weight: 600; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="pf-page">
+
+  <div class="pf-header">
+    <h1>🔬 Quality Check</h1>
+    <p>Upload a photo of your produce to get an AI-powered quality grade.</p>
+  </div>
+
+  <!-- Upload form -->
+  <div class="pf-section">
+    <form method="post" enctype="multipart/form-data" id="qc-form">
+      {% csrf_token %}
+      <div class="pf-image-drop" id="qc-drop-zone">
+        <div style="font-size: 2.5rem;">📷</div>
+        <p>Drag & drop a produce photo here, or click to browse</p>
+        <img id="qc-preview" class="pf-preview-img" src="#" alt="Preview">
+        <input type="file" name="image" id="qc-file-input" accept="image/*" style="display:none;" required>
+      </div>
+      <div style="margin-top: 1.25rem; display: flex; gap: 0.75rem;">
+        <button type="submit" class="btn btn--primary" id="qc-submit" disabled>Check Quality</button>
+        <a href="{% url 'marketplace:product_list' %}" class="btn btn--ghost">Back to Products</a>
+      </div>
+    </form>
+  </div>
+
+  <!-- Result -->
+  {% if result %}
+  <div class="qc-result">
+    <div class="qc-header">
+      <div class="qc-grade-badge qc-grade-{{ result.grade }}">{{ result.grade }}</div>
+      <div class="qc-header-text">
+        <h3>{{ result.produce_type }} — {{ result.state }}</h3>
+        <p>{{ result.recommendation }}</p>
+      </div>
+    </div>
+
+    <div class="qc-scores">
+      <div class="qc-score-item">
+        <div class="qc-score-label">Colour</div>
+        <div class="qc-score-value">{{ result.color_score }}%</div>
+        <div class="qc-bar"><div class="qc-bar-fill" style="width:{{ result.color_score }}%; background:{% if result.color_score >= 75 %}#16a34a{% elif result.color_score >= 65 %}#d97706{% else %}#dc2626{% endif %};"></div></div>
+      </div>
+      <div class="qc-score-item">
+        <div class="qc-score-label">Size</div>
+        <div class="qc-score-value">{{ result.size_score }}%</div>
+        <div class="qc-bar"><div class="qc-bar-fill" style="width:{{ result.size_score }}%; background:{% if result.size_score >= 80 %}#16a34a{% elif result.size_score >= 70 %}#d97706{% else %}#dc2626{% endif %};"></div></div>
+      </div>
+      <div class="qc-score-item">
+        <div class="qc-score-label">Ripeness</div>
+        <div class="qc-score-value">{{ result.ripeness_score }}%</div>
+        <div class="qc-bar"><div class="qc-bar-fill" style="width:{{ result.ripeness_score }}%; background:{% if result.ripeness_score >= 70 %}#16a34a{% elif result.ripeness_score >= 60 %}#d97706{% else %}#dc2626{% endif %};"></div></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="qc-detail-row">
+        <span class="qc-detail-label">Classification</span>
+        <span class="qc-detail-value">{{ result.predicted_class }}</span>
+      </div>
+      <div class="qc-detail-row">
+        <span class="qc-detail-label">Confidence</span>
+        <span class="qc-detail-value">{{ result.confidence|floatformat:1 }}%</span>
+      </div>
+      <div class="qc-detail-row">
+        <span class="qc-detail-label">Overall Grade</span>
+        <span class="qc-detail-value">Grade {{ result.grade }}</span>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+
+<script>
+  const dropZone = document.getElementById('qc-drop-zone');
+  const fileInput = document.getElementById('qc-file-input');
+  const preview = document.getElementById('qc-preview');
+  const submitBtn = document.getElementById('qc-submit');
+
+  dropZone.addEventListener('click', () => fileInput.click());
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      fileInput.files = dt.files;
+      showPreview(file);
+    }
+  });
+
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files[0]) showPreview(fileInput.files[0]);
+  });
+
+  function showPreview(file) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      preview.src = e.target.result;
+      preview.style.display = 'block';
+      submitBtn.disabled = false;
+    };
+    reader.readAsDataURL(file);
+  }
+</script>
+{% endblock %}

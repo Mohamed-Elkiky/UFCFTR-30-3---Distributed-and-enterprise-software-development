@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="stories-page">
+  <h1>Recipes, Stories &amp; Guides</h1>
+  <p class="stories-intro">Discover seasonal recipes, meet the producers behind your food, and learn how to keep your local produce fresh.</p>
+
+  <form class="stories-filters" method="get" action="{% url 'content:public_stories' %}">
+    <label for="kind-select">Type:</label>
+    <select id="kind-select" name="kind" onchange="this.form.submit()">
+      <option value="">All</option>
+      {% for value, label in kind_choices %}
+        <option value="{{ value }}" {% if current_kind == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+
+    <label for="season-select">Season:</label>
+    <select id="season-select" name="season" onchange="this.form.submit()">
+      <option value="">All seasons</option>
+      {% for value, label in season_choices %}
+        <option value="{{ value }}" {% if current_season == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </form>
+
+  {% if posts %}
+    <div class="stories-grid">
+      {% for post in posts %}
+        <a href="{% url 'content:story_detail' post.pk %}" class="story-card-link">
+        <article class="story-card">
+          {% if post.image_url %}
+            <img src="{{ post.image_url }}" alt="{{ post.title }}" class="story-card__img">
+          {% endif %}
+          <div class="story-card__body">
+            <span class="story-card__badge story-card__badge--{{ post.kind }}">{{ post.get_kind_display }}</span>
+            <span class="story-card__season">{{ post.get_seasonal_tag_display }}</span>
+            <h2 class="story-card__title">{{ post.title }}</h2>
+            <p class="story-card__producer">By {{ post.producer.business_name }}</p>
+            <div class="story-card__text">{{ post.body|linebreaksbr|truncatewords_html:60 }}</div>
+            <p class="story-card__date">{{ post.created_at|date:"j M Y" }}</p>
+            <span class="story-card__read">Read more →</span>
+          </div>
+        </article>
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="stories-empty">No content found{% if current_kind or current_season %} matching your filters{% endif %}. Check back soon!</p>
+  {% endif %}
+
+  <p class="back-link"><a href="{% url 'marketplace:home' %}">&larr; Back to marketplace</a></p>
+</div>
+
+<style>
+  .stories-page { max-width: 900px; margin: 0 auto; padding: 24px 16px; }
+  .stories-intro { color: #666; margin-bottom: 20px; }
+
+  .stories-filters {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+    padding: 12px 16px;
+    background: #f9f9f7;
+    border-radius: 8px;
+    border: 1px solid #e5e0d8;
+  }
+  .stories-filters label { font-weight: 600; font-size: 0.9rem; }
+  .stories-filters select {
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font: inherit;
+    font-size: 0.9rem;
+  }
+
+  .stories-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+
+  .story-card {
+    border: 1px solid #e5e0d8;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+    transition: box-shadow 0.15s;
+  }
+  .story-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+
+  .story-card__img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .story-card__body { padding: 16px; }
+
+  .story-card__badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .story-card__badge--recipe       { background: #fef3c7; color: #92400e; }
+  .story-card__badge--farm_story   { background: #d1fae5; color: #065f46; }
+  .story-card__badge--storage_guide { background: #dbeafe; color: #1e40af; }
+
+  .story-card__season {
+    font-size: 0.78rem;
+    color: #888;
+    margin-left: 6px;
+  }
+
+  .story-card__title {
+    font-size: 1.1rem;
+    margin: 10px 0 6px;
+  }
+  .story-card__producer {
+    font-size: 0.85rem;
+    color: #666;
+    margin: 0 0 10px;
+  }
+  .story-card__text {
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: #444;
+  }
+  .story-card__date {
+    font-size: 0.78rem;
+    color: #999;
+    margin-top: 10px;
+  }
+
+  .stories-empty { color: #888; font-style: italic; }
+  .back-link { margin-top: 24px; }
+
+  .story-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+  .story-card__read {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #4a7c59;
+  }
+</style>
+{% endblock %}

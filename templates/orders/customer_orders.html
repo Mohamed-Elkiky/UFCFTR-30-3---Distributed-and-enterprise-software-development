@@ -12,7 +12,7 @@
         <div style="padding: 1rem; border: 1px solid var(--border); border-radius: 12px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
             <div>
-              <span style="font-family: monospace; font-size: 0.85rem; color: var(--text-muted);">{{ order.id }}</span>
+              <span style="font-family: monospace; font-size: 0.85rem; color: var(--text-muted);">{{ order.short_ref }}</span>
             </div>
             <span style="font-size: 0.85rem; padding: 0.2rem 0.6rem; border-radius: 6px; background: var(--surface-alt, #f9f6f1);">
               {{ order.get_status_display }}
@@ -26,7 +26,7 @@
               {{ order.producer_orders.count }} producer{{ order.producer_orders.count|pluralize }}
             </div>
             <div style="display: flex; align-items: center; gap: 1rem;">
-              <strong>£{% widthratio order.total_pence 100 1 %}</strong>
+              <strong>£{{ order.total_pence|pence_to_pounds }}</strong>
               <a href="{% url 'orders:customer_order_detail' order.id %}" class="btn btn--ghost" style="font-size: 0.85rem; padding: 0.35rem 0.75rem;">View</a>
             </div>
           </div>

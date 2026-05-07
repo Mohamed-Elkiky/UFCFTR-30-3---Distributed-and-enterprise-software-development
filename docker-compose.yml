@@ -39,7 +39,7 @@ services:
       - DJANGO_DB_HOST=db
       - DJANGO_DB_PORT=5432
       - DATABASE_URL=postgresql://myuser:mypassword@db:5432/mydb
-
+      - AI_API_BASE_URL=http://host.docker.internal:5000
   nginx:
     image: nginx:1.25-alpine
     ports:
