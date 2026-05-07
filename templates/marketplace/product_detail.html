@@ -47,7 +47,14 @@
       {% endif %}
 
       {% if food_miles is not None %}
-        <p class="food-miles-badge">🌱 {{ food_miles }} miles from farm to you</p>
+        <p class="food-miles-badge" style="{% if within_20 %}color: #2e7d32;{% else %}color: #b45309;{% endif %}">
+          🌱 {{ food_miles }} miles from farm to you
+          {% if within_20 %}
+            <span style="background:#d1fae5; color:#065f46; border-radius:99px; padding:2px 8px; font-size:0.8rem; margin-left:4px;">within 20-mile radius</span>
+          {% else %}
+            <span style="background:#fef3c7; color:#92400e; border-radius:99px; padding:2px 8px; font-size:0.8rem; margin-left:4px;">over 20-mile radius</span>
+          {% endif %}
+        </p>
       {% endif %}
 
       {% if product.harvest_date %}

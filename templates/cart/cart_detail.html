@@ -12,8 +12,19 @@
   {% else %}
     {% for producer, items in grouped.items %}
       <div style="margin-bottom: 2rem;">
-        <h2 style="font-size: 1.1rem; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--border);">
+        <h2 style="font-size: 1.1rem; margin-bottom: 0.25rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--border);">
           {{ producer.business_name }}
+          {% if producer.food_miles %}
+            <span style="font-size: 0.82rem; font-weight: 600; margin-left: 0.5rem;
+              {% if producer.within_20 %}color: #2e7d32;{% else %}color: #b45309;{% endif %}">
+              🌱 {{ producer.food_miles }} mi
+              {% if producer.within_20 %}
+                <span style="background:#d1fae5; color:#065f46; border-radius:99px; padding:1px 7px; font-size:0.75rem; margin-left:3px;">within 20mi</span>
+              {% else %}
+                <span style="background:#fef3c7; color:#92400e; border-radius:99px; padding:1px 7px; font-size:0.75rem; margin-left:3px;">over 20mi</span>
+              {% endif %}
+            </span>
+          {% endif %}
         </h2>
 
         <table style="width: 100%; border-collapse: collapse;">

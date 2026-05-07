@@ -6,54 +6,99 @@
 <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
 <style>
+  /* ── Account-type card selector ── */
+  .type-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 1.75rem;
+  }
+  @media (max-width: 560px) { .type-cards { grid-template-columns: 1fr; } }
+
+  .type-card {
+    position: relative;
+    padding: 18px 16px 14px;
+    border: 2px solid var(--border, #e0dcd4);
+    border-radius: 12px;
+    cursor: pointer;
+    text-align: center;
+    transition: border-color .15s, box-shadow .15s, background .15s;
+    background: var(--bg-secondary, #FBF9F4);
+  }
+  .type-card:hover {
+    border-color: var(--primary, #4a7c59);
+    box-shadow: 0 2px 8px rgba(74,124,89,.10);
+  }
+  .type-card.active {
+    border-color: var(--primary, #4a7c59);
+    background: var(--accent-sage, #f0ebe0);
+    box-shadow: 0 0 0 3px rgba(74,124,89,.12);
+  }
+  .type-card__title { font-weight: 700; font-size: 0.95rem; display: block; }
+  .type-card__desc {
+    display: block;
+    font-size: 0.78rem;
+    color: var(--text-secondary, #666);
+    margin-top: 4px;
+    line-height: 1.35;
+  }
+
+  /* ── Form sections ── */
+  .reg-form-section { display: none; }
+  .reg-form-section.visible { display: block; animation: fadeUp .2s ease; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .reg-section-heading {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-secondary, #555);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 1.5rem 0 0.75rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--border, #e0dcd4);
+  }
+
+  /* ── Shared form helpers ── */
   .page-register .phone-split {
     display: flex;
     align-items: center;
     gap: 12px;
     max-width: 520px;
   }
-
   .page-register .phone-country-select {
     width: 140px;
     min-width: 140px;
-    padding: 14px 14px;
-    font-size: 1.05rem;
-    line-height: 1.2;
+    padding: 12px;
+    font-size: 1rem;
     border-radius: 10px;
   }
-
   .page-register .phone-number-input {
     flex: 1 1 auto;
     min-width: 180px;
-    padding: 14px 14px;
-    font-size: 1.05rem;
-    line-height: 1.2;
+    padding: 12px;
+    font-size: 1rem;
     border-radius: 10px;
   }
-
   .page-register .phone-country-select,
-  .page-register .phone-number-input {
-    box-sizing: border-box;
-  }
+  .page-register .phone-number-input { box-sizing: border-box; }
 
   .page-register .name-split {
     display: flex;
     gap: 12px;
     max-width: 520px;
   }
-  .page-register .name-split > div {
-    flex: 1 1 0;
-  }
+  .page-register .name-split > div { flex: 1 1 0; }
   .page-register .name-input {
-    padding: 14px 14px;
-    font-size: 1.05rem;
-    line-height: 1.2;
+    padding: 12px;
+    font-size: 1rem;
     border-radius: 10px;
   }
 
-  .page-register .hidden-field {
-    display: none !important;
-  }
+  .page-register .hidden-field { display: none !important; }
 
   .page-register .address-grid {
     display: grid;
@@ -61,10 +106,7 @@
     gap: 12px;
     max-width: 520px;
   }
-
-  .page-register .address-grid .full-width {
-    grid-column: span 2;
-  }
+  .page-register .address-grid .full-width { grid-column: span 2; }
 
   .page-register .country-locked {
     display: inline-block;
@@ -78,36 +120,60 @@
     box-sizing: border-box;
   }
 
-  .page-register h2 {
-    font-size: 1.25rem;
-    margin: 1.5rem 0 0.75rem;
-  }
+  .page-register h2 { font-size: 1.25rem; margin: 1.5rem 0 0.75rem; }
+  .page-register label { display: block; font-size: 0.9rem; font-weight: 500; margin-bottom: 0.35rem; }
+  .page-register .form-control { font-size: 0.95rem; padding: 10px 12px; border-radius: 8px; }
+  .page-register .address-grid label { font-size: 0.85rem; margin-bottom: 0.25rem; }
 
-  .page-register label {
+  /* Ensure all Django-rendered inputs/selects/textareas are visible */
+  .page-register input[type="text"],
+  .page-register input[type="email"],
+  .page-register input[type="password"],
+  .page-register input[type="tel"],
+  .page-register input[type="number"],
+  .page-register select:not(.phone-country-select),
+  .page-register textarea {
     display: block;
-    font-size: 0.9rem;
-    font-weight: 500;
-    margin-bottom: 0.35rem;
-  }
-
-  .page-register .form-control {
-    font-size: 0.95rem;
+    width: 100%;
     padding: 10px 12px;
+    font: inherit;
+    font-size: 0.95rem;
+    border: 1px solid var(--border, #ccc);
     border-radius: 8px;
+    background: var(--bg, #fff);
+    color: var(--text, #2D2A26);
+    box-sizing: border-box;
+  }
+  .page-register input:focus,
+  .page-register select:focus,
+  .page-register textarea:focus {
+    outline: none;
+    border-color: var(--primary, #4a7c59);
+    box-shadow: 0 0 0 2px rgba(74,124,89,.15);
   }
 
-  .page-register .address-grid label {
-    font-size: 0.85rem;
-    margin-bottom: 0.25rem;
-  }
-
-  .page-register .btn--ghost {
+  .page-register .btn--submit {
     width: 100%;
     max-width: 520px;
-    padding: 12px 20px;
+    padding: 14px 20px;
     font-size: 1rem;
-    font-weight: 600;
-    margin-top: 0.5rem;
+    font-weight: 700;
+    margin-top: 0.75rem;
+    border-radius: 10px;
+    background: var(--primary, #4a7c59);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .page-register .btn--submit:hover { background: var(--primary-dark, #3d6a4a); }
+
+  .page-register .login-prompt {
+    text-align: center;
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border, #e0dcd4);
+    font-size: 0.95rem;
   }
 </style>
 {% endblock %}
@@ -117,18 +183,26 @@
   <h1>Create an account</h1>
   <p>Join the Bristol Regional Food Network and start shopping local.</p>
 
-  <div class="form-row">
-    <label for="accountType">I want to register as a&hellip;</label>
-    <select id="accountType" class="form-control">
-      <option value="customer" selected>Customer (Individual)</option>
-      <option value="producer">Producer</option>
-    </select>
+  <!-- ─── Account Type Cards ─── -->
+  <div class="type-cards">
+    <div class="type-card active" data-type="customer">
+      <span class="type-card__title">Individual</span>
+      <span class="type-card__desc">Browse &amp; buy local produce for your household</span>
+    </div>
+    <div class="type-card" data-type="community_group">
+      <span class="type-card__title">Business</span>
+      <span class="type-card__desc">Schools, charities, restaurants &amp; bulk catering</span>
+    </div>
+    <div class="type-card" data-type="producer">
+      <span class="type-card__title">Producer</span>
+      <span class="type-card__desc">List and sell your farm produce on the marketplace</span>
+    </div>
   </div>
 
-  <!-- CUSTOMER -->
-  <div id="customerForm">
-    <h2>Your details</h2>
-
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- CUSTOMER (Individual)                          -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div id="customerForm" class="reg-form-section visible">
     <form method="post" action="{% url 'accounts:register_customer' %}" novalidate data-phone-form="customer" data-name-form="customer">
       {% csrf_token %}
 
@@ -138,131 +212,47 @@
         </div>
       {% endif %}
 
-      <!-- NAME -->
+      <div class="reg-section-heading">Your details</div>
+
       <div class="form-row">
         <label>Name</label>
-        <div class="hidden-field django-fullname-field">
-          {{ customer_form.full_name }}
-        </div>
+        <div class="hidden-field">{{ customer_form.full_name }}</div>
         <div class="name-split" data-name-split="customer">
-          <div>
-            <input class="form-control name-input first-name-input" type="text" placeholder="First name" autocomplete="given-name" />
-          </div>
-          <div>
-            <input class="form-control name-input last-name-input" type="text" placeholder="Last name" autocomplete="family-name" />
-          </div>
+          <div><input class="form-control name-input first-name-input" type="text" placeholder="First name" autocomplete="given-name" /></div>
+          <div><input class="form-control name-input last-name-input" type="text" placeholder="Last name" autocomplete="family-name" /></div>
         </div>
         {% for e in customer_form.full_name.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
       </div>
 
-      <!-- EMAIL -->
       <div class="form-row">
         <label for="{{ customer_form.email.id_for_label }}">Email</label>
         {{ customer_form.email }}
         {% for e in customer_form.email.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
       </div>
 
-      <!-- PHONE -->
       <div class="form-row">
         <label>Phone</label>
-        <div class="hidden-field django-phone-field">
-          {{ customer_form.phone }}
-        </div>
+        <div class="hidden-field">{{ customer_form.phone }}</div>
         <div class="phone-split" data-phone-split="customer">
-          <select class="form-control phone-country-select" autocomplete="tel-country-code">
-            <option value="44" selected>🇬🇧 +44</option>
-            <option value="353">🇮🇪 +353</option>
-            <option value="1">🇺🇸 +1</option>
-            <option value="1">🇨🇦 +1</option>
-            <option value="61">🇦🇺 +61</option>
-            <option value="64">🇳🇿 +64</option>
-            <option value="33">🇫🇷 +33</option>
-            <option value="49">🇩🇪 +49</option>
-            <option value="39">🇮🇹 +39</option>
-            <option value="34">🇪🇸 +34</option>
-            <option value="31">🇳🇱 +31</option>
-            <option value="32">🇧🇪 +32</option>
-            <option value="41">🇨🇭 +41</option>
-            <option value="43">🇦🇹 +43</option>
-            <option value="351">🇵🇹 +351</option>
-            <option value="46">🇸🇪 +46</option>
-            <option value="47">🇳🇴 +47</option>
-            <option value="45">🇩🇰 +45</option>
-            <option value="358">🇫🇮 +358</option>
-            <option value="48">🇵🇱 +48</option>
-            <option value="420">🇨🇿 +420</option>
-            <option value="36">🇭🇺 +36</option>
-            <option value="40">🇷🇴 +40</option>
-            <option value="30">🇬🇷 +30</option>
-            <option value="380">🇺🇦 +380</option>
-            <option value="7">🇷🇺 +7</option>
-            <option value="20">🇪🇬 +20</option>
-            <option value="27">🇿🇦 +27</option>
-            <option value="234">🇳🇬 +234</option>
-            <option value="254">🇰🇪 +254</option>
-            <option value="233">🇬🇭 +233</option>
-            <option value="212">🇲🇦 +212</option>
-            <option value="213">🇩🇿 +213</option>
-            <option value="216">🇹🇳 +216</option>
-            <option value="971">🇦🇪 +971</option>
-            <option value="966">🇸🇦 +966</option>
-            <option value="974">🇶🇦 +974</option>
-            <option value="965">🇰🇼 +965</option>
-            <option value="973">🇧🇭 +973</option>
-            <option value="968">🇴🇲 +968</option>
-            <option value="972">🇮🇱 +972</option>
-            <option value="90">🇹🇷 +90</option>
-            <option value="98">🇮🇷 +98</option>
-            <option value="92">🇵🇰 +92</option>
-            <option value="880">🇧🇩 +880</option>
-            <option value="91">🇮🇳 +91</option>
-            <option value="94">🇱🇰 +94</option>
-            <option value="977">🇳🇵 +977</option>
-            <option value="86">🇨🇳 +86</option>
-            <option value="81">🇯🇵 +81</option>
-            <option value="82">🇰🇷 +82</option>
-            <option value="65">🇸🇬 +65</option>
-            <option value="60">🇲🇾 +60</option>
-            <option value="62">🇮🇩 +62</option>
-            <option value="66">🇹🇭 +66</option>
-            <option value="84">🇻🇳 +84</option>
-            <option value="63">🇵🇭 +63</option>
-            <option value="55">🇧🇷 +55</option>
-            <option value="52">🇲🇽 +52</option>
-            <option value="54">🇦🇷 +54</option>
-            <option value="56">🇨🇱 +56</option>
-            <option value="57">🇨🇴 +57</option>
-            <option value="51">🇵🇪 +51</option>
-          </select>
-          <input
-            class="form-control phone-number-input"
-            type="tel"
-            inputmode="numeric"
-            autocomplete="tel-national"
-            placeholder="Phone number"
-          />
+          {% include "partials/phone_country_options.html" %}
+          <input class="form-control phone-number-input" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="Phone number" />
         </div>
         {% for e in customer_form.phone.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
       </div>
 
-      <!-- PASSWORD -->
       <div class="form-row">
         <label for="{{ customer_form.password.id_for_label }}">Password</label>
         {{ customer_form.password }}
         {% if customer_form.password.help_text %}<small class="form-help">{{ customer_form.password.help_text }}</small>{% endif %}
         {% for e in customer_form.password.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
       </div>
-
       <div class="form-row">
         <label for="{{ customer_form.password_confirm.id_for_label }}">Confirm password</label>
         {{ customer_form.password_confirm }}
         {% for e in customer_form.password_confirm.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
       </div>
 
-      <!-- DELIVERY ADDRESS -->
-      <div class="form-row">
-        <label>Delivery address</label>
-      </div>
+      <div class="reg-section-heading">Delivery address</div>
       <div class="form-row">
         <div class="address-grid">
           <div class="full-width">
@@ -293,22 +283,125 @@
         </div>
       </div>
 
-      <!-- TERMS -->
       <div class="form-row">
-        <label>
-          {{ customer_form.terms_accepted }} I accept the <a href="{% url 'accounts:terms_conditions' %}">terms and conditions</a>
-        </label>
+        <label>{{ customer_form.terms_accepted }} I accept the <a href="{% url 'accounts:terms_conditions' %}">terms and conditions</a></label>
         {% for e in customer_form.terms_accepted.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
       </div>
 
-      <button class="btn btn--ghost" type="submit">Create my account</button>
+      <button class="btn--submit" type="submit">Create my account</button>
     </form>
   </div>
 
-  <!-- PRODUCER -->
-  <div id="producerForm" style="display:none;">
-    <h2>Your details</h2>
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- COMMUNITY GROUP / BUSINESS (TC-017)            -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div id="communityGroupForm" class="reg-form-section">
+    <form method="post" action="{% url 'accounts:register_community_group' %}" novalidate data-phone-form="community_group" data-name-form="community_group">
+      {% csrf_token %}
 
+      {% if community_group_form.non_field_errors %}
+        <div class="message message--error" role="alert">
+          {% for err in community_group_form.non_field_errors %}{{ err }}{% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="reg-section-heading">Contact details</div>
+
+      <div class="form-row">
+        <label>Contact person</label>
+        <div class="hidden-field">{{ community_group_form.contact_name }}</div>
+        <div class="name-split" data-name-split="community_group">
+          <div><input class="form-control name-input first-name-input" type="text" placeholder="First name" autocomplete="given-name" /></div>
+          <div><input class="form-control name-input last-name-input" type="text" placeholder="Last name" autocomplete="family-name" /></div>
+        </div>
+        {% for e in community_group_form.contact_name.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="form-row">
+        <label for="{{ community_group_form.email.id_for_label }}">Email</label>
+        {{ community_group_form.email }}
+        {% for e in community_group_form.email.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="form-row">
+        <label>Phone</label>
+        <div class="hidden-field">{{ community_group_form.phone }}</div>
+        <div class="phone-split" data-phone-split="community_group">
+          {% include "partials/phone_country_options.html" %}
+          <input class="form-control phone-number-input" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="Phone number" />
+        </div>
+        {% for e in community_group_form.phone.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="form-row">
+        <label for="{{ community_group_form.password.id_for_label }}">Password</label>
+        {{ community_group_form.password }}
+        {% if community_group_form.password.help_text %}<small class="form-help">{{ community_group_form.password.help_text }}</small>{% endif %}
+        {% for e in community_group_form.password.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+      </div>
+      <div class="form-row">
+        <label for="{{ community_group_form.password_confirm.id_for_label }}">Confirm password</label>
+        {{ community_group_form.password_confirm }}
+        {% for e in community_group_form.password_confirm.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="reg-section-heading">Organisation details</div>
+
+      <div class="form-row">
+        <label for="{{ community_group_form.organisation_name.id_for_label }}">Organisation name</label>
+        {{ community_group_form.organisation_name }}
+        {% for e in community_group_form.organisation_name.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="form-row">
+        <label for="{{ community_group_form.organisation_type.id_for_label }}">Organisation type</label>
+        {{ community_group_form.organisation_type }}
+        {% for e in community_group_form.organisation_type.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="reg-section-heading">Delivery address</div>
+
+      <div class="form-row">
+        <div class="address-grid">
+          <div class="full-width">
+            <label for="{{ community_group_form.delivery_street.id_for_label }}">Street</label>
+            {{ community_group_form.delivery_street }}
+            {% for e in community_group_form.delivery_street.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+          </div>
+          <div>
+            <label for="{{ community_group_form.delivery_city.id_for_label }}">City</label>
+            {{ community_group_form.delivery_city }}
+            {% for e in community_group_form.delivery_city.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+          </div>
+          <div>
+            <label for="{{ community_group_form.delivery_county.id_for_label }}">County</label>
+            {{ community_group_form.delivery_county }}
+            {% for e in community_group_form.delivery_county.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+          </div>
+          <div>
+            <label for="{{ community_group_form.postcode.id_for_label }}">Postcode</label>
+            {{ community_group_form.postcode }}
+            {% for e in community_group_form.postcode.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+          </div>
+          <div>
+            <label>Country</label>
+            <span class="country-locked">United Kingdom</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label><input type="checkbox" name="community_group-terms_accepted" required /> I accept the <a href="{% url 'accounts:terms_conditions' %}">terms and conditions</a></label>
+      </div>
+
+      <button class="btn--submit" type="submit">Create business account</button>
+    </form>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- PRODUCER                                       -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div id="producerForm" class="reg-form-section">
     <form method="post" action="{% url 'accounts:register_producer' %}" novalidate data-phone-form="producer" data-name-form="producer">
       {% csrf_token %}
 
@@ -318,128 +411,48 @@
         </div>
       {% endif %}
 
-      <!-- NAME -->
+      <div class="reg-section-heading">Your details</div>
+
       <div class="form-row">
         <label>Name</label>
-        <div class="hidden-field django-fullname-field">
-          {{ producer_form.contact_name }}
-        </div>
+        <div class="hidden-field">{{ producer_form.contact_name }}</div>
         <div class="name-split" data-name-split="producer">
-          <div>
-            <input class="form-control name-input first-name-input" type="text" placeholder="First name" autocomplete="given-name" />
-          </div>
-          <div>
-            <input class="form-control name-input last-name-input" type="text" placeholder="Last name" autocomplete="family-name" />
-          </div>
+          <div><input class="form-control name-input first-name-input" type="text" placeholder="First name" autocomplete="given-name" /></div>
+          <div><input class="form-control name-input last-name-input" type="text" placeholder="Last name" autocomplete="family-name" /></div>
         </div>
         {% for e in producer_form.contact_name.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
       </div>
 
-      <!-- EMAIL -->
       <div class="form-row">
         <label for="{{ producer_form.email.id_for_label }}">Email</label>
         {{ producer_form.email }}
         {% for e in producer_form.email.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
       </div>
 
-      <!-- PHONE -->
       <div class="form-row">
         <label>Phone</label>
-        <div class="hidden-field django-phone-field">
-          {{ producer_form.phone }}
-        </div>
+        <div class="hidden-field">{{ producer_form.phone }}</div>
         <div class="phone-split" data-phone-split="producer">
-          <select class="form-control phone-country-select" autocomplete="tel-country-code">
-            <option value="44" selected>🇬🇧 +44</option>
-            <option value="353">🇮🇪 +353</option>
-            <option value="1">🇺🇸 +1</option>
-            <option value="1">🇨🇦 +1</option>
-            <option value="61">🇦🇺 +61</option>
-            <option value="64">🇳🇿 +64</option>
-            <option value="33">🇫🇷 +33</option>
-            <option value="49">🇩🇪 +49</option>
-            <option value="39">🇮🇹 +39</option>
-            <option value="34">🇪🇸 +34</option>
-            <option value="31">🇳🇱 +31</option>
-            <option value="32">🇧🇪 +32</option>
-            <option value="41">🇨🇭 +41</option>
-            <option value="43">🇦🇹 +43</option>
-            <option value="351">🇵🇹 +351</option>
-            <option value="46">🇸🇪 +46</option>
-            <option value="47">🇳🇴 +47</option>
-            <option value="45">🇩🇰 +45</option>
-            <option value="358">🇫🇮 +358</option>
-            <option value="48">🇵🇱 +48</option>
-            <option value="420">🇨🇿 +420</option>
-            <option value="36">🇭🇺 +36</option>
-            <option value="40">🇷🇴 +40</option>
-            <option value="30">🇬🇷 +30</option>
-            <option value="380">🇺🇦 +380</option>
-            <option value="7">🇷🇺 +7</option>
-            <option value="20">🇪🇬 +20</option>
-            <option value="27">🇿🇦 +27</option>
-            <option value="234">🇳🇬 +234</option>
-            <option value="254">🇰🇪 +254</option>
-            <option value="233">🇬🇭 +233</option>
-            <option value="212">🇲🇦 +212</option>
-            <option value="213">🇩🇿 +213</option>
-            <option value="216">🇹🇳 +216</option>
-            <option value="971">🇦🇪 +971</option>
-            <option value="966">🇸🇦 +966</option>
-            <option value="974">🇶🇦 +974</option>
-            <option value="965">🇰🇼 +965</option>
-            <option value="973">🇧🇭 +973</option>
-            <option value="968">🇴🇲 +968</option>
-            <option value="972">🇮🇱 +972</option>
-            <option value="90">🇹🇷 +90</option>
-            <option value="98">🇮🇷 +98</option>
-            <option value="92">🇵🇰 +92</option>
-            <option value="880">🇧🇩 +880</option>
-            <option value="91">🇮🇳 +91</option>
-            <option value="94">🇱🇰 +94</option>
-            <option value="977">🇳🇵 +977</option>
-            <option value="86">🇨🇳 +86</option>
-            <option value="81">🇯🇵 +81</option>
-            <option value="82">🇰🇷 +82</option>
-            <option value="65">🇸🇬 +65</option>
-            <option value="60">🇲🇾 +60</option>
-            <option value="62">🇮🇩 +62</option>
-            <option value="66">🇹🇭 +66</option>
-            <option value="84">🇻🇳 +84</option>
-            <option value="63">🇵🇭 +63</option>
-            <option value="55">🇧🇷 +55</option>
-            <option value="52">🇲🇽 +52</option>
-            <option value="54">🇦🇷 +54</option>
-            <option value="56">🇨🇱 +56</option>
-            <option value="57">🇨🇴 +57</option>
-            <option value="51">🇵🇪 +51</option>
-          </select>
-          <input
-            class="form-control phone-number-input"
-            type="tel"
-            inputmode="numeric"
-            autocomplete="tel-national"
-            placeholder="Phone number"
-          />
+          {% include "partials/phone_country_options.html" %}
+          <input class="form-control phone-number-input" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="Phone number" />
         </div>
         {% for e in producer_form.phone.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
       </div>
 
-      <!-- PASSWORD -->
       <div class="form-row">
         <label for="{{ producer_form.password.id_for_label }}">Password</label>
         {{ producer_form.password }}
         {% if producer_form.password.help_text %}<small class="form-help">{{ producer_form.password.help_text }}</small>{% endif %}
         {% for e in producer_form.password.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
       </div>
-
       <div class="form-row">
         <label for="{{ producer_form.password_confirm.id_for_label }}">Confirm password</label>
         {{ producer_form.password_confirm }}
         {% for e in producer_form.password_confirm.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
       </div>
 
-      <!-- BUSINESS DETAILS -->
+      <div class="reg-section-heading">Business details</div>
+
       <div class="form-row">
         <label for="{{ producer_form.business_name.id_for_label }}">Business name</label>
         {{ producer_form.business_name }}
@@ -447,114 +460,142 @@
       </div>
 
       <div class="form-row">
-        <label for="{{ producer_form.business_address.id_for_label }}">Business address</label>
-        {{ producer_form.business_address }}
-        {% for e in producer_form.business_address.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+        <div class="address-grid">
+          <div class="full-width">
+            <label for="{{ producer_form.street.id_for_label }}">Street</label>
+            {{ producer_form.street }}
+            {% for e in producer_form.street.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+          </div>
+          <div>
+            <label for="{{ producer_form.city.id_for_label }}">City</label>
+            {{ producer_form.city }}
+            {% for e in producer_form.city.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+          </div>
+          <div>
+            <label for="{{ producer_form.state.id_for_label }}">County</label>
+            {{ producer_form.state }}
+            {% for e in producer_form.state.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+          </div>
+          <div>
+            <label for="{{ producer_form.postcode.id_for_label }}">Postcode</label>
+            {{ producer_form.postcode }}
+            {% for e in producer_form.postcode.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+          </div>
+          <div>
+            <label>Country</label>
+            <span class="country-locked">United Kingdom</span>
+          </div>
+        </div>
       </div>
 
       <div class="form-row">
-        <label for="{{ producer_form.postcode.id_for_label }}">Postcode</label>
-        {{ producer_form.postcode }}
-        {% for e in producer_form.postcode.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+        <label><input type="checkbox" name="producer-terms_accepted" required /> I accept the <a href="{% url 'accounts:terms_conditions' %}">terms and conditions</a></label>
       </div>
 
-      <button class="btn btn--ghost" type="submit">Create my account</button>
+      <button class="btn--submit" type="submit">Create my account</button>
     </form>
   </div>
 
-  <hr style="margin: 2rem 0 1.25rem; border: none; border-top: 1px solid #e0e0e0;" />
-  <p style="text-align:center;">Already have an account? <a href="{% url 'accounts:login' %}">Log in</a></p>
+  <p class="login-prompt">Already have an account? <a href="{% url 'accounts:login' %}">Log in</a></p>
 </section>
 
 <script>
-  (function () {
-    const select = document.getElementById("accountType");
-    const customer = document.getElementById("customerForm");
-    const producer = document.getElementById("producerForm");
+(function () {
+  /* ── Card selector ── */
+  var cards = document.querySelectorAll('.type-card');
+  var sections = {
+    customer:        document.getElementById('customerForm'),
+    community_group: document.getElementById('communityGroupForm'),
+    producer:        document.getElementById('producerForm')
+  };
 
-    function update() {
-      const type = select.value;
-      customer.style.display = (type === "customer") ? "block" : "none";
-      producer.style.display = (type === "producer") ? "block" : "none";
-    }
-    select.addEventListener("change", update);
-    update();
+  function activate(type) {
+    cards.forEach(function (c) { c.classList.toggle('active', c.dataset.type === type); });
+    Object.keys(sections).forEach(function (k) {
+      sections[k].classList.toggle('visible', k === type);
+    });
+  }
 
-    function digitsOnly(s) {
-      return (s || "").toString().replace(/[^\d]/g, "");
-    }
+  cards.forEach(function (card) {
+    card.addEventListener('click', function () { activate(card.dataset.type); });
+  });
 
-    function wirePhone(kind) {
-      const form = document.querySelector(`form[data-phone-form="${kind}"]`);
-      if (!form) return;
+  /* If a form came back with errors, auto-show that section */
+  {% if community_group_form.errors %}activate('community_group');{% endif %}
+  {% if producer_form.errors %}activate('producer');{% endif %}
 
-      const djangoPhoneInput = form.querySelector('input[name$="-phone"], input[name="phone"]');
-      const split = form.querySelector(`[data-phone-split="${kind}"]`);
-      if (!djangoPhoneInput || !split) return;
+  /* ── Phone wiring ── */
+  function digitsOnly(s) { return (s || '').toString().replace(/[^\d]/g, ''); }
 
-      djangoPhoneInput.setAttribute("tabindex", "-1");
+  function wirePhone(kind) {
+    var form = document.querySelector('form[data-phone-form="' + kind + '"]');
+    if (!form) return;
+    var djangoInput = form.querySelector('input[name$="-phone"], input[name="phone"]');
+    var split = form.querySelector('[data-phone-split="' + kind + '"]');
+    if (!djangoInput || !split) return;
 
-      const country = split.querySelector(".phone-country-select");
-      const number = split.querySelector(".phone-number-input");
+    djangoInput.setAttribute('tabindex', '-1');
+    var country = split.querySelector('.phone-country-select');
+    var number  = split.querySelector('.phone-number-input');
 
-      if (djangoPhoneInput.value) {
-        const allDigits = digitsOnly(djangoPhoneInput.value);
-        const code = digitsOnly(country.value);
-        number.value = allDigits.startsWith(code) ? allDigits.slice(code.length) : allDigits;
-      }
-
-      function sync() {
-        const c = digitsOnly(country.value);
-        const n = digitsOnly(number.value);
-        djangoPhoneInput.value = (c || n) ? ("+" + c + n) : "";
-      }
-
-      country.addEventListener("change", sync);
-      number.addEventListener("input", sync);
-      form.addEventListener("submit", sync);
-
-      sync();
+    if (djangoInput.value) {
+      var all = digitsOnly(djangoInput.value);
+      var code = digitsOnly(country.value);
+      number.value = all.startsWith(code) ? all.slice(code.length) : all;
     }
 
-    function wireName(kind) {
-      const form = document.querySelector(`form[data-name-form="${kind}"]`);
-      if (!form) return;
+    function sync() {
+      var c = digitsOnly(country.value);
+      var n = digitsOnly(number.value);
+      djangoInput.value = (c || n) ? ('+' + c + n) : '';
+    }
+    country.addEventListener('change', sync);
+    number.addEventListener('input', sync);
+    form.addEventListener('submit', sync);
+    sync();
+  }
 
-      const hiddenName = kind === "customer"
-        ? form.querySelector('input[name$="-full_name"], input[name="full_name"]')
-        : form.querySelector('input[name$="-contact_name"], input[name="contact_name"]');
+  /* ── Name wiring ── */
+  function wireName(kind) {
+    var form = document.querySelector('form[data-name-form="' + kind + '"]');
+    if (!form) return;
 
-      const split = form.querySelector(`[data-name-split="${kind}"]`);
-      if (!hiddenName || !split) return;
+    var hiddenName;
+    if (kind === 'customer') {
+      hiddenName = form.querySelector('input[name$="-full_name"], input[name="full_name"]');
+    } else {
+      hiddenName = form.querySelector('input[name$="-contact_name"], input[name="contact_name"]');
+    }
+    var split = form.querySelector('[data-name-split="' + kind + '"]');
+    if (!hiddenName || !split) return;
 
-      hiddenName.setAttribute("tabindex", "-1");
+    hiddenName.setAttribute('tabindex', '-1');
+    var first = split.querySelector('.first-name-input');
+    var last  = split.querySelector('.last-name-input');
 
-      const first = split.querySelector(".first-name-input");
-      const last  = split.querySelector(".last-name-input");
-
-      if (hiddenName.value) {
-        const parts = hiddenName.value.trim().split(/\s+/);
-        first.value = parts.shift() || "";
-        last.value = parts.join(" ");
-      }
-
-      function sync() {
-        const f = (first.value || "").trim();
-        const l = (last.value || "").trim();
-        hiddenName.value = (f || l) ? (f + (l ? " " + l : "")) : "";
-      }
-
-      first.addEventListener("input", sync);
-      last.addEventListener("input", sync);
-      form.addEventListener("submit", sync);
-
-      sync();
+    if (hiddenName.value) {
+      var parts = hiddenName.value.trim().split(/\s+/);
+      first.value = parts.shift() || '';
+      last.value = parts.join(' ');
     }
 
-    wirePhone("customer");
-    wirePhone("producer");
-    wireName("customer");
-    wireName("producer");
-  })();
+    function sync() {
+      var f = (first.value || '').trim();
+      var l = (last.value || '').trim();
+      hiddenName.value = (f || l) ? (f + (l ? ' ' + l : '')) : '';
+    }
+    first.addEventListener('input', sync);
+    last.addEventListener('input', sync);
+    form.addEventListener('submit', sync);
+    sync();
+  }
+
+  wirePhone('customer');
+  wirePhone('producer');
+  wirePhone('community_group');
+  wireName('customer');
+  wireName('producer');
+  wireName('community_group');
+})();
 </script>
 {% endblock %}

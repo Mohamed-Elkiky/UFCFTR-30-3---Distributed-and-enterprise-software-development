@@ -74,12 +74,28 @@ class ProducerRegistrationForm(forms.ModelForm):
             'placeholder': 'Jane Smith'
         })
     )
-    business_address = forms.CharField(
-        widget=forms.Textarea(attrs={
+    street = forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'rows': 3,
-            'placeholder': 'Farm address'
+            'placeholder': '12 Farm Lane'
         })
+    )
+    city = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Bristol'
+        })
+    )
+    state = forms.CharField(
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Avon'
+        }),
+        label='County'
     )
     postcode = forms.CharField(
         max_length=10,
@@ -119,11 +135,14 @@ class ProducerRegistrationForm(forms.ModelForm):
         user.role = User.Role.PRODUCER
         if commit:
             user.save()
+            parts = [self.cleaned_data['street'], self.cleaned_data['city']]
+            if self.cleaned_data.get('state'):
+                parts.append(self.cleaned_data['state'])
             ProducerProfile.objects.create(
                 user=user,
                 business_name=self.cleaned_data['business_name'],
                 contact_name=self.cleaned_data['contact_name'],
-                business_address=self.cleaned_data['business_address'],
+                business_address=', '.join(parts),
                 postcode=self.cleaned_data['postcode']
             )
         return user
@@ -266,7 +285,7 @@ class CommunityGroupRegistrationForm(forms.ModelForm):
     email = forms.EmailField(
         widget=forms.EmailInput(attrs={
             'class': 'form-control',
-            'placeholder': 'group@email.com'
+            'placeholder': 'catering@stmarys-school.org.uk'
         })
     )
     phone = forms.CharField(
@@ -290,26 +309,53 @@ class CommunityGroupRegistrationForm(forms.ModelForm):
         }),
         label='Confirm Password'
     )
+    contact_name = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Jane Smith'
+        }),
+        label='Contact person'
+    )
     organisation_name = forms.CharField(
         max_length=200,
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Bristol Food Bank'
-        })
+            'placeholder': "St. Mary's School"
+        }),
+        label='Organisation name'
     )
     organisation_type = forms.ChoiceField(
         choices=ORGANISATION_TYPES,
         widget=forms.Select(attrs={
             'class': 'form-control',
         }),
-        help_text='Select your organisation type'
+        label='Organisation type'
     )
-    organisation_address = forms.CharField(
-        widget=forms.Textarea(attrs={
+    delivery_street = forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'rows': 3,
-            'placeholder': 'Organisation address'
-        })
+            'placeholder': '10 School Road'
+        }),
+        label='Street'
+    )
+    delivery_city = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Bristol'
+        }),
+        label='City'
+    )
+    delivery_county = forms.CharField(
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Avon'
+        }),
+        label='County'
     )
     postcode = forms.CharField(
         max_length=10,
@@ -322,6 +368,18 @@ class CommunityGroupRegistrationForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['email', 'phone']
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exists():
+            raise ValidationError('An account with this email already exists.')
+        return email
+
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        if len(password) < 8:
+            raise ValidationError('Password must be at least 8 characters.')
+        return password
 
     def clean(self):
         cleaned_data = super().clean()
@@ -337,11 +395,15 @@ class CommunityGroupRegistrationForm(forms.ModelForm):
         user.role = User.Role.COMMUNITY_GROUP
         if commit:
             user.save()
+            parts = [self.cleaned_data['delivery_street'], self.cleaned_data['delivery_city']]
+            if self.cleaned_data.get('delivery_county'):
+                parts.append(self.cleaned_data['delivery_county'])
             CommunityGroupProfile.objects.create(
                 user=user,
                 organisation_name=self.cleaned_data['organisation_name'],
                 organisation_type=self.cleaned_data['organisation_type'],
-                organisation_address=self.cleaned_data['organisation_address'],
+                contact_name=self.cleaned_data['contact_name'],
+                delivery_address=', '.join(parts),
                 postcode=self.cleaned_data['postcode']
             )
         return user

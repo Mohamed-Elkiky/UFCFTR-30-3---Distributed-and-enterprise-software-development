@@ -18,6 +18,20 @@ from .forms import ProductForm
 from .services.surplus import create_surplus_deal, get_active_surplus_deals, apply_surplus_discount
 
 
+def _annotate_food_miles(products, user):
+    """Attach ``food_miles`` and ``within_20`` to each product for a logged-in buyer."""
+    if not (user.is_authenticated and hasattr(user, 'customer_profile')):
+        return
+    cp = user.customer_profile
+    if not (cp.latitude and cp.longitude):
+        return
+    from apps.logistics.services.distance import get_food_miles
+    for p in products:
+        miles = get_food_miles(p, cp)
+        p.food_miles = miles
+        p.within_20 = (miles <= 20.0) if miles is not None else None
+
+
 def _get_suggested_products(user, limit=6):
     """Return AI-powered suggestions for a logged-in customer, or a
     seasonal fallback for anonymous / non-customer users."""
@@ -113,6 +127,9 @@ def home(request):
     for p in products:
         discounted = apply_surplus_discount(p)
         p.discounted_display = f'£{discounted / 100:.2f}' if discounted < p.price_pence else None
+
+    # Attach food_miles to each product for logged-in buyers (TC-013)
+    _annotate_food_miles(products, request.user)
 
     # AI-powered suggestions + active surplus deals for homepage sections
     # Hide suggestions when the user is actively filtering
@@ -308,10 +325,13 @@ def product_list_by_category(request, category_id):
         category=category
     ).exclude(
         availability='unavailable'
-    ).order_by('-created_at')
+    ).select_related('producer').order_by('-created_at')
 
     if organic == '1':
         products = products.filter(organic_certified=True)
+
+    products = list(products)
+    _annotate_food_miles(products, request.user)
 
     return render(request, 'marketplace/product_list.html', {
         'category': category,
@@ -363,12 +383,15 @@ def product_detail(request, product_id):
     images = product.images.all()
 
     food_miles = None
+    within_20 = None
     if request.user.is_authenticated:
         try:
             from apps.logistics.services.distance import get_food_miles
             customer_profile = request.user.customer_profile
             if customer_profile.latitude and customer_profile.longitude:
                 food_miles = get_food_miles(product, customer_profile)
+                if food_miles is not None:
+                    within_20 = food_miles <= 20.0
         except Exception:
             pass
 
@@ -416,6 +439,7 @@ def product_detail(request, product_id):
         'allergens': allergens,
         'images': images,
         'food_miles': food_miles,
+        'within_20': within_20,
         'reviews': reviews,
         'average_stars': average_stars,
         'review_count': review_count,

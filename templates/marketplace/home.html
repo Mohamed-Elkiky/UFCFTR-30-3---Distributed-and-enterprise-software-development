@@ -7,6 +7,7 @@
 <style>
   .product-card-actions { padding: 0 1rem 1rem; }
   .product-card-actions form, .product-card-actions a { display: block; }
+  .product-food-miles { font-size: 0.82rem; color: #2e7d32; margin: 2px 0 0; font-weight: 600; }
 </style>
 {% endblock %}
 
@@ -319,6 +320,14 @@
             <h3 class="product-name">{{ product.name }}</h3>
             {% if product.producer %}
               <p class="product-producer">{{ product.producer.business_name }}</p>
+            {% endif %}
+            {% if product.food_miles %}
+              <p class="product-food-miles" {% if not product.within_20 %}style="color:#b45309;"{% endif %}>
+                🌱 {{ product.food_miles }} mi
+                {% if product.within_20 %}
+                  <span style="background:#d1fae5; color:#065f46; border-radius:99px; padding:1px 6px; font-size:0.72rem;">✓ local</span>
+                {% endif %}
+              </p>
             {% endif %}
             <p class="product-description">{{ product.description|truncatewords:20 }}</p>
             <div class="product-meta">

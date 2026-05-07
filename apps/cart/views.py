@@ -75,16 +75,15 @@ def cart_detail(request):
             from apps.logistics.services.distance import get_food_miles
             customer_profile = request.user.customer_profile
             if customer_profile.latitude and customer_profile.longitude:
-                seen_producers = set()
                 total = 0.0
                 any_valid = False
-                for item in cart.items.select_related("product__producer"):
-                    producer = item.product.producer
-                    if producer.id in seen_producers:
+                for producer, items in grouped.items():
+                    if producer is None:
                         continue
-                    seen_producers.add(producer.id)
-                    miles = get_food_miles(item.product, customer_profile)
+                    miles = get_food_miles(items[0].product, customer_profile)
                     if miles is not None:
+                        producer.food_miles = miles
+                        producer.within_20 = miles <= 20.0
                         total += miles
                         any_valid = True
                 if any_valid:

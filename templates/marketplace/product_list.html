@@ -20,6 +20,11 @@
         {% if p.organic_certified %}
           <span style="color: #2e7d32; font-size: 0.85rem;">🌿 Organic</span>
         {% endif %}
+        {% if p.food_miles %}
+          <span style="font-size: 0.85rem; {% if p.within_20 %}color: #2e7d32;{% else %}color: #b45309;{% endif %}">
+            🌱 {{ p.food_miles }} mi{% if p.within_20 %} ✓{% endif %}
+          </span>
+        {% endif %}
         <br />
         {% if p.producer %}
           <small>Producer: {{ p.producer.business_name }}</small><br />

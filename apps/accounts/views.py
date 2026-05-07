@@ -34,11 +34,12 @@ def logout_view(request):
     return redirect('accounts:login')
 
 
-def _register_context(customer_form=None, producer_form=None):
+def _register_context(customer_form=None, producer_form=None, community_group_form=None):
     """Return the context dict that auth/register.html expects."""
     return {
         "customer_form": customer_form or CustomerRegistrationForm(prefix="customer"),
         "producer_form": producer_form or ProducerRegistrationForm(prefix="producer"),
+        "community_group_form": community_group_form or CommunityGroupRegistrationForm(prefix="community_group"),
     }
 
 
@@ -91,7 +92,6 @@ def register_producer(request):
 def register_community_group(request):
     """
     Register a new Community Group account (TC-017).
-    Handles both GET (display form) and POST (process registration).
     """
     if request.user.is_authenticated:
         return redirect('marketplace:home')
@@ -102,10 +102,7 @@ def register_community_group(request):
     form = CommunityGroupRegistrationForm(request.POST, prefix="community_group")
 
     if not form.is_valid():
-        # For now, redirect to register and show error. In the future,
-        # could add a dedicated community group registration page.
-        messages.error(request, "Please correct the errors below.")
-        return render(request, 'auth/register.html', _register_context())
+        return render(request, 'auth/register.html', _register_context(community_group_form=form))
 
     with transaction.atomic():
         user = form.save()
