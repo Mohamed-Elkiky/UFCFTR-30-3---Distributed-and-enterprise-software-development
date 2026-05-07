@@ -70,7 +70,7 @@ def customer_required(view_func):
             )
 
         user_role = getattr(user, "role", None)
-        allowed_roles = ("customer", "community_group")
+        allowed_roles = ("customer", "community_group", "restaurant")
         
         if user_role not in allowed_roles:
             return render(

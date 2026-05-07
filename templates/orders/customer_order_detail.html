@@ -63,7 +63,8 @@
 
   <!-- Delivery address -->
   <h2 style="font-size: 1.1rem; margin: 1.5rem 0 0.5rem;">Delivery address</h2>
-  <p style="font-size: 0.95rem; white-space: pre-line; color: var(--text-muted);">{{ order.delivery_address }}</p>
+  <p style="font-size: 0.95rem; white-space: pre-line; color: var(--text-muted);">{{ order.delivery_address }}
+{{ order.delivery_postcode }}</p>
 
   {% if order.special_instructions %}
     <h2 style="font-size: 1.1rem; margin: 1rem 0 0.5rem;">Special instructions</h2>

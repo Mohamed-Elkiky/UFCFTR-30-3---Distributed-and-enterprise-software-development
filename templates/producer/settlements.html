@@ -2,9 +2,30 @@
 {% load payment_filters %}
 {% block title %}My Settlements | BRFN{% endblock %}
 
+{% block extra_head %}
+<style>
+  @media print {
+    .site-nav, .site-footer, .no-print { display: none !important; }
+    body { background: #fff !important; color: #000 !important; }
+    .settlements-wrap { max-width: 100%; padding: 0; }
+    .settlements-wrap h1 { font-size: 1.3rem; }
+    table { font-size: 0.85rem; }
+    th, td { padding: 6px 8px !important; }
+  }
+</style>
+{% endblock %}
+
 {% block content %}
-<div style="max-width: 800px; margin: 0 auto; padding: 20px;">
-  <h1>Weekly Settlements</h1>
+<div class="settlements-wrap" style="max-width: 800px; margin: 0 auto; padding: 20px;">
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 0.5rem;">
+    <h1 style="margin: 0;">Weekly Settlements</h1>
+    {% if settlements %}
+    <div class="no-print" style="display: flex; gap: 0.5rem;">
+      <a href="{% url 'payments:producer_settlements_csv' %}" class="btn btn--ghost" style="font-size: 0.85rem; padding: 0.5rem 1rem;">Download CSV</a>
+      <button onclick="window.print()" class="btn btn--ghost" style="font-size: 0.85rem; padding: 0.5rem 1rem;">Save as PDF</button>
+    </div>
+    {% endif %}
+  </div>
 
   {% if settlements %}
     <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
@@ -30,9 +51,9 @@
             <td style="padding: 10px;"><strong>£{{ s.payout_pence|pence_to_pounds }}</strong></td>
             <td style="padding: 10px;">
               {% if s.status == 'processed' %}
-                <span style="color: #2e7d32; font-weight: 600;">✅ Processed</span>
+                <span style="color: #2e7d32; font-weight: 600;">Processed</span>
               {% else %}
-                <span style="color: #f0a500; font-weight: 600;">⏳ Pending</span>
+                <span style="color: #f0a500; font-weight: 600;">Pending</span>
               {% endif %}
             </td>
           </tr>

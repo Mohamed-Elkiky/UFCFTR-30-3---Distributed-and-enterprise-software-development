@@ -24,6 +24,38 @@ def producer_settlements(request):
     })
 
 
+@producer_required
+def producer_settlements_csv(request):
+    """Download producer settlements as CSV (TC-012)."""
+    producer = request.user.producer_profile
+    settlements = ProducerSettlement.objects.filter(
+        producer=producer
+    ).select_related('settlement_week').order_by('-settlement_week__week_start')
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = (
+        f'attachment; filename="settlements_{producer.business_name.replace(" ", "_")}.csv"'
+    )
+
+    writer = csv.writer(response)
+    writer.writerow([
+        'Week Start', 'Week End', 'Gross (£)', 'Commission 5% (£)',
+        'Payout 95% (£)', 'Status',
+    ])
+    for s in settlements:
+        gross = s.payout_pence + s.commission_pence
+        writer.writerow([
+            s.settlement_week.week_start,
+            s.settlement_week.week_end,
+            f'{gross / 100:.2f}',
+            f'{s.commission_pence / 100:.2f}',
+            f'{s.payout_pence / 100:.2f}',
+            s.status,
+        ])
+
+    return response
+
+
 @admin_required
 def admin_commission_report(request):
     today = date.today()

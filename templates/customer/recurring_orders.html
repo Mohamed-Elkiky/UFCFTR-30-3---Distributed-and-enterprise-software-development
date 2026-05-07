@@ -120,7 +120,7 @@
         <span>{{ template.rrule }}</span>
         <span>{{ template.items.count }} product{{ template.items.count|pluralize }}</span>
       </div>
-      <div class="ro-items-list">
+      <div class="ro-items-list" id="ro-items-{{ template.id }}" style="display: none;">
         <p>Items</p>
         <ul>
           {% for item in template.items.all %}
@@ -130,7 +130,7 @@
       </div>
       <div class="ro-actions">
         <a href="{% url 'orders:recurring_modify_next' template.id %}" class="btn btn--primary" style="font-size:0.88rem;padding:0.5rem 1rem;">Modify Next Order</a>
-        <a href="{% url 'orders:recurring_orders' %}" class="btn btn--ghost" style="font-size:0.88rem;padding:0.5rem 1rem;">View Details</a>
+        <button type="button" class="btn btn--ghost ro-toggle-btn" data-target="ro-items-{{ template.id }}" style="font-size:0.88rem;padding:0.5rem 1rem;">View Details</button>
       </div>
     </div>
     {% endfor %}
@@ -208,6 +208,20 @@
 
 <script>
 (function() {
+  // --- Toggle item details ---
+  document.querySelectorAll('.ro-toggle-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var target = document.getElementById(this.dataset.target);
+      if (target.style.display === 'none') {
+        target.style.display = '';
+        this.textContent = 'Hide Details';
+      } else {
+        target.style.display = 'none';
+        this.textContent = 'View Details';
+      }
+    });
+  });
+
   // --- Toggle create panel ---
   const panel = document.getElementById('create-panel');
   const toggleBtn = document.getElementById('toggle-create-btn');

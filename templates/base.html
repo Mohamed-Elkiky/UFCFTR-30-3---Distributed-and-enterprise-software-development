@@ -107,7 +107,7 @@
               <a class="nav-link" href="{% url 'orders:producer_orders' %}">Orders</a>
               <a class="nav-link" href="{% url 'payments:producer_settlements' %}">Settlements</a>
               <a class="nav-link" href="{% url 'content:content_list' %}">Content</a>
-            {% elif user.role == 'customer' or user.role == 'community_group' %}
+            {% elif user.role == 'customer' or user.role == 'community_group' or user.role == 'restaurant' %}
               <a class="nav-link" href="{% url 'orders:customer_orders' %}">My Orders</a>
               <a class="nav-link" href="{% url 'orders:recurring_orders' %}">Recurring Orders</a>
               <a class="nav-link" href="{% url 'content:public_stories' %}">Stories</a>

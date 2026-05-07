@@ -35,7 +35,7 @@ from apps.orders.services.create_order import create_orders_from_cart
 from apps.payments.gateways.mock import MockGateway
 from apps.payments.services.commission import record_order_commission
 
-_BUYER_ROLES = {"customer", "community_group"}
+_BUYER_ROLES = {"customer", "community_group", "restaurant"}
 
 
 def _is_buyer(user):
@@ -47,15 +47,28 @@ def _get_buyer_profile(user):
         return user.customer_profile
 
     from apps.accounts.models import CustomerProfile
-    cg = user.community_group_profile
+
+    if hasattr(user, 'community_group_profile'):
+        org = user.community_group_profile
+        name = org.organisation_name
+        address = org.delivery_address
+        postcode = org.postcode
+    elif hasattr(user, 'restaurant_profile'):
+        org = user.restaurant_profile
+        name = org.restaurant_name
+        address = org.delivery_address
+        postcode = org.postcode
+    else:
+        return None
+
     profile, _ = CustomerProfile.objects.get_or_create(
         user=user,
         defaults={
-            'full_name': cg.organisation_name,
-            'street': cg.delivery_address,
+            'full_name': name,
+            'street': address,
             'city': '',
             'state': '',
-            'postcode': cg.postcode,
+            'postcode': postcode,
             'country': 'UK',
         },
     )
