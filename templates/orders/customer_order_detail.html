@@ -37,7 +37,7 @@
       {% for item in order.items.all %}
         {% if item.product.producer == producer_order.producer %}
           <div style="display: flex; justify-content: space-between; font-size: 0.95rem; padding: 0.3rem 0;">
-            <span>{{ item.product_name }} × {{ item.quantity }}</span>
+            <span>{% if item.product %}<a href="{% url 'marketplace:product_detail' item.product.pk %}" style="color: inherit; text-decoration: underline; text-underline-offset: 2px;">{{ item.product_name }}</a>{% else %}{{ item.product_name }}{% endif %} × {{ item.quantity }}</span>
             <span>£{{ item.line_total_pence|pence_to_pounds }}</span>
           </div>
         {% endif %}

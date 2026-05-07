@@ -213,7 +213,7 @@
   "pk": 12,
   "fields": {
     "password": "pbkdf2_sha256$600000$OmHkWQP1UGlKP8LfWrkDN4$+WcbEaI31NnRVkRbztkI0NGSbRunJ1Ak/ETOqV5rgAU=",
-    "last_login": "2026-05-07T11:12:20.125Z",
+    "last_login": "2026-05-07T11:26:22.540Z",
     "is_superuser": false,
     "first_name": "",
     "last_name": "",
@@ -4293,6 +4293,18 @@
     "title": "Excellent quality",
     "body": "Incredibly fresh and flavourful. Perfect for our family salads.",
     "created_at": "2026-05-07T10:15:56.003Z"
+  }
+},
+{
+  "model": "reviews.productreview",
+  "pk": "cae115cf-696f-4ecb-93d3-e158134c6b45",
+  "fields": {
+    "product": "a1b2c3d4-0001-0001-0001-000000000020",
+    "customer": 2,
+    "stars": 5,
+    "title": "Best sourdough ever!",
+    "body": "Wow it's a loaf! of sourdough! 10/10",
+    "created_at": "2026-05-07T11:27:46.456Z"
   }
 },
 {
