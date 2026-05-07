@@ -3,7 +3,7 @@
 import os
 from .base import *
 
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() == 'true'
 
 # Allow connections from Docker services and localhost
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'web', 'nginx']

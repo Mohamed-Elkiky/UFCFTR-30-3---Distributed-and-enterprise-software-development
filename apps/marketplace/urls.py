@@ -27,5 +27,4 @@ urlpatterns = [
     path('products/<uuid:product_id>/surplus/', views.mark_as_surplus, name='mark_as_surplus'),
     path('products/<uuid:product_id>/surplus/cancel/', views.cancel_surplus_deal, name='cancel_surplus_deal'),
     # Temporary debug — remove after testing
-    path('ai-debug/', views.ai_debug, name='ai_debug'),
 ]

@@ -104,7 +104,7 @@ def home(request):
     q = request.GET.get('q', '').strip()
     if q:
         products = products.filter(
-            Q(name__icontains=q) |
+            Q(name__icontains=q) | Q(description__icontains=q) |
             Q(producer__business_name__icontains=q)
         )
 
@@ -159,52 +159,6 @@ def home(request):
         'filter_in_season': request.GET.get('in_season', ''),
     }
     return render(request, 'marketplace/home.html', context)
-
-
-def ai_debug(request):
-    """Temporary diagnostic endpoint — hit /ai-debug/ to check connectivity."""
-    import requests as req
-    from django.conf import settings as s
-
-    base = getattr(s, 'AI_API_BASE_URL', 'http://localhost:5000').rstrip('/')
-    timeout = getattr(s, 'AI_API_TIMEOUT', 5)
-    info = {
-        'base_url': base,
-        'timeout': timeout,
-        'user': str(request.user),
-        'is_authenticated': request.user.is_authenticated,
-        'has_customer_profile': (
-            hasattr(request.user, 'customer_profile')
-            if request.user.is_authenticated else None
-        ),
-        'user_role': getattr(request.user, 'role', None),
-    }
-
-    # Test health endpoint
-    try:
-        r = req.get(f'{base}/health', timeout=timeout)
-        info['health'] = {'status': r.status_code, 'body': r.text[:500]}
-    except Exception as e:
-        info['health'] = {'error': str(e)}
-
-    # Try a few common path patterns for the reorder endpoint
-    for path in ['/api/predict/reorder', '/predict/reorder', '/api/reorder/predict']:
-        try:
-            r = req.post(f'{base}{path}', json={'customer_id': 'test', 'top_n': 3}, timeout=timeout)
-            info[f'POST {path}'] = {'status': r.status_code, 'body': r.text[:500]}
-        except Exception as e:
-            info[f'POST {path}'] = {'error': str(e)}
-
-    # Count available products (fallback pool)
-    avail = Product.objects.exclude(
-        availability='unavailable'
-    ).exclude(
-        availability='out_of_season'
-    ).filter(stock_qty__gt=0)
-    info['available_products_with_stock'] = avail.count()
-    info['total_products'] = Product.objects.count()
-
-    return JsonResponse(info, json_dumps_params={'indent': 2})
 
 
 # =============================================================================
@@ -462,7 +416,7 @@ def product_search(request):
 
     if q:
         products = products.filter(
-            Q(name__icontains=q) |
+            Q(name__icontains=q) | Q(description__icontains=q) |
             Q(producer__business_name__icontains=q)
         )
 
@@ -648,7 +602,7 @@ def product_search_json(request):
 
     if q:
         products = products.filter(
-            Q(name__icontains=q) |
+            Q(name__icontains=q) | Q(description__icontains=q) |
             Q(producer__business_name__icontains=q)
         )
 

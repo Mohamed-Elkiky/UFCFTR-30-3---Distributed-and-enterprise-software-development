@@ -20,6 +20,7 @@ from django.db.models import F
 from django.utils import timezone
 
 from apps.marketplace.models import Product
+from apps.marketplace.services.surplus import apply_surplus_discount
 from apps.orders.models import (
     CustomerOrder,
     OrderItem,
@@ -233,7 +234,8 @@ def place_recurring_instance(instance):
                 str(product.id),
                 tmpl_item.quantity  # Fall back to template default
             )
-            line_total = product.price_pence * qty
+            unit_price = apply_surplus_discount(product)
+            line_total = unit_price * qty
             producer_subtotal += line_total
 
             OrderItem.objects.create(
@@ -241,7 +243,7 @@ def place_recurring_instance(instance):
                 product=product,
                 product_name=product.name,
                 product_unit=product.unit,
-                price_pence=product.price_pence,
+                price_pence=unit_price,
                 quantity=qty,
             )
 

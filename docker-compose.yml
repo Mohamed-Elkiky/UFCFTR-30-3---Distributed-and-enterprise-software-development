@@ -33,7 +33,8 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
       - DJANGO_SETTINGS_MODULE=brfn.settings.docker
-      - DJANGO_DB_NAME=mydb
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY:-dev-secret-key-only-for-local}
+      - DJANGO_DEBUG=${DJANGO_DEBUG:-True}      - DJANGO_DB_NAME=mydb
       - DJANGO_DB_USER=myuser
       - DJANGO_DB_PASSWORD=mypassword
       - DJANGO_DB_HOST=db
