@@ -155,3 +155,41 @@ Tests are organised by app:
 ├── Dockerfile          # Django application image
 └── requirements.txt    # Python dependencies
 ```
+
+## Demo Accounts
+ 
+All accounts use password: `BrfnDemo2026!`
+ 
+### Admin
+| Email | Role |
+|-------|------|
+| admin@brfn.com | Admin |
+ 
+### Producers
+| Email | Business Name |
+|-------|---------------|
+| jane.smith@bristolvalleyfarm.com | Bristol Valley Farm |
+| tom.hartley@hillsidedairy.co.uk | Hillside Dairy |
+| david.marsh@greenacresfarm.co.uk | Green Acres Farm |
+| helen.price@orchardviewfarm.co.uk | Orchard View Farm |
+| paul.baker@severnvalleybakers.co.uk | Severn Valley Bakers |
+| sarah.bee@hartcliffehoney.co.uk | Hartcliffe Honey |
+| neil.foster@redlandfreerange.co.uk | Redland Free Range |
+| margaret.cook@cliftonpreserves.co.uk | Clifton Preserves |
+ 
+### Customers (Individual)
+| Email | Name |
+|-------|------|
+| robert.johnson@email.com | Robert Johnson |
+| emily.chen@email.com | Emily Chen |
+| test@test.com | Test Customer |
+ 
+### Customer (Business — Community Group)
+| Email | Organisation | Type |
+|-------|-------------|------|
+| catering@stmarys-school.org.uk | St. Mary's School | School/Educational |
+ 
+### Customer (Business — Restaurant)
+| Email | Restaurant |
+|-------|-----------|
+| info@cliftonkitchen.co.uk | The Clifton Kitchen |

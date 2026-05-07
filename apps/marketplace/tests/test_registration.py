@@ -25,7 +25,9 @@ class TestTC001_ProducerRegistration:
             "producer-password_confirm": "SecurePass99",
             "producer-business_name": "Bristol Valley Farm",
             "producer-contact_name": "Jane Smith",
-            "producer-business_address": "1 Farm Lane, Bristol",
+            "producer-street": "1 Farm Lane",
+            "producer-city": "Bristol",
+            "producer-state": "Avon",
             "producer-postcode": "BS1 4DJ",
         })
 
@@ -65,7 +67,8 @@ class TestTC001_ProducerRegistration:
             "producer-password_confirm": "short",
             "producer-business_name": "Test",
             "producer-contact_name": "Test",
-            "producer-business_address": "Test",
+            "producer-street": "Test",
+            "producer-city": "Test",
             "producer-postcode": "BS1",
         })
         assert not User.objects.filter(email="weak@test.com").exists()
@@ -80,7 +83,8 @@ class TestTC001_ProducerRegistration:
             "producer-password_confirm": "AnotherPass99",
             "producer-business_name": "Duplicate Farm",
             "producer-contact_name": "Dup",
-            "producer-business_address": "Dup",
+            "producer-street": "Dup",
+            "producer-city": "Dup",
             "producer-postcode": "BS2",
         })
         assert User.objects.filter(email="jane@bristolvalley.com").count() == 1
